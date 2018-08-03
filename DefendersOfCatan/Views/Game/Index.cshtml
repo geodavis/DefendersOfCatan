@@ -1,0 +1,208 @@
+﻿
+@{
+    ViewBag.Title = "Game";
+}
+
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+    <link rel="stylesheet" href="~/Content/Assets/app.css" type="text/css" />
+    @*<script src="lib/phaser/build/phaser.js"></script>*@
+    <script src="~/scripts/phaser/phaser.js"></script>
+    <script src="~/Scripts/jquery-3.0.0.min.js"></script>
+    <script src="~/scripts/phaser/app.js"></script>
+    <script src="~/scripts/phaser/boot.js"></script>
+    <script src="~/scripts/phaser/preloader.js"></script>
+    <script src="~/scripts/phaser/mainmenu.js"></script>
+    <script src="~/scripts/phaser/game.js"></script>
+    <script src="~/scripts/phaser/enemymove.js"></script>
+    <script src="~/scripts/phaser/enemyoverrun.js"></script>
+    <script src="~/scripts/phaser/enemycard.js"></script>
+    <script src="~/scripts/phaser/playermove.js"></script>
+    <script src="~/Scripts/Phaser/player_res_or_fight.js"></script>
+    <script src="~/scripts/phaser/popup.js"></script>
+    <script src="~/scripts/phaser/hextile.js"></script>
+    @*<script src="~/scripts/phaser/player.js"></script>*@
+    <script src="~/scripts/phaser/enemy.js"></script>
+    <script src="~/scripts/phaser/barbarian.js"></script>
+    <script src="~/scripts/models/playerModel.js"></script>
+    <script src="~/scripts/common/functions.js"></script>
+    <script src="~/Scripts/Models/PlayerResource.js"></script>
+    <script src="~/Scripts/Knockout/knockout-3.4.2.js"></script>
+    <script src="~/Scripts/Knockout/KOModels/player_vm.js"></script>
+    <script src="~/Scripts/Knockout/KOModels/players_vm.js"></script>
+    <script src="~/Scripts/Knockout/KOModels/game_vm.js"></script>
+    <script src="~/Scripts/Phaser/item.js"></script>
+    <script src="~/Scripts/Knockout/KOModels/items_vm.js"></script>
+    <script src="~/Scripts/Models/PlayerItem.js"></script>
+
+
+</head>
+
+<body>
+    <div class="container-fluid">
+        <div id="row-main" class="row no-gutters">
+            <div id="sidebar-left" class="col-md-3 sidebar bg-secondary rounded">Messages:</div>
+            <div id="content" class="col-md-6 bg-info rounded">
+                <button type="button" class="btn btn-default toggle-sidebar-left">Toggle messages</button>
+                @*<button type="button" class="btn btn-default toggle-sidebar-right">Toggle right</button>
+                    <!-- Button trigger modal -->
+                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+                        Launch demo modal
+                    </button>*@
+
+            </div>
+            @*<div id="sidebar-right" class="col-md-3 sidebar bg-danger rounded" style="white-space: pre; overflow-y:scroll; height:450px;" data-bind="text: gameLog"></div>*@
+            <div id="carouselExampleIndicators" class="col-md-3 bg-danger carousel slide rounded" data-ride="carousel" data-interval="false">
+                <ol class="carousel-indicators">
+                    <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
+                    <li data-target="#carouselExampleIndicators" data-slide-to="1"></li>
+                    <li data-target="#carouselExampleIndicators" data-slide-to="2"></li>
+                </ol>
+                <div class="carousel-inner">
+                    <div class="carousel-item active">
+                        <div id="players" data-bind="with: players">
+                            <table class="table">
+                                <thead class="thead-light">
+                                    <tr>
+                                        <th>Player</th>
+                                        <th>Health</th>
+                                        <th colspan="10">Resources</th>
+                                    </tr>
+                                </thead>
+                                <tbody data-bind="foreach: playersList">
+                                    <tr data-bind="css: { 'table-primary': isCurrentPlayer() }">
+                                        <td data-bind="text: name"></td>
+                                        <td data-bind="text: health"></td>
+                                        <!-- ko foreach: resources -->
+                                        <td><img height="15" width="15" data-bind="attr:{src: imagePath}" /></td>
+                                        <td data-bind="text: resourceCount"></td>
+                                        <!-- /ko -->
+                                    </tr>
+                                    <tr data-bind="css: { 'table-primary': isCurrentPlayer() }">
+                                        <!-- ko foreach: items -->
+                                        <td data-bind="text: itemType"></td>
+                                        <!-- /ko -->
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                    </div>
+                    <div class="carousel-item">
+                        <div id="sidebar-right" class="bg-danger" style="white-space: pre; overflow-y:scroll" data-bind="text: gameLog"></div>
+                    </div>
+                    <div class="carousel-item">
+                        <div id="items">
+                            <table class="table table-striped table-hover">
+                                <thead class="thead-light">
+                                    <tr>
+                                        <th>Item Name</th>
+                                        <th>Image</th>
+                                        <th>Can buy</th>
+                                        <th colspan="10">Cost</th>
+                                    </tr>
+                                </thead>
+                                <tbody data-bind="foreach: items">
+                                    <tr data-bind="click: $parent.purchaseItem">
+                                        <td data-bind="text: itemName"></td>
+                                        <td><img height="15" width="15" data-bind="attr:{src: imagePath}" /></td>
+                                        <td>Yes</td>
+                                        <!-- ko foreach: resourceCostPaths -->
+                                        <td><img height="15" width="15" data-bind="attr:{src: $data}" /></td>
+                                        <!-- /ko -->
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="sr-only">Previous</span>
+                </a>
+                <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="sr-only">Next</span>
+                </a>
+            </div>
+        </div>
+        <div class="row bg-light no-gutters rounded">
+
+        </div>
+        <!-- Modal -->
+        @*<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            ...
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-primary">Save changes</button>
+                        </div>
+                    </div>
+                </div>
+            </div>*@
+    </div>
+
+    <script>
+        $(document).ready(function () {
+            function toggleSidebar(side) {
+                if (side !== "left" && side !== "right") {
+                    return false;
+                }
+                var left = $("#sidebar-left"),
+                right = $("#sidebar-right"),
+                content = $("#content"),
+                openSidebarsCount = 0,
+                contentClass = "";
+
+                // toggle sidebar
+                if (side === "left") {
+                    left.toggleClass("collapsed");
+                } else if (side === "right") {
+                    right.toggleClass("collapsed");
+                }
+
+                // determine number of open sidebars
+                if (!left.hasClass("collapsed")) {
+                    openSidebarsCount += 1;
+                }
+
+                if (!right.hasClass("collapsed")) {
+                    openSidebarsCount += 1;
+                }
+
+                // determine appropriate content class
+                if (openSidebarsCount === 0) {
+                    contentClass = "col-md-12";
+                } else if (openSidebarsCount === 1) {
+                    contentClass = "col-md-9";
+                } else {
+                    contentClass = "col-md-6";
+                }
+
+                // apply class to content
+                content.removeClass("col-md-12 col-md-9 col-md-6")
+                .addClass(contentClass);
+            }
+            $(".toggle-sidebar-left").click(function () {
+                toggleSidebar("left");
+
+                return false;
+            });
+            $(".toggle-sidebar-right").click(function () {
+                toggleSidebar("right");
+
+                return false;
+            });
+        });
+    </script>
+</body>
