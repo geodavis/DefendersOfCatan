@@ -17,11 +17,11 @@ namespace DefendersOfCatan.BusinessLogic
             var randomResourceTypes = GetRandomResourceTileTypes();
             var i = 0;
 
-            for (int x = 0; x <= TileLayout.GetUpperBound(0); x++)
+            for (int x = 0; x <= TileLayout.GetUpperBound(0); x++) // row
             {
-                for (int y = 0; y <= TileLayout.GetUpperBound(1); y++)
+                for (int y = 0; y <= TileLayout.GetUpperBound(1); y++) // col
                 {
-                    var tile = new Tile { LocationX = x, LocationY = y, Type = (TileType)TileLayout[x, y], Name = "Tile" + x.ToString() + y.ToString() };
+                    var tile = new Tile { LocationX = y, LocationY = x, Type = (TileType)TileLayout[x, y], Name = "Tile" + x.ToString() + y.ToString() };
                 
                     if (tile.Type == TileType.Resource)
                     {

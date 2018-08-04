@@ -365,7 +365,7 @@ function highlightTiles(d)
 }
 
 function highlight(tile) {
-    tile.alpha = 0.6;
+    tile.alpha = 0.2;
     game.add.tween(tile).to({ alpha: 1 }, 1000, Phaser.Easing.Linear.None, true, 0, 1000, true);
 }
 

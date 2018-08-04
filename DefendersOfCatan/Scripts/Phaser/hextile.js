@@ -147,7 +147,7 @@ function getResourceTypeBasedOnTileImage(tileImage) {
 }
 
 HexTile.prototype.onTap = function () {
-    console.log(this.i + "," + this.j);
+    console.log(this.id);
     // Get clicked tile
     var tile = findHexTile();
     var clickedTile = hexGrid.getByName("tile" + tile.x + "_" + tile.y);

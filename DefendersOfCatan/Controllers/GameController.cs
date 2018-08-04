@@ -444,14 +444,36 @@ namespace DefendersOfCatan.Controllers
         private List<Tile> GetNeighborTiles(Tile tile)
         {
             var neighboringTiles = new List<Tile>();
-            var neighbors = from x in Enumerable.Range(0, Globals.TileLayout.GetLength(0)).Where(x => Math.Abs(x - tile.LocationX) <= 1)
-                            from y in Enumerable.Range(0, Globals.TileLayout.GetLength(1)).Where(y => Math.Abs(y - tile.LocationY) <= 1)
-                            select new { x, y };
 
-            foreach (var point in neighbors)
+            
+            //            element[x, y]
+            //            neighbor1 = x + 1, y;
+            //            neighbor2 = x - 1, y;
+            //            neighbor3 = x, y + 1;
+            //            neighbor4 = x, y - 1;
+            //            neighbor5 = x + 1, y + 1; - NOT A HEX NEIGHBOR FOR EVEN ROW
+            //            neighbor6 = x + 1, y - 1; - NOT A HEX NEIGHBOR FOR EVEN ROW
+            //            neighbor7 = x - 1, y + 1; - NOT A HEX NEIGHBOR FOR ODD ROW
+            //            neighbor8 = x - 1, y - 1; - NOT A HEX NEIGHBOR FOR ODD ROW
+
+
+            // Each hex has 6 neighbors - the below 4 are always a neighbor, regardless if even or odd row
+            neighboringTiles.Add(db.Tiles.Where(t => t.LocationX == tile.LocationX + 1 && t.LocationY == tile.LocationY).Single());
+            neighboringTiles.Add(db.Tiles.Where(t => t.LocationX == tile.LocationX - 1 && t.LocationY == tile.LocationY).Single());
+            neighboringTiles.Add(db.Tiles.Where(t => t.LocationX == tile.LocationX && t.LocationY == tile.LocationY + 1).Single());
+            neighboringTiles.Add(db.Tiles.Where(t => t.LocationX == tile.LocationX && t.LocationY == tile.LocationY - 1).Single());
+
+
+            // The next two neighbors will change depending on if it is an even or odd row
+            if (tile.LocationY % 2 != 0) // odd row
             {
-                var neighborTile = db.Tiles.Where(t => t.LocationX == point.x && t.LocationY == point.y).Single();
-                neighboringTiles.Add(neighborTile);
+                neighboringTiles.Add(db.Tiles.Where(t => t.LocationX == tile.LocationX + 1 && t.LocationY == tile.LocationY + 1).Single());
+                neighboringTiles.Add(db.Tiles.Where(t => t.LocationX == tile.LocationX + 1 && t.LocationY == tile.LocationY - 1).Single());
+            }
+            else // even row
+            {
+                neighboringTiles.Add(db.Tiles.Where(t => t.LocationX == tile.LocationX - 1 && t.LocationY == tile.LocationY + 1).Single());
+                neighboringTiles.Add(db.Tiles.Where(t => t.LocationX == tile.LocationX - 1 && t.LocationY == tile.LocationY - 1).Single());
             }
 
             return neighboringTiles;
