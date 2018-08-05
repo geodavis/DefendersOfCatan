@@ -39,7 +39,7 @@ namespace DefendersOfCatan.BusinessLogic
             return tiles;
         }
 
-        public List<Player> InitializePlayers()
+        public List<Player> InitializePlayers(Tile capitalTile)
         {
             var players = new List<Player>
             {
@@ -48,6 +48,11 @@ namespace DefendersOfCatan.BusinessLogic
             new Player { Name = "GeoffY", Color = PlayerColor.Yellow, IsOverrun = false, Health = 5, PlayerResources = InitializePlayerResources()  },
             new Player { Name = "GeoffG", Color = PlayerColor.Green, IsOverrun = false, Health = 5, PlayerResources = InitializePlayerResources()  }
             };
+
+            foreach (var player in players)
+            {
+                capitalTile.Players.Add(player);
+            }
 
             return players;
         }

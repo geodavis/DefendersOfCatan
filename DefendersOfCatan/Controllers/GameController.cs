@@ -27,8 +27,10 @@ namespace DefendersOfCatan.Controllers
         public ActionResult Index()
         {
             Globals.GameState = GameState.Initialization;
+
             game.Tiles = gameInitializer.InitializeTiles();
-            game.Players = gameInitializer.InitializePlayers();
+            var capitalTile = game.Tiles.Where(t => t.Type == TileType.Capital).Single();
+            game.Players = gameInitializer.InitializePlayers(capitalTile);
             game.Enemies = gameInitializer.InitializeEnemies();
 
             db.Game.Add(game);
@@ -290,7 +292,7 @@ namespace DefendersOfCatan.Controllers
         }
 
         [HttpPost]
-        public JsonResult AddPlayerToTile(PlayerTileTransfer data)
+        public JsonResult MovePlayerToTile(PlayerTileTransfer data)
         {
             var result = new ItemModel<PlayerTileTransfer>();
 
@@ -298,7 +300,7 @@ namespace DefendersOfCatan.Controllers
             {
                 var tile = db.Tiles.Where(t => t.Id == data.TileId).Single();
                 var player = db.Players.Where(e => e.Id == data.PlayerId).Single();
-                tile.Player = player;
+                tile.Players.Add(player);
                 db.SaveChanges();
 
                 result.Item = data;
@@ -395,9 +397,10 @@ namespace DefendersOfCatan.Controllers
                         tile.Enemy.BarbarianIndex += 1;
 
                         // Reset barbarian index if it hits 3, and overrun the appropriate tile
-                        if (tile.Enemy.BarbarianIndex == 3)
+                        if (tile.Enemy.BarbarianIndex == 2) // ToDo: change back to "3"
                         {
-                            SetOverrunTile(tile);
+                            var overrunTile = SetOverrunTile(tile);
+                            tiles.Add(overrunTile);
                             tile.Enemy.BarbarianIndex = 0; // Reset barbarian
                         }
 
@@ -444,8 +447,6 @@ namespace DefendersOfCatan.Controllers
         private List<Tile> GetNeighborTiles(Tile tile)
         {
             var neighboringTiles = new List<Tile>();
-
-            
             //            element[x, y]
             //            neighbor1 = x + 1, y;
             //            neighbor2 = x - 1, y;
@@ -456,35 +457,43 @@ namespace DefendersOfCatan.Controllers
             //            neighbor7 = x - 1, y + 1; - NOT A HEX NEIGHBOR FOR ODD ROW
             //            neighbor8 = x - 1, y - 1; - NOT A HEX NEIGHBOR FOR ODD ROW
 
-
             // Each hex has 6 neighbors - the below 4 are always a neighbor, regardless if even or odd row
-            neighboringTiles.Add(db.Tiles.Where(t => t.LocationX == tile.LocationX + 1 && t.LocationY == tile.LocationY).Single());
-            neighboringTiles.Add(db.Tiles.Where(t => t.LocationX == tile.LocationX - 1 && t.LocationY == tile.LocationY).Single());
-            neighboringTiles.Add(db.Tiles.Where(t => t.LocationX == tile.LocationX && t.LocationY == tile.LocationY + 1).Single());
-            neighboringTiles.Add(db.Tiles.Where(t => t.LocationX == tile.LocationX && t.LocationY == tile.LocationY - 1).Single());
-
-
+            AddNeighbor(tile.LocationX + 1, tile.LocationY, neighboringTiles);
+            AddNeighbor(tile.LocationX - 1, tile.LocationY, neighboringTiles);
+            AddNeighbor(tile.LocationX, tile.LocationY + 1, neighboringTiles);
+            AddNeighbor(tile.LocationX, tile.LocationY - 1, neighboringTiles);
+            
             // The next two neighbors will change depending on if it is an even or odd row
             if (tile.LocationY % 2 != 0) // odd row
             {
-                neighboringTiles.Add(db.Tiles.Where(t => t.LocationX == tile.LocationX + 1 && t.LocationY == tile.LocationY + 1).Single());
-                neighboringTiles.Add(db.Tiles.Where(t => t.LocationX == tile.LocationX + 1 && t.LocationY == tile.LocationY - 1).Single());
+                AddNeighbor(tile.LocationX + 1, tile.LocationY + 1, neighboringTiles);
+                AddNeighbor(tile.LocationX + 1, tile.LocationY - 1, neighboringTiles);
+                
             }
             else // even row
             {
-                neighboringTiles.Add(db.Tiles.Where(t => t.LocationX == tile.LocationX - 1 && t.LocationY == tile.LocationY + 1).Single());
-                neighboringTiles.Add(db.Tiles.Where(t => t.LocationX == tile.LocationX - 1 && t.LocationY == tile.LocationY - 1).Single());
+                AddNeighbor(tile.LocationX - 1, tile.LocationY + 1, neighboringTiles);
+                AddNeighbor(tile.LocationX - 1, tile.LocationY - 1, neighboringTiles);
             }
 
             return neighboringTiles;
         }
 
-        private void SetOverrunTile(Tile tile)
+        private void AddNeighbor(int x, int y, List<Tile> neighboringTiles)
         {
-            var tileNumber = Globals.HexOverrunData[tile.LocationX, tile.LocationY];
+            if (db.Tiles.Where(t => t.LocationX == x && t.LocationY == y).Any())
+            {
+                neighboringTiles.Add(db.Tiles.Where(t => t.LocationX == x && t.LocationY == y).Single());
+            }
+        }
+
+        private Tile SetOverrunTile(Tile tile)
+        {
+            var tileNumber = Globals.HexOverrunData[tile.LocationY, tile.LocationX];
             var overrunTile = GetNextOverrunTile(tile, tileNumber, 0);
             overrunTile.IsOverrun = true;
             db.SaveChanges();
+            return overrunTile;
         }
 
         private Tile GetNextOverrunTile(Tile tile, string tileNumber, int tileCount)
@@ -495,7 +504,7 @@ namespace DefendersOfCatan.Controllers
 
             foreach (var neighbor in neighbors)
             {
-                var overrunData = Globals.HexOverrunData[neighbor.LocationX, neighbor.LocationY];
+                var overrunData = Globals.HexOverrunData[neighbor.LocationY, neighbor.LocationX];
                 var splitOverrunData = overrunData.Split(',');
 
                 if (splitOverrunData.Contains(tileNumber) == true && !neighbor.IsEnemyTile()) // if is enemy tile, do not consider that neighbor tile

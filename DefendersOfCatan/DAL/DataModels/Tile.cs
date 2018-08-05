@@ -1,4 +1,5 @@
-﻿using static DefendersOfCatan.Common.Enums;
+﻿using System.Collections.Generic;
+using static DefendersOfCatan.Common.Enums;
 
 namespace DefendersOfCatan.DAL.DataModels
 {
@@ -12,7 +13,7 @@ namespace DefendersOfCatan.DAL.DataModels
         public ResourceType ResourceType { get; set; }
         public virtual Enemy Enemy { get; set; }
         public string Name { get; set; }
-        public Player Player { get; set; }
+        public virtual List<Player> Players { get; set; } = new List<Player>();
         public bool IsOverrun {get; set; }
 
         

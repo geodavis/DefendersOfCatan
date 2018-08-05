@@ -31,7 +31,39 @@ GameStates.EnemyMove.prototype = {
 
 GameStates.EnemyMove.prototype.updateBarbarians = function (d) {
     // Advance barbarians
-    //alert('test');
+    // alert('test');
+    if (d.HasError) {
+        alert(d.Error);
+    }
+    else {
+        $.each(d.Item, function () { // loop each tile
+            var tile = HexTile.prototype.getTileById(this.Id);
+            if (this.Enemy != null) {
+                var barbarianIndex = this.Enemy.BarbarianIndex;
+                $.each(tile.children, function () { // loop each child on tile
+                    if (this.name == 'enemycard') {
+                        switch (barbarianIndex) {
+                            case 0:
+                                this.loadTexture('enemycardB0', 0, false);
+                                break;
+                            case 1:
+                                this.loadTexture('enemycardB1', 0, false);
+
+                                break;
+                            default:
+                                alert('Barbarian index out of range!');
+                        }
+                    }
+                });
+            }
+            else {
+                tile.loadTexture('hexagonoverrun', 0, false);
+            }
+
+        });
+    }
+
+
     //$.each(hexGrid.children, function () { // loop each tile
     //    if (currentPlayer.playerColor == this.type && this.isEnemyTile() && this.hasEnemyCard()) { // only interested in the current player here
     //        $.each(this.children, function () { // loop each child on tile

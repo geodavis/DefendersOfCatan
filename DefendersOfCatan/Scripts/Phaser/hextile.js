@@ -223,7 +223,7 @@ HexTile.prototype.onTap = function () {
 
                     // Send new player tile to server
                     var playerTileTransfer = { "tileId": clickedTile.id, "playerId": currentPlayer.id };
-                    postJSON('/Game/AddPlayerToTile', "{data:" + JSON.stringify(playerTileTransfer) + "}", GameStates.PlayerMove.prototype.placePlayer, error);
+                    postJSON('/Game/MovePlayerToTile', "{data:" + JSON.stringify(playerTileTransfer) + "}", GameStates.PlayerMove.prototype.placePlayer, error);
 
 
                     //// Add player to the clicked tile
