@@ -20,13 +20,13 @@ namespace DefendersOfCatan.Controllers
     {
         private GameContext db = new GameContext();
         private GameInitializer gameInitializer = new GameInitializer();
-        private Game game = new Game();
+        private Game game = new Game();      
         private PlayerLogic playerLogic = new PlayerLogic();
 
         // GET: Game
         public ActionResult Index()
         {
-            Globals.GameState = GameState.Initialization;
+            game.GameState = GameState.Initialization;
 
             game.Tiles = gameInitializer.InitializeTiles();
             var capitalTile = game.Tiles.Where(t => t.Type == TileType.Capital).Single();
@@ -40,6 +40,27 @@ namespace DefendersOfCatan.Controllers
             db.SaveChanges();
 
             return View();
+        }
+
+        [HttpGet]
+        public JsonResult GetNextGameState()
+        {
+            var result = new ItemModel<string>();
+            try
+            {
+                var game = db.GetSet<Game>().FirstOrDefault();
+                var nextGameState = GetNextGameState(game.GameState);
+                game.GameState = nextGameState;
+                db.SaveChanges(); // save game state to DB
+                result.Item = game.GameState.ToString();
+                return ReturnJsonResult(result);
+            }
+            catch (Exception e)
+            {
+                result.HasError = true;
+                result.Error = e.Message;
+                return ReturnJsonResult(result);
+            }
         }
 
         [HttpGet]
@@ -347,44 +368,6 @@ namespace DefendersOfCatan.Controllers
             var result = new ItemModel<List<Tile>> { Item = new List<Tile>() };
 
             // In this phase, we progress any barbarians tied to the current players tiles
-
-
-            //            $.each(hexGrid.children, function() { // loop each tile
-            //        if (currentPlayer.playerColor == this.type && this.isEnemyTile() && this.hasEnemyCard())
-            //        { // only interested in the current player here
-            //        $.each(this.children, function() { // loop each child on tile
-            //                if (this.hasOwnProperty('barbarianIndex') && this.hasBarbarian)
-            //                {
-            //                    this.barbarianIndex += 1;
-
-            //                    switch (this.barbarianIndex)
-            //                    {
-            //                        case 1:
-            //                            this.loadTexture('enemycardB1', 0, false);
-            //                            break;
-            //                        case 2:
-            //                            this.loadTexture('enemycardB2', 0, false);
-            //                            this.barbarianIndex = 0;
-            //                            this.loadTexture('enemycardB0', 0, false);
-            //                            // ToDo: Mark first tile in line as inactive.
-            //                            // If it already inactive, mark the next.
-            //                            // Making a row of inactives ends the game, or if capital is hit.
-            //                            this.parent.setOverrunTile();
-            //                            checkForEndGameState();
-
-            //                            break;
-            //                        default:
-            //                            alert('Barbarian index out of range!');
-            //                    }
-
-            //                    // Pass data to server to update barbarian index
-            //                    var enemy = { "id": this.id, "hasBeenPlaced": this.hasBeenPlaced, "currentHexName": this.currentHexName, "barbarianIndex": this.barbarianIndex };
-            //                postJSON('/Game/UpdateEnemy', "{data:" + JSON.stringify(enemy) + "}", success, error);
-            //            }
-            //        });
-            //    }
-            //});
-
             try
             {
                 var game = db.Game.FirstOrDefault();
@@ -401,7 +384,7 @@ namespace DefendersOfCatan.Controllers
                         {
                             var overrunTile = SetOverrunTile(tile);
                             tiles.Add(overrunTile);
-                            tile.Enemy.BarbarianIndex = 0; // Reset barbarian
+                            tile.Enemy.BarbarianIndex = 0; // Reset barbarian index
                         }
 
                         db.SaveChanges();
@@ -518,7 +501,7 @@ namespace DefendersOfCatan.Controllers
                         tileCount += 1;
                         if (tileCount == 4 || neighbor.Type == TileType.Capital)
                         {
-                            Console.WriteLine("game over!"); // todo: second blue tile (46) flipping ends game - BUG
+                            Console.WriteLine("game over!"); // todo: second blue tile (46) flipping ends game - BUG; need to check entire row for count, not just the direction we are coming; do need a check end game state function
                         }
                         return GetNextOverrunTile(neighbor, tileNumber, tileCount); // if tile is overrun, move onto the next tile in line
                     }
@@ -570,6 +553,14 @@ namespace DefendersOfCatan.Controllers
                 return ReturnJsonResult(result);
             }
 
+        }
+
+        private GameState GetNextGameState(GameState gameState)
+        {
+            // ToDo: Ensure this logic works when wrapping to game state 1
+            var currentEnumIndex = (int)gameState;
+            var gameStateEnumValues = Enum.GetValues(typeof(GameState));
+            return currentEnumIndex == gameStateEnumValues.Length ? (GameState)gameStateEnumValues.GetValue(1) : (GameState)gameStateEnumValues.GetValue(currentEnumIndex + 1);
         }
 
 

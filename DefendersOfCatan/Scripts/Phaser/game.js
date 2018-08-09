@@ -91,7 +91,9 @@ GameStates.Game.prototype = {
         getPlayers();
         getEnemies();
 
-        this.state.start('EnemyMove', false, false);
+        // Get resource tile types from the server
+        getJSONWithoutDataSync('/Game/GetNextGameState', startNextGameState, error); // URL, Success Function, Error Function
+        //this.state.start('EnemyMove', false, false);
 
         //vm.updatePlayerResources(player.resources);
     },
@@ -109,6 +111,11 @@ GameStates.Game.prototype = {
         //this.debug.spriteCoords(player, 32, 32);
     },
 };
+
+function startNextGameState(d) {
+    var gameState = d.Item;
+    this.game.state.start(gameState, false, false);
+}
 
 function getBoardData() {
     // Get resource tile types from the server

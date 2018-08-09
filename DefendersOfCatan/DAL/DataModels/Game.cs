@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
+using static DefendersOfCatan.Common.Enums;
 
 namespace DefendersOfCatan.DAL.DataModels
 {
@@ -13,6 +14,7 @@ namespace DefendersOfCatan.DAL.DataModels
         public virtual List<Player> Players { get; set; }
         public virtual List<Enemy> Enemies { get; set; }
         public virtual Player CurrentPlayer { get; set; }
+        public GameState GameState { get; set; }
 
     }
 }

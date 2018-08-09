@@ -11,9 +11,8 @@ GameStates.EnemyMove.prototype = {
         
         // Execute Enemy Move phase
         getJSONWithoutDataSync('/Game/ExecuteEnemyMovePhase', GameStates.EnemyMove.prototype.updateBarbarians, error); // URL, Success Function, Error Function
+        
 
-
-        this.state.start('EnemyOverrun', false, false);
     },
 
     update: function () {
@@ -63,6 +62,7 @@ GameStates.EnemyMove.prototype.updateBarbarians = function (d) {
         });
     }
 
+    this.game.state.start('EnemyOverrun', false, false);
 
     //$.each(hexGrid.children, function () { // loop each tile
     //    if (currentPlayer.playerColor == this.type && this.isEnemyTile() && this.hasEnemyCard()) { // only interested in the current player here
