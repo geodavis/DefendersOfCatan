@@ -91,7 +91,6 @@ GameStates.Game.prototype = {
         getPlayers();
         getEnemies();
 
-        // Get resource tile types from the server
         getJSONWithoutDataSync('/Game/GetNextGameState', startNextGameState, error); // URL, Success Function, Error Function
         //this.state.start('EnemyMove', false, false);
 
@@ -416,6 +415,8 @@ function moveToNextPlayer(d) {
             updateLogText(currentPlayer.name + "'s turn.");
         }
     });
+
+    getJSONWithoutDataSync('/Game/GetNextGameState', startNextGameState, error); // URL, Success Function, Error Function
 }
 
 function checkForEndGameState() {

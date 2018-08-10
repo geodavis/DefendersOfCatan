@@ -49,9 +49,7 @@ namespace DefendersOfCatan.Controllers
             try
             {
                 var game = db.GetSet<Game>().FirstOrDefault();
-                var nextGameState = GetNextGameState(game.GameState);
-                game.GameState = nextGameState;
-                db.SaveChanges(); // save game state to DB
+                UpdateGameState(game);
                 result.Item = game.GameState.ToString();
                 return ReturnJsonResult(result);
             }
@@ -555,12 +553,19 @@ namespace DefendersOfCatan.Controllers
 
         }
 
+        private void UpdateGameState(Game game)
+        {
+            var nextGameState = GetNextGameState(game.GameState);
+            game.GameState = nextGameState;
+            db.SaveChanges(); // save game state to DB
+        }
+
         private GameState GetNextGameState(GameState gameState)
         {
             // ToDo: Ensure this logic works when wrapping to game state 1
             var currentEnumIndex = (int)gameState;
             var gameStateEnumValues = Enum.GetValues(typeof(GameState));
-            return currentEnumIndex == gameStateEnumValues.Length ? (GameState)gameStateEnumValues.GetValue(1) : (GameState)gameStateEnumValues.GetValue(currentEnumIndex + 1);
+            return currentEnumIndex == gameStateEnumValues.Length - 1 ? (GameState)gameStateEnumValues.GetValue(1) : (GameState)gameStateEnumValues.GetValue(currentEnumIndex + 1);
         }
 
 

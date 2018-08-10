@@ -30,7 +30,7 @@ GameStates.PlayerResourceOrFight.prototype.addResourceToPlayer = function (d) {
 
         // Advance to the next player and phase
         getJSONWithoutDataSync('/Game/MoveToNextPlayer', moveToNextPlayer, error); // URL, Success Function, Error Function
-        game.state.start('EnemyMove', false, false);
+        //game.state.start('EnemyMove', false, false);
     }
     else {
         alert(d.Error);
@@ -57,7 +57,7 @@ GameStates.PlayerResourceOrFight.prototype.removeEnemy = function (d) {
         // Advance to the next player and phase
 
         getJSONWithoutDataSync('/Game/MoveToNextPlayer', moveToNextPlayer, error); // URL, Success Function, Error Function
-        game.state.start('EnemyMove', false, false);
+        //game.state.start('EnemyMove', false, false);
     }
     else {
         alert(d.Error);

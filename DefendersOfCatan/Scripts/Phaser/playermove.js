@@ -29,7 +29,7 @@ GameStates.PlayerMove.prototype.placePlayer = function (d) {
     playerMoved = true;
 
     // Update state
-    game.state.start('PlayerResourceOrFight', false, false);
+    getJSONWithoutDataSync('/Game/GetNextGameState', startNextGameState, error); // URL, Success Function, Error Function
 
 }
 

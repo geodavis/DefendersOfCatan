@@ -39,8 +39,7 @@ GameStates.EnemyCard.prototype.placeCard = function (d) {
         tile.addChild(enemy);
 
         cardSelected = false;
-
-        game.state.start('PlayerMove', false, false);
+        getJSONWithoutDataSync('/Game/GetNextGameState', startNextGameState, error); // URL, Success Function, Error Function
     }
     else {
         alert(d.Error);

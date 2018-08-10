@@ -62,7 +62,8 @@ GameStates.EnemyMove.prototype.updateBarbarians = function (d) {
         });
     }
 
-    this.game.state.start('EnemyOverrun', false, false);
+    getJSONWithoutDataSync('/Game/GetNextGameState', startNextGameState, error); // URL, Success Function, Error Function
+    //this.game.state.start('EnemyOverrun', false, false);
 
     //$.each(hexGrid.children, function () { // loop each tile
     //    if (currentPlayer.playerColor == this.type && this.isEnemyTile() && this.hasEnemyCard()) { // only interested in the current player here

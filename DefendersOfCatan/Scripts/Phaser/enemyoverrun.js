@@ -5,7 +5,8 @@
 GameStates.EnemyOverrun.prototype = {
     create: function () {
         textPhase.text = 'Phase: Overrun';
-        this.state.start('EnemyCard', false, false);
+        getJSONWithoutDataSync('/Game/GetNextGameState', startNextGameState, error); // URL, Success Function, Error Function
+        //this.state.start('EnemyCard', false, false);
         //highlight(enemyCards.children[3]);
 
         //alert('enemy overrun phase');
