@@ -20,7 +20,7 @@ namespace DefendersOfCatan.Controllers
     {
         private GameContext db = new GameContext();
         private GameInitializer gameInitializer = new GameInitializer();
-        private Game game = new Game();      
+        private Game game = new Game();
         private PlayerLogic playerLogic = new PlayerLogic();
 
         // GET: Game
@@ -40,6 +40,159 @@ namespace DefendersOfCatan.Controllers
             db.SaveChanges();
 
             return View();
+        }
+
+        [HttpGet]
+        public JsonResult GetCurrentGameState()
+        {
+            var result = new ItemModel<string>();
+            try
+            {
+                var game = db.GetSet<Game>().FirstOrDefault();
+                result.Item = game.GameState.ToString();
+                return ReturnJsonResult(result);
+            }
+            catch (Exception e)
+            {
+                result.HasError = true;
+                result.Error = e.Message;
+                return ReturnJsonResult(result);
+            }
+        }
+
+        [HttpPost]
+        public JsonResult SetSelectedEnemy(ClickedEnemyTransfer data)
+        {
+            var result = new ItemModel<ClickedEnemyTransfer>();
+            try
+            {
+                var enemy = db.Enemies.Where(e => e.Id == data.EnemyId).Single();
+                enemy.IsSelected = true;
+                db.SaveChanges();
+                result.Item = data;
+                return ReturnJsonResult(result);
+            }
+            catch (Exception e)
+            {
+                result.HasError = true;
+                result.Error = e.Message;
+                return ReturnJsonResult(result);
+            }
+        }
+
+        [HttpPost]
+        public JsonResult ExecuteEnemyClickedActions(ClickedEnemyTransfer data)
+        {
+            var result = new ItemModel<ClickedEnemyTransfer>();
+            try
+            {
+                var gameState = db.GetSet<Game>().FirstOrDefault().GameState;
+                var enemy = db.Enemies.Where(e => e.Id == data.EnemyId).Single();
+                result.Item = new ClickedEnemyTransfer() { EnemyId = enemy.Id, GameState = gameState.ToString() };
+                switch (gameState)
+                {
+                    case GameState.EnemyCard:
+                        enemy.IsSelected = true;
+                        break;
+                    case GameState.PlayerMove:
+                        // ToDo: Implement error handling (pass error to client)
+                        break;
+                    case GameState.PlayerResourceOrFight:
+                        var currentPlayer = GetCurrentPlayer();
+                        var tiles = db.Tiles.ToList();
+                        var currentPlayerTile = tiles.Where(t => t.Players.Contains(currentPlayer)).Single();
+                        var enemyTile = tiles.Where(t => t.Enemy != null && t.Enemy.Id == enemy.Id).Single();
+                        result.Item.EnemyTileId = enemyTile.Id;
+                        var neighborTiles = GetNeighborTiles(currentPlayerTile);
+
+                        if (neighborTiles.Contains(enemyTile))
+                        {
+                            RemoveEnemy(enemy, enemyTile);
+                        }
+                        else
+                        {
+                            result.HasError = true;
+                            result.Error = "You cannot reach that enemy.";
+                        }
+
+                        break;
+                    default:
+                        Console.WriteLine("Error getting game state!");
+                        break;
+                }
+
+                db.SaveChanges();
+
+                return ReturnJsonResult(result);
+            }
+            catch (Exception e)
+            {
+                result.HasError = true;
+                result.Error = e.Message;
+                return ReturnJsonResult(result);
+            }
+        }
+
+        [HttpPost]
+        public JsonResult ExecuteTileClickedActions(ClickedTileTransfer data)
+        {
+            var result = new ItemModel<ClickedTileTransfer>();
+            result.Item = new ClickedTileTransfer();
+            try
+            {
+                var gameState = db.GetSet<Game>().FirstOrDefault().GameState;
+                var selectedTile = db.Tiles.Where(t => t.Id == data.ClickedTileId).Single();
+                var currentPlayer = GetCurrentPlayer();
+                result.Item.GameState = gameState.ToString();
+                result.Item.ClickedTileId = selectedTile.Id;
+                switch (gameState)
+                {
+                    case GameState.EnemyCard:
+                        var selectedEnemy = db.Enemies.Where(e => e.IsSelected == true).Single();
+                        AddEnemyToTile(selectedEnemy, selectedTile);
+                        result.Item.EnemyId = selectedEnemy.Id;
+                        break;
+                    case GameState.PlayerMove:
+                        result.Item.PlayerId = currentPlayer.Id;
+                        var tiles = db.Tiles.ToList();
+                        var currentPlayerTile = tiles.Where(t => t.Players.Contains(currentPlayer)).Single();
+                        var neighborTiles = GetNeighborTiles(currentPlayerTile);
+
+                        if (neighborTiles.Contains(selectedTile) || selectedTile == currentPlayerTile)
+                        {
+                            selectedTile.Players.Add(currentPlayer);
+                        }
+                        else
+                        {
+                            result.HasError = true;
+                            result.Error = "You cannot move to that tile.";
+                        }
+
+                        break;
+                    case GameState.PlayerResourceOrFight:
+                        var resourceType = selectedTile.ResourceType;
+                        result.Item.ResourceType = (int)resourceType;
+                        AddResourceToPlayer(currentPlayer, resourceType);
+                        break;
+                    default:
+                        Console.WriteLine("Error getting game state!");
+                        break;
+                }
+
+                db.SaveChanges();
+                return ReturnJsonResult(result);
+            }
+            catch (Exception e)
+            {
+                result.HasError = true;
+                result.Error = e.Message;
+                return ReturnJsonResult(result);
+            }
+        }
+
+        private Player GetCurrentPlayer()
+        {
+            return db.GetSet<Game>().FirstOrDefault().CurrentPlayer;
         }
 
         [HttpGet]
@@ -169,43 +322,36 @@ namespace DefendersOfCatan.Controllers
 
         }
 
-        [HttpPost]
-        public JsonResult AddEnemyToTile(EnemyTileTransfer data)
+        private bool CanEnemyBeAddedToTile(Enemy enemy, Tile tile)
         {
-            var result = new ItemModel<EnemyTileTransfer>();
+            var playerIsOverrun = db.Players.Where(p => p.Color == enemy.PlayerColor).Single().IsOverrun; // Check if selected card can be placed on it's color, if not allow it to be placed anywhere
 
-            try
+            if (tile.IsEnemyTile() && ((int)tile.Type == (int)enemy.PlayerColor) || playerIsOverrun)
             {
-                var tile = db.Tiles.Where(t => t.Id == data.TileId).Single(); ;
-                var enemy = db.Enemies.Where(e => e.Id == data.EnemyId).Single();
-                var playerIsOverrun = db.Players.Where(p => p.Color == enemy.PlayerColor).Single().IsOverrun; // Check if selected card can be placed on it's color, if not allow it to be placed anywhere
-
-                if (tile.IsEnemyTile() && ((int)tile.Type == (int)enemy.PlayerColor) || playerIsOverrun)
-                {
-                    enemy.HasBeenPlaced = true;
-                    tile.Enemy = enemy;
-
-                    // Check if player is overrun - todo: Return player overrun value to update UI
-                    var player = db.Players.Where(p => (int)p.Color == (int)tile.Type).Single();
-                    player.IsOverrun = CheckIfPlayerIsOverrun(player);
-
-                    db.SaveChanges();
-                }
-                else
-                {
-                    result.HasError = true;
-                    result.Error = "Cannot place card on that color.";
-                }
-
-                result.Item = data;
-                return ReturnJsonResult(result);
+                return true;
             }
-            catch (Exception e)
+            else
             {
-                result.HasError = true;
-                result.Error = e.Message;
-                result.Item = data;
-                return ReturnJsonResult(result);
+                return false;
+            }
+        }
+
+        private void AddEnemyToTile(Enemy enemy, Tile tile)
+        {
+            if (CanEnemyBeAddedToTile(enemy, tile))
+            {
+                enemy.IsSelected = false;
+                enemy.HasBeenPlaced = true;
+                tile.Enemy = enemy;
+
+                // Check if player is overrun - todo: Return player overrun value to update UI
+                var player = db.Players.Where(p => (int)p.Color == (int)tile.Type).Single();
+                player.IsOverrun = CheckIfPlayerIsOverrun(player);
+                db.SaveChanges();
+            }
+            else
+            {
+                // ToDo: return error if validation fails
             }
 
         }
@@ -232,36 +378,13 @@ namespace DefendersOfCatan.Controllers
             return isOverrun;
         }
 
-        [HttpPost]
-        public JsonResult RemoveEnemy(EnemyTileTransfer data)
+        public void RemoveEnemy(Enemy enemy, Tile tile)
         {
-            var result = new ItemModel<EnemyTileTransfer>();
+            enemy.IsRemoved = true;
 
-            try
-            {
-                // Remove enemy
-                var enemy = db.GetSet<Enemy>().Single(e => e.Id == data.EnemyId);
-                enemy.IsRemoved = true;
-
-
-                // Check if player is no longer overrun
-                var enemyTile = db.Tiles.Where(t => t.Id == data.TileId).Single(); // get tile enemy was removed from
-                var player = db.Players.Where(p => (int)p.Color == (int)enemyTile.Type).Single(); // get that player color
-                player.IsOverrun = CheckIfPlayerIsOverrun(player);
-
-                // Save data
-                db.SaveChanges();
-                result.Item = data; // todo: Return player overrun value to update UI
-                return ReturnJsonResult(result);
-            }
-            catch (Exception e)
-            {
-                result.HasError = true;
-                result.Error = e.Message;
-                result.Item = data;
-                return ReturnJsonResult(result);
-            }
-
+            // Check if player is no longer overrun
+            var player = db.Players.Where(p => (int)p.Color == (int)tile.Type).Single(); // get the player color of the tile
+            player.IsOverrun = CheckIfPlayerIsOverrun(player);
         }
 
         [HttpPost]
@@ -335,29 +458,10 @@ namespace DefendersOfCatan.Controllers
 
         }
 
-        [HttpPost]
-        public JsonResult AddResourceToPlayer(PlayerResourceTransfer data)
+        private void AddResourceToPlayer(Player player, ResourceType resourceType)
         {
-            var result = new ItemModel<PlayerResourceTransfer>();
-
-            try
-            {
-                var playerResources = db.PlayerResources.Where(r => r.Player.Id == data.PlayerId & (int)r.ResourceType == data.ResourceType).Single();
-                playerResources.Qty += 1;
-
-                db.SaveChanges();
-
-                result.Item = data;
-                return ReturnJsonResult(result);
-            }
-            catch (Exception e)
-            {
-                result.HasError = true;
-                result.Error = e.Message;
-                result.Item = data;
-                return ReturnJsonResult(result);
-            }
-
+            var playerResources = db.PlayerResources.Where(r => r.Player.Id == player.Id && (int)r.ResourceType == (int)resourceType).Single();
+            playerResources.Qty += 1;
         }
 
         [HttpGet]
@@ -400,13 +504,13 @@ namespace DefendersOfCatan.Controllers
                 return ReturnJsonResult(result);
             }
         }
-        
+
         [HttpGet]
         public JsonResult GetNeighbors(int tileId)
         {
             var result = new ItemModel<List<int>> { Item = new List<int>() };
             var tile = db.Tiles.Where(t => t.Id == tileId).Single();
-            
+
             try
             {
                 var neighboringTiles = GetNeighborTiles(tile);
@@ -443,13 +547,13 @@ namespace DefendersOfCatan.Controllers
             AddNeighbor(tile.LocationX - 1, tile.LocationY, neighboringTiles);
             AddNeighbor(tile.LocationX, tile.LocationY + 1, neighboringTiles);
             AddNeighbor(tile.LocationX, tile.LocationY - 1, neighboringTiles);
-            
+
             // The next two neighbors will change depending on if it is an even or odd row
             if (tile.LocationY % 2 != 0) // odd row
             {
                 AddNeighbor(tile.LocationX + 1, tile.LocationY + 1, neighboringTiles);
                 AddNeighbor(tile.LocationX + 1, tile.LocationY - 1, neighboringTiles);
-                
+
             }
             else // even row
             {
@@ -509,7 +613,7 @@ namespace DefendersOfCatan.Controllers
             Console.WriteLine("Error getting next overrun tile!");
             return new Tile(); // Error condition here!!!
         }
-        
+
         [HttpGet]
         public JsonResult MoveToNextPlayer()
         {
@@ -518,7 +622,7 @@ namespace DefendersOfCatan.Controllers
             try
             {
                 var game = db.Game.FirstOrDefault();
-                var currentPlayer = game.CurrentPlayer;
+                var currentPlayer = GetCurrentPlayer();
 
                 switch (currentPlayer.Color)
                 {
@@ -540,7 +644,7 @@ namespace DefendersOfCatan.Controllers
                 }
                 db.SaveChanges();
 
-                result.Item = (int) game.CurrentPlayer.Color;
+                result.Item = (int)game.CurrentPlayer.Color;
                 return ReturnJsonResult(result);
             }
             catch (Exception e)

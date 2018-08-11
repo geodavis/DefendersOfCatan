@@ -15,6 +15,7 @@ namespace DefendersOfCatan.DAL.DataModels
         public string Name { get; set; }
         public virtual List<Player> Players { get; set; } = new List<Player>();
         public bool IsOverrun {get; set; }
+        public bool IsSelected { get; set; }
 
         
         public bool IsEnemyTile()

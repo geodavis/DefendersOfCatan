@@ -10,5 +10,6 @@ namespace DefendersOfCatan.DAL.DataModels
         public bool HasBeenPlaced { get; set; }
         public int BarbarianIndex { get; set; } = 0;
         public bool IsRemoved { get; set; }
+        public bool IsSelected { get; set; }
     }
 }

@@ -13,7 +13,7 @@
     });
 };
 
-function getJSONWithoutDataSync(url, successFunc, errorFunc) {
+function getJSONSync(url, successFunc, errorFunc) {
     $.ajax({
         url: url,
         type: 'GET',

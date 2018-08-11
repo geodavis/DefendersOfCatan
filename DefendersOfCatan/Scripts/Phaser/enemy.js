@@ -33,43 +33,80 @@ Enemy.prototype.rollOver = function () {
 }
 
 Enemy.prototype.onEnemyCardMouseUp = function (enemyCard) {
-    switch (game.state.getCurrentState().key) { // switch on game state
-        case 'EnemyCard': // Enemy card phase means we select the card to place and set selected flag to true
-            if (!enemyCard.hasBeenPlaced && !cardSelected) { // ToDo: add error handling to trying to select another card before placing 
-                selectedEnemyCard = enemyCard;
-                cardSelected = true;
+    var selectedEnemyTransfer = { "enemyId": this.id, "playerId": currentPlayer.id };
+    postJSON('/Game/ExecuteEnemyClickedActions', "{data:" + JSON.stringify(selectedEnemyTransfer) + "}", executePostEnemyClickEvents, error);
 
-                $.each(hexGrid.children, function () {
-                    if (this.type == enemyCard.playerColor) {
-                        highlight(this);
-                    }
-                });
-            }
-            else {
-                alert('Card has already been placed!');
-            }
-            break;
-        case 'PlayerMove':
+    // todo: code below is being moved to the server... pick up here 
+    //switch (game.state.getCurrentState().key) { // switch on game state
+    //    case 'EnemyCard': // Enemy card phase means we select the card to place and set selected flag to true
+
+    //        var selectedEnemyTransfer = { "enemyId": this.id, "playerId": currentPlayer.id };
+    //        postJSON('/Game/SetSelectedEnemy', "{data:" + JSON.stringify(selectedEnemyTransfer) + "}", highlightEnemyPlacementTiles, error);
+            
+    //        break;
+    //    case 'PlayerMove':
+    //            // ToDo: error handling
+    //        break;
+    //    case 'PlayerResourceOrFight':
+    //        var enemyTile = hexGrid.getByName(this.currentHexName);
+    //        var playerTile = hexGrid.getByName(currentPlayer.currentHexName);
+
+    //        // If enemy card is a neighbor to the current player, remove the card from play
+    //        if (isNeighbor(playerTile, enemyTile)) {
+    //            // Send enemy to server to be removed
+    //            var enemyTransfer = { "enemyId": enemyCard.id, "tileId": enemyTile.id };
+    //            postJSON('/Game/RemoveEnemy', "{data:" + JSON.stringify(enemyTransfer) + "}", GameStates.PlayerResourceOrFight.prototype.removeEnemy, error);
+    //        }
+    //        else {
+    //            alert('Not in range to attack!');
+    //        }
+
+    //        break;
+    //    default:
+    //        // ToDo:
+    //}
+}
+
+function executePostEnemyClickEvents(d) {
+    if (!d.HasError) {
+        var gameState = d.Item.GameState;
+        var enemyCard = Enemy.prototype.getEnemyById(d.Item.EnemyId);
+
+        switch (gameState) { // switch on game state
+            case 'EnemyCard': // Enemy card phase means we select the card to place and set selected flag to true
+                highlightEnemyPlacementTiles(enemyCard);
+                break;
+            case 'PlayerMove':
                 // ToDo: error handling
-            break;
-        case 'PlayerResourceOrFight':
-            var enemyTile = hexGrid.getByName(this.currentHexName);
-            var playerTile = hexGrid.getByName(currentPlayer.currentHexName);
-
-            // If enemy card is a neighbor to the current player, remove the card from play
-            if (isNeighbor(playerTile, enemyTile)) {
-                // Send enemy to server to be removed
-                var enemyTransfer = { "enemyId": enemyCard.id, "tileId": enemyTile.id };
-                postJSON('/Game/RemoveEnemy', "{data:" + JSON.stringify(enemyTransfer) + "}", GameStates.PlayerResourceOrFight.prototype.removeEnemy, error);
-            }
-            else {
-                alert('Not in range to attack!');
-            }
-
-            break;
-        default:
-            // ToDo:
+                break;
+            case 'PlayerResourceOrFight':
+                GameStates.PlayerResourceOrFight.prototype.removeEnemy(d.Item.EnemyTileId)
+                break;
+            default:
+                alert("Game state unknown!");
+        }
     }
+    else {
+        alert(d.Error);
+    }
+
+}
+
+function highlightEnemyPlacementTiles(enemyCard) {
+    //var cardSelected = true; // todo: clean up card selected logic (may just remove it)
+    //if (!enemyCard.hasBeenPlaced && !cardSelected) { // ToDo: add error handling to trying to select another card before placing 
+        //selectedEnemyCard = enemyCard;
+        //cardSelected = true;
+
+        $.each(hexGrid.children, function () {
+            if (this.type == enemyCard.playerColor) {
+                highlight(this);
+            }
+        });
+    //}
+    //else {
+      //  alert('Card has already been placed!');
+    //}
 }
 
 Enemy.prototype.setAngle = function (tileType) { // FYI - tile type = player color

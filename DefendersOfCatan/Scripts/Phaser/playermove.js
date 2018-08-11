@@ -29,7 +29,7 @@ GameStates.PlayerMove.prototype.placePlayer = function (d) {
     playerMoved = true;
 
     // Update state
-    getJSONWithoutDataSync('/Game/GetNextGameState', startNextGameState, error); // URL, Success Function, Error Function
+    getJSONSync('/Game/GetNextGameState', startNextGameState, error); // URL, Success Function, Error Function
 
 }
 

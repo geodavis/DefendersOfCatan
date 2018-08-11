@@ -90,8 +90,8 @@ GameStates.Game.prototype = {
         getItems();
         getPlayers();
         getEnemies();
-
-        getJSONWithoutDataSync('/Game/GetNextGameState', startNextGameState, error); // URL, Success Function, Error Function
+        // ToDo: Make this a common function and call the common in all places
+        getJSONSync('/Game/GetNextGameState', startNextGameState, error); // URL, Success Function, Error Function
         //this.state.start('EnemyMove', false, false);
 
         //vm.updatePlayerResources(player.resources);
@@ -118,22 +118,22 @@ function startNextGameState(d) {
 
 function getBoardData() {
     // Get resource tile types from the server
-    getJSONWithoutDataSync('/Game/GetBoardData', initializeBoard, error); // URL, Success Function, Error Function
+    getJSONSync('/Game/GetBoardData', initializeBoard, error); // URL, Success Function, Error Function
 
 }
 
 function getItems() {
-    getJSONWithoutDataSync('/Game/GetItems', initializeItems, error); // URL, Success Function, Error Function
+    getJSONSync('/Game/GetItems', initializeItems, error); // URL, Success Function, Error Function
 }
 
 function getPlayers() {
     // Get players from the server
-    getJSONWithoutDataSync('/Game/GetPlayers', initializePlayers, error); // URL, Success Function, Error Function
+    getJSONSync('/Game/GetPlayers', initializePlayers, error); // URL, Success Function, Error Function
 }
 
 function getEnemies() {
     // Get players from the server
-    getJSONWithoutDataSync('/Game/GetEnemies', initializeEnemyCards, error); // URL, Success Function, Error Function
+    getJSONSync('/Game/GetEnemies', initializeEnemyCards, error); // URL, Success Function, Error Function
 }
 
 function initializeBoard(d) {
@@ -352,7 +352,7 @@ function highlightMoveableTiles() {
 
     // Get new move to tiles and highlight
     var playerTile = hexGrid.getByName(currentPlayer.currentHexName);
-    getJSONWithoutDataSync('/Game/GetNeighbors?tileId=' + playerTile.id, highlightTiles, error); // URL, Success Function, Error Function
+    getJSONSync('/Game/GetNeighbors?tileId=' + playerTile.id, highlightTiles, error); // URL, Success Function, Error Function
     //highlight(playerTile);
     //var neighbors = getNeighbors(playerTile.i, playerTile.j); // TODO: Store neighbors on each tile upfront, so you do not have to calculate it every move
 
@@ -416,7 +416,7 @@ function moveToNextPlayer(d) {
         }
     });
 
-    getJSONWithoutDataSync('/Game/GetNextGameState', startNextGameState, error); // URL, Success Function, Error Function
+    getJSONSync('/Game/GetNextGameState', startNextGameState, error); // URL, Success Function, Error Function
 }
 
 function checkForEndGameState() {

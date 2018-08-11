@@ -147,142 +147,72 @@ function getResourceTypeBasedOnTileImage(tileImage) {
 }
 
 HexTile.prototype.onTap = function () {
-    console.log(this.id);
-    // Get clicked tile
-    var tile = findHexTile();
-    var clickedTile = hexGrid.getByName("tile" + tile.x + "_" + tile.y);
-    //alert("i:" + tile.x + ", " + "j:" + tile.y);
+    var clickedTileTransfer = { "clickedTileId": this.id };
+    postJSON('/Game/ExecuteTileClickedActions', "{data:" + JSON.stringify(clickedTileTransfer) + "}", executePostTileClickEvents, error);
+}
 
-    switch (game.state.getCurrentState().key) {
-        case 'EnemyCard':
-            // ToDo: if you click on the hex where another card has been placed, it does not prevent placement. Need to check if card already exists on hex.
-            
-            if (cardSelected == true) {
-                // Send clicked tile id and enemy card id to the server
-                var enemyTileTransfer = { "tileId": clickedTile.id, "enemyId": selectedEnemyCard.id };
-                postJSON('/Game/AddEnemyToTile', "{data:" + JSON.stringify(enemyTileTransfer) + "}", GameStates.EnemyCard.prototype.placeCard, error);
+function executePostTileClickEvents(d) {
 
-                //// Check if selected card can be placed on it's color, if not allow it to be placed anywhere
-                //var isEnemyCardColorOverrun = players.getPlayerBasedOnColor(selectedEnemyCard.playerColor).isOverrun;
+    if (d.HasError) {
+        alert(d.Error);
+    }
+    else {
+        var gameState = d.Item.GameState;
 
-                //// If the card has been selected, force it to be placed on it's color. Use flag set above to bypass this
-                //if ((clickedTile.type == selectedEnemyCard.playerColor || isEnemyCardColorOverrun)) {
-                //    //selectedEnemyCard.scale.setTo(1, 1);
-                //    //selectedEnemyCard.setAngle(clickedTile.type);
-                //    //clickedTile.addChild(selectedEnemyCard);
-                //    cardSelected = false;
-                //    //selectedEnemyCard.setHasBeenPlaced(true);
-                //    // ToDo: Need to incorporate this code on the server to set is overrun state, then remove it from here 
-                //    var playerPlaced = players.getPlayerBasedOnColor(clickedTile.type);
-                //    var count = 0;
-                //    $.each(hexGrid.children, function () { // loop each tile
-                //        if (this.isEnemyTile() && this.hasEnemyCard() && this.type == playerPlaced.playerColor) {
-                //            count += 1;
-                //        }
-                //    });
-
-                //    if (count == 3) {
-                //        playerPlaced.setPlayerOverrun(true);
-
-                //        // Pass data to server
-                //        var playerOverrunTransfer = { "id": playerPlaced.id, "isOverrun": playerPlaced.isOverrun};
-                //        postJSON('/Game/SetPlayerOverrun', "{data:" + JSON.stringify(playerOverrunTransfer) + "}", success, error);
-                //    }
-                    
-                //    // Update the player current hex ToDo: Make this into a function
-                //    selectedEnemyCard.currentHexName = "tile" + clickedTile.i + "_" + clickedTile.j;
-
-                //    // Pass data to server
-                //    var enemy = { "id": selectedEnemyCard.id, "hasBeenPlaced": selectedEnemyCard.hasBeenPlaced, "currentHexName": selectedEnemyCard.currentHexName, "barbarianIndex": selectedEnemyCard.barbarianIndex };
-                //    postJSON('/Game/UpdateEnemy', "{data:" + JSON.stringify(enemy) + "}", success, error);
-
-                    // Advance state
-                //    game.state.start('PlayerMove', false, false);
-                }
-                //else {
-                //    alert('Cannot place card on that color.');
-                //}
-
-            break;
-        case 'PlayerMove':
-            if (!checkforBoundary(tile.x, tile.y) && clickedTile != null) {
+        switch (gameState) {
+            case 'EnemyCard':
+                // ToDo: if you click on the hex where another card has been placed, it does not prevent placement. Need to check if card already exists on hex.
+                var enemy = Enemy.prototype.getEnemyById(d.Item.EnemyId);
+                var tile = HexTile.prototype.getTileById(d.Item.ClickedTileId);
+                GameStates.EnemyCard.prototype.placeCard(enemy, tile);
+                break;
+            case 'PlayerMove':
+                var tile = HexTile.prototype.getTileById(d.Item.ClickedTileId);
+                tile.addChild(currentPlayer);
+                //if (!checkforBoundary(tile.x, tile.y) && clickedTile != null) {
 
                 // Get player tile
-                var playerTile = hexGrid.getByName(currentPlayer.currentHexName);
+                //var playerTile = hexGrid.getByName(currentPlayer.currentHexName);
 
                 // Move player to clicked tile if neighbor TODO: Move this logic to server
-                if (isNeighbor(playerTile, clickedTile) || clickedTile === playerTile) {
-                    var neighborsPrevious = getNeighbors(playerTile.i, playerTile.j);
+                //if (isNeighbor(playerTile, clickedTile) || clickedTile === playerTile) {
+                //    var neighborsPrevious = getNeighbors(playerTile.i, playerTile.j);
 
-                    // Set alphas back to 1 for previous tiles
-                    playerTile.alpha = 1;
-                    for (var i = 0, len = neighborsPrevious.length; i < len; i++) {
-                        var highlightTile = hexGrid.getByName("tile" + neighborsPrevious[i].x + "_" + neighborsPrevious[i].y);
-                        highlightTile.alpha = 1;
-                    }
+                // Set alphas back to 1 for previous tiles
+                //  playerTile.alpha = 1;
+                //for (var i = 0, len = neighborsPrevious.length; i < len; i++) {
+                //    var highlightTile = hexGrid.getByName("tile" + neighborsPrevious[i].x + "_" + neighborsPrevious[i].y);
+                //    highlightTile.alpha = 1;
+                //}
 
-                    // Send new player tile to server
-                    var playerTileTransfer = { "tileId": clickedTile.id, "playerId": currentPlayer.id };
-                    postJSON('/Game/MovePlayerToTile', "{data:" + JSON.stringify(playerTileTransfer) + "}", GameStates.PlayerMove.prototype.placePlayer, error);
+                // Send new player tile to server
+                //var playerTileTransfer = { "tileId": clickedTile.id, "playerId": currentPlayer.id };
+                //postJSON('/Game/MovePlayerToTile', "{data:" + JSON.stringify(playerTileTransfer) + "}", GameStates.PlayerMove.prototype.placePlayer, error);
 
 
-                    //// Add player to the clicked tile
-                    //clickedTile.addChild(currentPlayer);
+                //// Add player to the clicked tile
+                //clickedTile.addChild(currentPlayer);
 
-                    //// Update the player current hex
-                    //currentPlayer.currentHexName = "tile" + clickedTile.i + "_" + clickedTile.j;
-                    //playerMoved = true;
+                //// Update the player current hex
+                //currentPlayer.currentHexName = "tile" + clickedTile.i + "_" + clickedTile.j;
+                //playerMoved = true;
 
-                    //// Update state
-                    //game.state.start('PlayerResourceOrFight', false, false);
-                }
-            }
-            break;
-        case 'PlayerResourceOrFight':
-            // Send player resource to server
-            var playerResourceTransfer = { "playerId": currentPlayer.id, "resourceType": clickedTile.resource};
-            postJSON('/Game/AddResourceToPlayer', "{data:" + JSON.stringify(playerResourceTransfer) + "}", GameStates.PlayerResourceOrFight.prototype.addResourceToPlayer, error);
-                        
-            break;
-        default:
-            // ToDo:
+                //// Update state
+                //game.state.start('PlayerResourceOrFight', false, false);
+                //  }
+                //}
+                break;
+            case 'PlayerResourceOrFight':
+                GameStates.PlayerResourceOrFight.prototype.addResourceToPlayer(d.Item.ResourceType);
+
+                break;
+            default:
+                // ToDo:
+        }
+
+        getJSONSync('/Game/GetNextGameState', startNextGameState, error); // URL, Success Function, Error Function
     }
 
-
-
-
-
-
-
-            //playerTile.children.remove(player);
-
-            //    if (checkForOccuppancy(tile.x, tile.y)) {
-            //        if (tileLayout[tile.x][tile.y] == 10) {
-            //            console.log('boom');
-            //            var hexTile = hexGrid.getByName("tile" + tile.x + "_" + tile.y);
-            //            if (!hexTile.revealed) {
-            //                hexTile.reveal();
-            //                //game over
-            //            }
-            //        }
-            //    } else {
-            //        var hexTile = hexGrid.getByName("tile" + tile.x + "_" + tile.y);
-
-            //        if (!hexTile.revealed) {
-            //            if (tileLayout[tile.x][tile.y] == 0) {
-            //                console.log('recursive reveal');
-            //                recursiveReveal(tile.x, tile.y);
-            //            } else {
-            //                //console.log('reveal');
-            //                hexTile.reveal();
-            //                revealedTiles++;
-            //            }
-
-            //        }
-            //    }
-        
-        //infoTxt.text = 'found ' + revealedTiles + ' of ' + blankTiles;
-    
 }
 
 HexTile.prototype.getTileById = function (id) {
@@ -295,3 +225,71 @@ HexTile.prototype.getTileById = function (id) {
 
     return tile;
 }
+
+//function getCurrentGameState() {
+//    getJSONSync('/Game/GetCurrentGameState', takeActionBasedOnGameState, error); // URL, Success Function, Error Function
+//}
+
+//function takeActionBasedOnGameState(d)
+//{
+//    // Get clicked tile
+//    var clickedTileId = d.Item.ClickedTileId;
+//    var tile = findHexTile();
+//    var clickedTile = hexGrid.getByName("tile" + tile.x + "_" + tile.y);
+
+//    switch (d.Item.CurrentGameState) {
+//        case 'EnemyCard':
+//            // ToDo: if you click on the hex where another card has been placed, it does not prevent placement. Need to check if card already exists on hex.
+
+//            if (cardSelected == true) {
+//                // Send clicked tile id and enemy card id to the server
+//                var enemyTileTransfer = { "tileId": clickedTile.id, "enemyId": selectedEnemyCard.id };
+//                postJSON('/Game/AddEnemyToTile', "{data:" + JSON.stringify(enemyTileTransfer) + "}", GameStates.EnemyCard.prototype.placeCard, error);
+//            }
+//            break;
+//        case 'PlayerMove':
+//            if (!checkforBoundary(tile.x, tile.y) && clickedTile != null) {
+
+//                // Get player tile
+//                var playerTile = hexGrid.getByName(currentPlayer.currentHexName);
+
+//                // Move player to clicked tile if neighbor TODO: Move this logic to server
+//                if (isNeighbor(playerTile, clickedTile) || clickedTile === playerTile) {
+//                    var neighborsPrevious = getNeighbors(playerTile.i, playerTile.j);
+
+//                    // Set alphas back to 1 for previous tiles
+//                    playerTile.alpha = 1;
+//                    for (var i = 0, len = neighborsPrevious.length; i < len; i++) {
+//                        var highlightTile = hexGrid.getByName("tile" + neighborsPrevious[i].x + "_" + neighborsPrevious[i].y);
+//                        highlightTile.alpha = 1;
+//                    }
+
+//                    // Send new player tile to server
+//                    var playerTileTransfer = { "tileId": clickedTile.id, "playerId": currentPlayer.id };
+//                    postJSON('/Game/MovePlayerToTile', "{data:" + JSON.stringify(playerTileTransfer) + "}", GameStates.PlayerMove.prototype.placePlayer, error);
+
+
+//                    //// Add player to the clicked tile
+//                    //clickedTile.addChild(currentPlayer);
+
+//                    //// Update the player current hex
+//                    //currentPlayer.currentHexName = "tile" + clickedTile.i + "_" + clickedTile.j;
+//                    //playerMoved = true;
+
+//                    //// Update state
+//                    //game.state.start('PlayerResourceOrFight', false, false);
+//                }
+//            }
+//            break;
+//        case 'PlayerResourceOrFight':
+//            // Send player resource to server
+//            var playerResourceTransfer = { "playerId": currentPlayer.id, "resourceType": clickedTile.resource };
+//            postJSON('/Game/AddResourceToPlayer', "{data:" + JSON.stringify(playerResourceTransfer) + "}", GameStates.PlayerResourceOrFight.prototype.addResourceToPlayer, error);
+
+//            break;
+//        default:
+//            // ToDo:
+//    }
+
+
+//}

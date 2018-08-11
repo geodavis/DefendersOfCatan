@@ -1,4 +1,4 @@
-﻿GameStates.PlayerResourceOrFight = function (game) {  
+﻿GameStates.PlayerResourceOrFight = function (game) {
 
 };
 
@@ -23,45 +23,25 @@ GameStates.PlayerResourceOrFight.prototype = {
 };
 
 
-GameStates.PlayerResourceOrFight.prototype.addResourceToPlayer = function (d) {
-    if (!d.HasError) {
-        // Update player resource list to add the new resource
-        currentPlayer.addResourceToPlayer(d.Item.ResourceType);
+GameStates.PlayerResourceOrFight.prototype.addResourceToPlayer = function (resourceType) {
+    currentPlayer.addResourceToPlayer(resourceType);
+    getJSONSync('/Game/MoveToNextPlayer', moveToNextPlayer, error); // URL, Success Function, Error Function
 
-        // Advance to the next player and phase
-        getJSONWithoutDataSync('/Game/MoveToNextPlayer', moveToNextPlayer, error); // URL, Success Function, Error Function
-        //game.state.start('EnemyMove', false, false);
-    }
-    else {
-        alert(d.Error);
-    }
 }
 
-GameStates.PlayerResourceOrFight.prototype.removeEnemy = function (d) {
-    if (!d.HasError) {
-        //var enemy = Enemy.prototype.getEnemyById(d.Item.EnemyId);
-        var tile = HexTile.prototype.getTileById(d.Item.TileId);
+GameStates.PlayerResourceOrFight.prototype.removeEnemy = function (enemyTileId) {
+    var tile = HexTile.prototype.getTileById(enemyTileId);
 
-        $.each(tile.children, function () {
-            if (this.name == 'enemycard') {
-                this.destroy(); // destroy removes the object, kill() makes it hidden from view
-            }
-        });
+    $.each(tile.children, function () {
+        if (this.name == 'enemycard') {
+            this.destroy(); // destroy removes the object, kill() makes it hidden from view
+        }
+    });
 
-        // TODo - set player overrun
-        //var player = players.getPlayerBasedOnColor(enemyCard.playerColor);
-        //if (player.isOverrun) {
-        //    player.setPlayerOverrun(false);
-        //}
+    // Advance to the next player and phase
+    getJSONSync('/Game/MoveToNextPlayer', moveToNextPlayer, error); // URL, Success Function, Error Function
+    //game.state.start('EnemyMove', false, false);
 
-        // Advance to the next player and phase
-
-        getJSONWithoutDataSync('/Game/MoveToNextPlayer', moveToNextPlayer, error); // URL, Success Function, Error Function
-        //game.state.start('EnemyMove', false, false);
-    }
-    else {
-        alert(d.Error);
-    }
 }
 
 

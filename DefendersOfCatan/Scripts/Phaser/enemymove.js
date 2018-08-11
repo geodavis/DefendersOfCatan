@@ -10,7 +10,7 @@ GameStates.EnemyMove.prototype = {
         //var playerColor = game.rnd.integerInRange(3, 6)
         
         // Execute Enemy Move phase
-        getJSONWithoutDataSync('/Game/ExecuteEnemyMovePhase', GameStates.EnemyMove.prototype.updateBarbarians, error); // URL, Success Function, Error Function
+        getJSONSync('/Game/ExecuteEnemyMovePhase', GameStates.EnemyMove.prototype.updateBarbarians, error); // URL, Success Function, Error Function
         
 
     },
@@ -62,7 +62,7 @@ GameStates.EnemyMove.prototype.updateBarbarians = function (d) {
         });
     }
 
-    getJSONWithoutDataSync('/Game/GetNextGameState', startNextGameState, error); // URL, Success Function, Error Function
+    getJSONSync('/Game/GetNextGameState', startNextGameState, error); // URL, Success Function, Error Function
     //this.game.state.start('EnemyOverrun', false, false);
 
     //$.each(hexGrid.children, function () { // loop each tile

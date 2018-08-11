@@ -28,21 +28,12 @@ GameStates.EnemyCard.prototype = {
     }
 };
 
-GameStates.EnemyCard.prototype.placeCard = function (d) {
-    if (!d.HasError) {
-        var tile = HexTile.prototype.getTileById(d.Item.TileId);
-        var enemy = Enemy.prototype.getEnemyById(d.Item.EnemyId);
+GameStates.EnemyCard.prototype.placeCard = function (enemy, tile) {
+    enemy.scale.setTo(1, 1);
+    enemy.setAngle(tile.type);
+    enemy.currentHexName = tile.name;
+    tile.addChild(enemy);
 
-        enemy.scale.setTo(1, 1);
-        enemy.setAngle(tile.type);
-        enemy.currentHexName = tile.name;
-        tile.addChild(enemy);
-
-        cardSelected = false;
-        getJSONWithoutDataSync('/Game/GetNextGameState', startNextGameState, error); // URL, Success Function, Error Function
-    }
-    else {
-        alert(d.Error);
-    }
+    //cardSelected = false;
 }
 
