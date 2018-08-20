@@ -22,6 +22,9 @@ namespace DefendersOfCatan.Controllers
         private GameInitializer gameInitializer = new GameInitializer();
         private Game game = new Game();
         private PlayerLogic playerLogic = new PlayerLogic();
+        private TileLogic tileLogic = new TileLogic();
+        private GameStateLogic gameStateLogic = new GameStateLogic();
+        private EnemyLogic enemyLogic = new EnemyLogic();
 
         // GET: Game
         public ActionResult Index()
@@ -40,24 +43,6 @@ namespace DefendersOfCatan.Controllers
             db.SaveChanges();
 
             return View();
-        }
-
-        [HttpGet]
-        public JsonResult GetCurrentGameState()
-        {
-            var result = new ItemModel<string>();
-            try
-            {
-                var game = db.GetSet<Game>().FirstOrDefault();
-                result.Item = game.GameState.ToString();
-                return ReturnJsonResult(result);
-            }
-            catch (Exception e)
-            {
-                result.HasError = true;
-                result.Error = e.Message;
-                return ReturnJsonResult(result);
-            }
         }
 
         [HttpPost]
@@ -86,7 +71,7 @@ namespace DefendersOfCatan.Controllers
             var result = new ItemModel<ClickedEnemyTransfer>();
             try
             {
-                var gameState = db.GetSet<Game>().FirstOrDefault().GameState;
+                var gameState = gameStateLogic.GetCurrentGameState();
                 var enemy = db.Enemies.Where(e => e.Id == data.EnemyId).Single();
                 result.Item = new ClickedEnemyTransfer() { EnemyId = enemy.Id, GameState = gameState.ToString() };
                 switch (gameState)
@@ -98,12 +83,12 @@ namespace DefendersOfCatan.Controllers
                         // ToDo: Implement error handling (pass error to client)
                         break;
                     case GameState.PlayerResourceOrFight:
-                        var currentPlayer = GetCurrentPlayer();
+                        var currentPlayer = playerLogic.GetCurrentPlayer();
                         var tiles = db.Tiles.ToList();
                         var currentPlayerTile = tiles.Where(t => t.Players.Contains(currentPlayer)).Single();
                         var enemyTile = tiles.Where(t => t.Enemy != null && t.Enemy.Id == enemy.Id).Single();
                         result.Item.EnemyTileId = enemyTile.Id;
-                        var neighborTiles = GetNeighborTiles(currentPlayerTile);
+                        var neighborTiles = tileLogic.GetNeighborTiles(currentPlayerTile);
 
                         if (neighborTiles.Contains(enemyTile))
                         {
@@ -133,6 +118,30 @@ namespace DefendersOfCatan.Controllers
             }
         }
 
+        [HttpGet]
+        public JsonResult GetNeighbors(int tileId)
+        {
+            var result = new ItemModel<List<int>> { Item = new List<int>() };
+            var tile = db.Tiles.Where(t => t.Id == tileId).Single();
+
+            try
+            {
+                var neighboringTiles = tileLogic.GetNeighborTiles(tile);
+                foreach (var neighboringTile in neighboringTiles)
+                {
+                    result.Item.Add(neighboringTile.Id);
+                }
+
+                return ReturnJsonResult(result);
+            }
+            catch (Exception e)
+            {
+                result.HasError = true;
+                result.Error = e.Message;
+                return ReturnJsonResult(result);
+            }
+        }
+
         [HttpPost]
         public JsonResult ExecuteTileClickedActions(ClickedTileTransfer data)
         {
@@ -140,9 +149,9 @@ namespace DefendersOfCatan.Controllers
             result.Item = new ClickedTileTransfer();
             try
             {
-                var gameState = db.GetSet<Game>().FirstOrDefault().GameState;
+                var gameState = gameStateLogic.GetCurrentGameState();
                 var selectedTile = db.Tiles.Where(t => t.Id == data.ClickedTileId).Single();
-                var currentPlayer = GetCurrentPlayer();
+                var currentPlayer = playerLogic.GetCurrentPlayer();
                 result.Item.GameState = gameState.ToString();
                 result.Item.ClickedTileId = selectedTile.Id;
                 switch (gameState)
@@ -154,25 +163,16 @@ namespace DefendersOfCatan.Controllers
                         break;
                     case GameState.PlayerMove:
                         result.Item.PlayerId = currentPlayer.Id;
-                        var tiles = db.Tiles.ToList();
-                        var currentPlayerTile = tiles.Where(t => t.Players.Contains(currentPlayer)).Single();
-                        var neighborTiles = GetNeighborTiles(currentPlayerTile);
-
-                        if (neighborTiles.Contains(selectedTile) || selectedTile == currentPlayerTile)
-                        {
-                            selectedTile.Players.Add(currentPlayer);
-                        }
-                        else
+                        if (!playerLogic.MovePlayerToTile(data.ClickedTileId))
                         {
                             result.HasError = true;
                             result.Error = "You cannot move to that tile.";
                         }
-
                         break;
                     case GameState.PlayerResourceOrFight:
                         var resourceType = selectedTile.ResourceType;
                         result.Item.ResourceType = (int)resourceType;
-                        AddResourceToPlayer(currentPlayer, resourceType);
+                        //AddResourceToPlayer(currentPlayer, resourceType);
                         break;
                     default:
                         Console.WriteLine("Error getting game state!");
@@ -190,20 +190,13 @@ namespace DefendersOfCatan.Controllers
             }
         }
 
-        private Player GetCurrentPlayer()
-        {
-            return db.GetSet<Game>().FirstOrDefault().CurrentPlayer;
-        }
-
         [HttpGet]
         public JsonResult GetNextGameState()
         {
             var result = new ItemModel<string>();
             try
             {
-                var game = db.GetSet<Game>().FirstOrDefault();
-                UpdateGameState(game);
-                result.Item = game.GameState.ToString();
+                result.Item = gameStateLogic.UpdateGameState().ToString();
                 return ReturnJsonResult(result);
             }
             catch (Exception e)
@@ -285,8 +278,7 @@ namespace DefendersOfCatan.Controllers
             var result = new ItemModel<List<Enemy>> { Item = new List<Enemy>() };
             try
             {
-                var game = db.GetSet<Game>().FirstOrDefault();
-                result.Item = game.Enemies;
+                result.Item = enemyLogic.GetEnemies();
                 return ReturnJsonResult(result);
             }
             catch (Exception e)
@@ -297,30 +289,26 @@ namespace DefendersOfCatan.Controllers
             }
         }
 
-        [HttpPost]
-        public JsonResult UpdateEnemy(UpdateEnemyTransfer data)
-        {
-            var result = new ItemModel<string>();
+        //[HttpPost]
+        //public JsonResult UpdateEnemy(UpdateEnemyTransfer data)
+        //{
+        //    var result = new ItemModel<string>();
 
-            try
-            {
-                var enemy = db.GetSet<Enemy>().Single(e => e.Id == data.Id);
-                //enemy.CurrentTileName = data.CurrentHexName;
-                enemy.HasBeenPlaced = data.HasBeenPlaced;
-                enemy.BarbarianIndex = data.BarbarianIndex;
-                db.SaveChanges();
-                result.Item = "Successfully Saved Enemy!";
-                return ReturnJsonResult(result);
-            }
-            catch (Exception e)
-            {
-                result.HasError = true;
-                result.Error = e.Message;
-                result.Item = "Failure saving Enemy to DB!";
-                return ReturnJsonResult(result);
-            }
+        //    try
+        //    {
+        //        enemyLogic.UpdateEnemy(data);
+        //        result.Item = "Successfully Saved Enemy!";
+        //        return ReturnJsonResult(result);
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        result.HasError = true;
+        //        result.Error = e.Message;
+        //        result.Item = "Failure saving Enemy to DB!";
+        //        return ReturnJsonResult(result);
+        //    }
 
-        }
+        //}
 
         private bool CanEnemyBeAddedToTile(Enemy enemy, Tile tile)
         {
@@ -472,29 +460,7 @@ namespace DefendersOfCatan.Controllers
             // In this phase, we progress any barbarians tied to the current players tiles
             try
             {
-                var game = db.Game.FirstOrDefault();
-                var tiles = new List<Tile>();
-                // Check current player for barbarian advancement
-                foreach (var tile in game.Tiles)
-                {
-                    if (((int)game.CurrentPlayer.Color == (int)tile.Type) && tile.Enemy != null && tile.Enemy.HasBarbarian)
-                    {
-                        tile.Enemy.BarbarianIndex += 1;
-
-                        // Reset barbarian index if it hits 3, and overrun the appropriate tile
-                        if (tile.Enemy.BarbarianIndex == 2) // ToDo: change back to "3"
-                        {
-                            var overrunTile = SetOverrunTile(tile);
-                            tiles.Add(overrunTile);
-                            tile.Enemy.BarbarianIndex = 0; // Reset barbarian index
-                        }
-
-                        db.SaveChanges();
-                        tiles.Add(tile);
-                    }
-                }
-
-                result.Item = tiles;
+                result.Item = enemyLogic.ExecuteEnemyMovePhase();
                 return ReturnJsonResult(result);
             }
             catch (Exception e)
@@ -503,115 +469,6 @@ namespace DefendersOfCatan.Controllers
                 result.Error = e.Message;
                 return ReturnJsonResult(result);
             }
-        }
-
-        [HttpGet]
-        public JsonResult GetNeighbors(int tileId)
-        {
-            var result = new ItemModel<List<int>> { Item = new List<int>() };
-            var tile = db.Tiles.Where(t => t.Id == tileId).Single();
-
-            try
-            {
-                var neighboringTiles = GetNeighborTiles(tile);
-                foreach (var neighboringTile in neighboringTiles)
-                {
-                    result.Item.Add(neighboringTile.Id);
-                }
-
-                return ReturnJsonResult(result);
-            }
-            catch (Exception e)
-            {
-                result.HasError = true;
-                result.Error = e.Message;
-                return ReturnJsonResult(result);
-            }
-        }
-
-        private List<Tile> GetNeighborTiles(Tile tile)
-        {
-            var neighboringTiles = new List<Tile>();
-            //            element[x, y]
-            //            neighbor1 = x + 1, y;
-            //            neighbor2 = x - 1, y;
-            //            neighbor3 = x, y + 1;
-            //            neighbor4 = x, y - 1;
-            //            neighbor5 = x + 1, y + 1; - NOT A HEX NEIGHBOR FOR EVEN ROW
-            //            neighbor6 = x + 1, y - 1; - NOT A HEX NEIGHBOR FOR EVEN ROW
-            //            neighbor7 = x - 1, y + 1; - NOT A HEX NEIGHBOR FOR ODD ROW
-            //            neighbor8 = x - 1, y - 1; - NOT A HEX NEIGHBOR FOR ODD ROW
-
-            // Each hex has 6 neighbors - the below 4 are always a neighbor, regardless if even or odd row
-            AddNeighbor(tile.LocationX + 1, tile.LocationY, neighboringTiles);
-            AddNeighbor(tile.LocationX - 1, tile.LocationY, neighboringTiles);
-            AddNeighbor(tile.LocationX, tile.LocationY + 1, neighboringTiles);
-            AddNeighbor(tile.LocationX, tile.LocationY - 1, neighboringTiles);
-
-            // The next two neighbors will change depending on if it is an even or odd row
-            if (tile.LocationY % 2 != 0) // odd row
-            {
-                AddNeighbor(tile.LocationX + 1, tile.LocationY + 1, neighboringTiles);
-                AddNeighbor(tile.LocationX + 1, tile.LocationY - 1, neighboringTiles);
-
-            }
-            else // even row
-            {
-                AddNeighbor(tile.LocationX - 1, tile.LocationY + 1, neighboringTiles);
-                AddNeighbor(tile.LocationX - 1, tile.LocationY - 1, neighboringTiles);
-            }
-
-            return neighboringTiles;
-        }
-
-        private void AddNeighbor(int x, int y, List<Tile> neighboringTiles)
-        {
-            if (db.Tiles.Where(t => t.LocationX == x && t.LocationY == y).Any())
-            {
-                neighboringTiles.Add(db.Tiles.Where(t => t.LocationX == x && t.LocationY == y).Single());
-            }
-        }
-
-        private Tile SetOverrunTile(Tile tile)
-        {
-            var tileNumber = Globals.HexOverrunData[tile.LocationY, tile.LocationX];
-            var overrunTile = GetNextOverrunTile(tile, tileNumber, 0);
-            overrunTile.IsOverrun = true;
-            db.SaveChanges();
-            return overrunTile;
-        }
-
-        private Tile GetNextOverrunTile(Tile tile, string tileNumber, int tileCount)
-        {
-            // Get next tile in line
-            // First, get neighbor with tile number
-            var neighbors = GetNeighborTiles(tile);
-
-            foreach (var neighbor in neighbors)
-            {
-                var overrunData = Globals.HexOverrunData[neighbor.LocationY, neighbor.LocationX];
-                var splitOverrunData = overrunData.Split(',');
-
-                if (splitOverrunData.Contains(tileNumber) == true && !neighbor.IsEnemyTile()) // if is enemy tile, do not consider that neighbor tile
-                {
-                    if (!neighbor.IsOverrun)
-                    {
-                        return neighbor;
-                    }
-                    else // neighbor tile is overrun
-                    {
-                        tileCount += 1;
-                        if (tileCount == 4 || neighbor.Type == TileType.Capital)
-                        {
-                            Console.WriteLine("game over!"); // todo: second blue tile (46) flipping ends game - BUG; need to check entire row for count, not just the direction we are coming; do need a check end game state function
-                        }
-                        return GetNextOverrunTile(neighbor, tileNumber, tileCount); // if tile is overrun, move onto the next tile in line
-                    }
-                }
-            }
-
-            Console.WriteLine("Error getting next overrun tile!");
-            return new Tile(); // Error condition here!!!
         }
 
         [HttpGet]
@@ -622,7 +479,7 @@ namespace DefendersOfCatan.Controllers
             try
             {
                 var game = db.Game.FirstOrDefault();
-                var currentPlayer = GetCurrentPlayer();
+                var currentPlayer = playerLogic.GetCurrentPlayer();
 
                 switch (currentPlayer.Color)
                 {
@@ -656,22 +513,6 @@ namespace DefendersOfCatan.Controllers
             }
 
         }
-
-        private void UpdateGameState(Game game)
-        {
-            var nextGameState = GetNextGameState(game.GameState);
-            game.GameState = nextGameState;
-            db.SaveChanges(); // save game state to DB
-        }
-
-        private GameState GetNextGameState(GameState gameState)
-        {
-            // ToDo: Ensure this logic works when wrapping to game state 1
-            var currentEnumIndex = (int)gameState;
-            var gameStateEnumValues = Enum.GetValues(typeof(GameState));
-            return currentEnumIndex == gameStateEnumValues.Length - 1 ? (GameState)gameStateEnumValues.GetValue(1) : (GameState)gameStateEnumValues.GetValue(currentEnumIndex + 1);
-        }
-
 
         public JsonResult ReturnJsonResult(object result)
         {

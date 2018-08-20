@@ -11,12 +11,34 @@ namespace DefendersOfCatan.BusinessLogic
     public class PlayerLogic
     {
         private PlayerRepository playerRepo = new PlayerRepository();
+        private TileRepository tileRepo = new TileRepository();
+        private TileLogic tileLogic = new TileLogic();
+
         public List<Player> GetPlayers()
         {
-            var players = playerRepo.GetPlayers();
-
-            return players;
+            return playerRepo.GetPlayers();
         }
 
+        public Player GetCurrentPlayer()
+        {
+            return playerRepo.GetCurrentPlayer();
+        }
+
+        public bool MovePlayerToTile(int selectedTileId)
+        {
+            var currentPlayerTile = tileRepo.GetCurrentPlayerTile();
+            var selectedTile = tileRepo.GetTileById(selectedTileId);
+            var neighborTiles = tileLogic.GetNeighborTiles(currentPlayerTile);
+
+            if (neighborTiles.Any(t => t.Id == selectedTile.Id) || selectedTile.Id == currentPlayerTile.Id)
+            {
+                selectedTile.Players.Add(GetCurrentPlayer());
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
     }
 }

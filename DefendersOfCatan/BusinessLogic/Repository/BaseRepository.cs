@@ -1,4 +1,5 @@
 ﻿using DefendersOfCatan.DAL;
+using DefendersOfCatan.DAL.DataModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,6 +14,21 @@ namespace DefendersOfCatan.BusinessLogic.Repository
         public BaseRepository()
         {
             db = new GameContext();
+        }
+
+        public Game GetGame()
+        {
+            return db.Game.Single();
+        }
+
+        public Player GetCurrentPlayerBase()
+        {
+            return GetGame().CurrentPlayer;
+        }
+
+        public void Save()
+        {
+            db.SaveChanges();
         }
     }
 }

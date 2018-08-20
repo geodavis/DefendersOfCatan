@@ -11,9 +11,13 @@ namespace DefendersOfCatan.BusinessLogic.Repository
     {
         public List<Player> GetPlayers()
         {
-            var players = db.GetSet<Game>().FirstOrDefault().Players;
+            var players = db.Game.FirstOrDefault().Players;
             return players;
         }
 
+        public Player GetCurrentPlayer()
+        {
+            return GetCurrentPlayerBase();
+        }
     }
 }

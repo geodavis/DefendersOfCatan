@@ -352,7 +352,7 @@ function highlightMoveableTiles() {
 
     // Get new move to tiles and highlight
     var playerTile = hexGrid.getByName(currentPlayer.currentHexName);
-    getJSONSync('/Game/GetNeighbors?tileId=' + playerTile.id, highlightTiles, error); // URL, Success Function, Error Function
+    //getJSONSync('/Game/GetNeighbors?tileId=' + playerTile.id, highlightTiles, error); // URL, Success Function, Error Function ToDo: return highlighting!
     //highlight(playerTile);
     //var neighbors = getNeighbors(playerTile.i, playerTile.j); // TODO: Store neighbors on each tile upfront, so you do not have to calculate it every move
 
@@ -416,7 +416,6 @@ function moveToNextPlayer(d) {
         }
     });
 
-    getJSONSync('/Game/GetNextGameState', startNextGameState, error); // URL, Success Function, Error Function
 }
 
 function checkForEndGameState() {

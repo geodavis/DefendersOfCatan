@@ -165,42 +165,12 @@ function executePostTileClickEvents(d) {
                 var enemy = Enemy.prototype.getEnemyById(d.Item.EnemyId);
                 var tile = HexTile.prototype.getTileById(d.Item.ClickedTileId);
                 GameStates.EnemyCard.prototype.placeCard(enemy, tile);
+
                 break;
             case 'PlayerMove':
                 var tile = HexTile.prototype.getTileById(d.Item.ClickedTileId);
                 tile.addChild(currentPlayer);
-                //if (!checkforBoundary(tile.x, tile.y) && clickedTile != null) {
 
-                // Get player tile
-                //var playerTile = hexGrid.getByName(currentPlayer.currentHexName);
-
-                // Move player to clicked tile if neighbor TODO: Move this logic to server
-                //if (isNeighbor(playerTile, clickedTile) || clickedTile === playerTile) {
-                //    var neighborsPrevious = getNeighbors(playerTile.i, playerTile.j);
-
-                // Set alphas back to 1 for previous tiles
-                //  playerTile.alpha = 1;
-                //for (var i = 0, len = neighborsPrevious.length; i < len; i++) {
-                //    var highlightTile = hexGrid.getByName("tile" + neighborsPrevious[i].x + "_" + neighborsPrevious[i].y);
-                //    highlightTile.alpha = 1;
-                //}
-
-                // Send new player tile to server
-                //var playerTileTransfer = { "tileId": clickedTile.id, "playerId": currentPlayer.id };
-                //postJSON('/Game/MovePlayerToTile', "{data:" + JSON.stringify(playerTileTransfer) + "}", GameStates.PlayerMove.prototype.placePlayer, error);
-
-
-                //// Add player to the clicked tile
-                //clickedTile.addChild(currentPlayer);
-
-                //// Update the player current hex
-                //currentPlayer.currentHexName = "tile" + clickedTile.i + "_" + clickedTile.j;
-                //playerMoved = true;
-
-                //// Update state
-                //game.state.start('PlayerResourceOrFight', false, false);
-                //  }
-                //}
                 break;
             case 'PlayerResourceOrFight':
                 GameStates.PlayerResourceOrFight.prototype.addResourceToPlayer(d.Item.ResourceType);
@@ -209,8 +179,8 @@ function executePostTileClickEvents(d) {
             default:
                 // ToDo:
         }
-
         getJSONSync('/Game/GetNextGameState', startNextGameState, error); // URL, Success Function, Error Function
+
     }
 
 }
@@ -225,10 +195,6 @@ HexTile.prototype.getTileById = function (id) {
 
     return tile;
 }
-
-//function getCurrentGameState() {
-//    getJSONSync('/Game/GetCurrentGameState', takeActionBasedOnGameState, error); // URL, Success Function, Error Function
-//}
 
 //function takeActionBasedOnGameState(d)
 //{
