@@ -158,7 +158,7 @@ namespace DefendersOfCatan.Controllers
                 {
                     case GameState.EnemyCard:
                         var selectedEnemy = db.Enemies.Where(e => e.IsSelected == true).Single();
-                        AddEnemyToTile(selectedEnemy, selectedTile);
+                        enemyLogic.AddEnemyToTile(data);
                         result.Item.EnemyId = selectedEnemy.Id;
                         break;
                     case GameState.PlayerMove:
@@ -310,61 +310,6 @@ namespace DefendersOfCatan.Controllers
 
         //}
 
-        private bool CanEnemyBeAddedToTile(Enemy enemy, Tile tile)
-        {
-            var playerIsOverrun = db.Players.Where(p => p.Color == enemy.PlayerColor).Single().IsOverrun; // Check if selected card can be placed on it's color, if not allow it to be placed anywhere
-
-            if (tile.IsEnemyTile() && ((int)tile.Type == (int)enemy.PlayerColor) || playerIsOverrun)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
-
-        private void AddEnemyToTile(Enemy enemy, Tile tile)
-        {
-            if (CanEnemyBeAddedToTile(enemy, tile))
-            {
-                enemy.IsSelected = false;
-                enemy.HasBeenPlaced = true;
-                tile.Enemy = enemy;
-
-                // Check if player is overrun - todo: Return player overrun value to update UI
-                var player = db.Players.Where(p => (int)p.Color == (int)tile.Type).Single();
-                player.IsOverrun = CheckIfPlayerIsOverrun(player);
-                db.SaveChanges();
-            }
-            else
-            {
-                // ToDo: return error if validation fails
-            }
-
-        }
-
-        private bool CheckIfPlayerIsOverrun(Player player)
-        {
-            var isOverrun = false;
-            var tiles = db.Tiles.Where(t => (int)t.Type == (int)player.Color).ToList();
-
-            var count = 0;
-            foreach (var tile in tiles)
-            {
-                if (tile.Enemy != null)
-                {
-                    count += 1;
-                }
-            }
-
-            if (count == 3)
-            {
-                isOverrun = true;
-            }
-
-            return isOverrun;
-        }
 
         public void RemoveEnemy(Enemy enemy, Tile tile)
         {
@@ -372,7 +317,7 @@ namespace DefendersOfCatan.Controllers
 
             // Check if player is no longer overrun
             var player = db.Players.Where(p => (int)p.Color == (int)tile.Type).Single(); // get the player color of the tile
-            player.IsOverrun = CheckIfPlayerIsOverrun(player);
+            player.IsOverrun = playerLogic.CheckIfPlayerIsOverrun(player);
         }
 
         [HttpPost]

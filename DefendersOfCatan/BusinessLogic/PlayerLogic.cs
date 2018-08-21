@@ -40,5 +40,27 @@ namespace DefendersOfCatan.BusinessLogic
                 return false;
             }
         }
+
+        public bool CheckIfPlayerIsOverrun(Player player)
+        {
+            var isOverrun = false;
+            var tiles = tileRepo.GetTiles().Where(t => (int)t.Type == (int)player.Color).ToList();
+
+            var count = 0;
+            foreach (var tile in tiles)
+            {
+                if (tile.Enemy != null)
+                {
+                    count += 1;
+                }
+            }
+
+            if (count == 3)
+            {
+                isOverrun = true;
+            }
+
+            return isOverrun;
+        }
     }
 }

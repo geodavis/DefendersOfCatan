@@ -12,6 +12,9 @@ namespace DefendersOfCatan.BusinessLogic
     {
         private EnemyRepository enemyRepo = new EnemyRepository();
         private TileLogic tileLogic = new TileLogic();
+        private TileRepository tileRepo = new TileRepository();
+        private PlayerLogic playerLogic = new PlayerLogic();
+        private PlayerRepository playerRepo = new PlayerRepository();
 
         public List<Enemy> GetEnemies()
         {
@@ -50,5 +53,39 @@ namespace DefendersOfCatan.BusinessLogic
 
             return tiles;
         }
+
+        public void AddEnemyToTile(ClickedTileTransfer tileTransfer)
+        {
+            var tile = tileRepo.GetTileById(tileTransfer.ClickedTileId);
+            var enemy = enemyRepo.GetSelectedEnemy();
+            if (CanEnemyBeAddedToTile(enemy, tile))
+            {
+                enemyRepo.PlaceEnemy(enemy, tile);
+                var player = playerRepo.GetPlayerBasedOnColor(tile.PlayerColor);
+                if (playerLogic.CheckIfPlayerIsOverrun(player))
+                {
+                    playerRepo.SetPlayerOverrun(player, true);
+                }
+            }
+            else
+            {
+                // ToDo: return error if validation fails
+            }
+
+        }
+        private bool CanEnemyBeAddedToTile(Enemy enemy, Tile tile)
+        {
+            var playerIsOverrun = playerRepo.GetPlayerOverrunBasedOnPlayerColor(enemy.PlayerColor);
+            if (tile.IsEnemyTile() && ((int)tile.Type == (int)enemy.PlayerColor) || playerIsOverrun)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
     }
+
+
 }
