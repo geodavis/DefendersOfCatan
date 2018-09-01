@@ -7,6 +7,6 @@ namespace DefendersOfCatan.DAL.DataModels.Items
 {
     public class Items
     {
-        public List<Item> GameItems = new List<Item>();
+        //public List<Item> GameItems = new List<Item>();
     }
 }

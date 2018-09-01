@@ -7,7 +7,8 @@ namespace DefendersOfCatan.DAL.DataModels.Items
 {
     public class ResourceCost
     {
-        public int ResourceType;
-        public int Qty;
+        public int Id { get; set; }
+        public int ResourceType { get; set; }
+        public int Qty { get; set; }
     }
 }

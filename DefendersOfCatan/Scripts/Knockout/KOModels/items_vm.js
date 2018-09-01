@@ -76,7 +76,10 @@
     };
 
     self.purchaseItem = function (item) {
-        // First check if player can purchase clicked on item - TODO:
+        getJSONSync('/Game/PurchaseItem?itemType=' + item.itemType, updatePlayerItems, error); // URL, Success Function, Error Function
+    };
+
+    self.updatePlayerItems = function (d) {
 
         var itemType = item.itemType;
         var itemCost = item.itemCost;
@@ -99,7 +102,7 @@
         // Add item to player inventory
 
         alert('Test');
-    };
+    }
 
     self.setPurchasableItem = function () {
 

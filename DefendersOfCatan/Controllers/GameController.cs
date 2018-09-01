@@ -25,6 +25,7 @@ namespace DefendersOfCatan.Controllers
         private TileLogic tileLogic = new TileLogic();
         private GameStateLogic gameStateLogic = new GameStateLogic();
         private EnemyLogic enemyLogic = new EnemyLogic();
+        private ItemLogic itemLogic = new ItemLogic();
 
         // GET: Game
         public ActionResult Index()
@@ -35,6 +36,7 @@ namespace DefendersOfCatan.Controllers
             var capitalTile = game.Tiles.Where(t => t.Type == TileType.Capital).Single();
             game.Players = gameInitializer.InitializePlayers(capitalTile);
             game.Enemies = gameInitializer.InitializeEnemies();
+            gameInitializer.InitializeItems();
 
             db.Game.Add(game);
             db.SaveChanges();
@@ -245,20 +247,40 @@ namespace DefendersOfCatan.Controllers
         [HttpGet]
         public JsonResult GetItems()
         {
-            var result = new ItemModel<Items> { Item = new Items() };
+            var result = new ItemModel<List<Item>> { Item = new List<Item>() };
             try
             {
-                var resourceCost = new ResourceCost { ResourceType = 0, Qty = 2 };
-                var itemCost = new List<ResourceCost>();
-                itemCost.Add(resourceCost);
-                var item = new Item { ItemType = 0, ItemName = "Item1", ItemCost = itemCost };
-                result.Item.GameItems.Add(item);
+                result.Item = itemLogic.GetItems();
+                return ReturnJsonResult(result);
+            }
+            catch (Exception e)
+            {
+                result.HasError = true;
+                result.Error = e.Message;
+                return ReturnJsonResult(result);
+            }
 
-                resourceCost = new ResourceCost { ResourceType = 1, Qty = 2 };
-                itemCost = new List<ResourceCost>();
-                itemCost.Add(resourceCost);
-                item = new Item { ItemType = 1, ItemName = "Item2", ItemCost = itemCost };
-                result.Item.GameItems.Add(item);
+        }
+
+        [HttpGet]
+        public JsonResult PurchaseItem(int itemType)
+        {
+            var result = new ItemModel<Item> { Item = new Item() };
+            try
+            {
+                // First check if player can purchase the item
+                
+                //var resourceCost = new ResourceCost { ResourceType = 0, Qty = 2 };
+                //var itemCost = new List<ResourceCost>();
+                //itemCost.Add(resourceCost);
+                //var item = new Item { ItemType = 0, ItemName = "Item1", ItemCost = itemCost };
+                //result.Item.GameItems.Add(item);
+
+                //resourceCost = new ResourceCost { ResourceType = 1, Qty = 2 };
+                //itemCost = new List<ResourceCost>();
+                //itemCost.Add(resourceCost);
+                //item = new Item { ItemType = 1, ItemName = "Item2", ItemCost = itemCost };
+                //result.Item.GameItems.Add(item);
 
                 return ReturnJsonResult(result);
             }

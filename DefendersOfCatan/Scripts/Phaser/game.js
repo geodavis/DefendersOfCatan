@@ -215,7 +215,7 @@ function initializeBoard(d) {
 }
 
 function initializeItems(d) {
-    items = new items_vm(game, d.Item.GameItems);
+    items = new items_vm(game, d.Item);
     var element = document.getElementById('items');
     ko.applyBindings(items, element);
 

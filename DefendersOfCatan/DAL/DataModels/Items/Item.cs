@@ -7,8 +7,9 @@ namespace DefendersOfCatan.DAL.DataModels.Items
 {
     public class Item
     {
-        public int ItemType;
-        public string ItemName;
-        public List<ResourceCost> ItemCost;
+        public int Id { get; set; }
+        public int ItemType { get; set; }
+        public string ItemName { get; set; }
+        public virtual List<ResourceCost> ItemCost { get; set; }
     }
 }

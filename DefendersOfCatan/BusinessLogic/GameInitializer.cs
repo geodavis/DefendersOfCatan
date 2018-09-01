@@ -6,11 +6,16 @@ using DefendersOfCatan.DAL.DataModels;
 using static DefendersOfCatan.Common.Enums;
 using static DefendersOfCatan.Common.Globals;
 using static DefendersOfCatan.Common.Constants;
+using DefendersOfCatan.DAL.DataModels.Items;
+using DefendersOfCatan.BusinessLogic.Repository;
 
 namespace DefendersOfCatan.BusinessLogic
 {
+    
     public class GameInitializer
     {
+        private ItemRepository itemRepo = new ItemRepository();
+
         public List<Tile> InitializeTiles()
         {
             var tiles = new List<Tile>();
@@ -71,6 +76,25 @@ namespace DefendersOfCatan.BusinessLogic
             }
 
             return enemies;
+        }
+
+        public void InitializeItems()
+        {
+            var items = new List<Item>();
+
+            var resourceCost = new ResourceCost { ResourceType = 0, Qty = 2 };
+            var itemCost = new List<ResourceCost>();
+            itemCost.Add(resourceCost);
+            var item = new Item { ItemType = 0, ItemName = "Item1", ItemCost = itemCost };
+            items.Add(item);
+
+            resourceCost = new ResourceCost { ResourceType = 1, Qty = 2 };
+            itemCost = new List<ResourceCost>();
+            itemCost.Add(resourceCost);
+            item = new Item { ItemType = 1, ItemName = "Item2", ItemCost = itemCost };
+            items.Add(item);
+
+            itemRepo.AddItems(items);          
         }
 
         private List<PlayerResource> InitializePlayerResources()

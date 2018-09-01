@@ -172,9 +172,11 @@
     <Compile Include="BusinessLogic\EnemyLogic.cs" />
     <Compile Include="BusinessLogic\GameInitializer.cs" />
     <Compile Include="BusinessLogic\GameStateLogic.cs" />
+    <Compile Include="BusinessLogic\ItemLogic.cs" />
     <Compile Include="BusinessLogic\PlayerLogic.cs" />
     <Compile Include="BusinessLogic\Repository\BaseRepository.cs" />
     <Compile Include="BusinessLogic\Repository\EnemyRepository.cs" />
+    <Compile Include="BusinessLogic\Repository\ItemRepository.cs" />
     <Compile Include="BusinessLogic\Repository\PlayerRepository.cs" />
     <Compile Include="BusinessLogic\Repository\TileRepository.cs" />
     <Compile Include="BusinessLogic\TileLogic.cs" />
@@ -196,7 +198,6 @@
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="DAL\DataModels\Items\Item.cs" />
     <Compile Include="DAL\DataModels\Items\ResourceCost.cs" />
-    <Compile Include="DAL\DataModels\Items\Items.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="DAL\DataModels\Player.cs" />
     <Compile Include="DAL\DataModels\PlayerResource.cs" />
