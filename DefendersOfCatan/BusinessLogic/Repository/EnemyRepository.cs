@@ -46,5 +46,11 @@ namespace DefendersOfCatan.BusinessLogic.Repository
             enemy.BarbarianIndex = barbarianIndex;
             db.SaveChanges();
         }
+
+        public void RemoveEnemy(Enemy enemy)
+        {
+            enemy.IsRemoved = true;
+            db.SaveChanges();
+        }
     }
 }

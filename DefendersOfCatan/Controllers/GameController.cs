@@ -92,7 +92,7 @@ namespace DefendersOfCatan.Controllers
 
                         if (neighborTiles.Contains(enemyTile))
                         {
-                            RemoveEnemy(enemy, enemyTile);
+                            enemyLogic.RemoveEnemy(enemy, enemyTile);
                         }
                         else
                         {
@@ -119,14 +119,13 @@ namespace DefendersOfCatan.Controllers
         }
 
         [HttpGet]
-        public JsonResult GetNeighbors(int tileId)
+        public JsonResult GetCurrentPlayerNeighbors()
         {
             var result = new ItemModel<List<int>> { Item = new List<int>() };
-            var tile = db.Tiles.Where(t => t.Id == tileId).Single();
 
             try
             {
-                var neighboringTiles = tileLogic.GetNeighborTiles(tile);
+                var neighboringTiles = tileLogic.GetNeighborTiles(tileLogic.GetCurrentPlayerTile());
                 foreach (var neighboringTile in neighboringTiles)
                 {
                     result.Item.Add(neighboringTile.Id);
@@ -309,16 +308,6 @@ namespace DefendersOfCatan.Controllers
         //    }
 
         //}
-
-
-        public void RemoveEnemy(Enemy enemy, Tile tile)
-        {
-            enemy.IsRemoved = true;
-
-            // Check if player is no longer overrun
-            var player = db.Players.Where(p => (int)p.Color == (int)tile.Type).Single(); // get the player color of the tile
-            player.IsOverrun = playerLogic.CheckIfPlayerIsOverrun(player);
-        }
 
         [HttpPost]
         public JsonResult UpdatePlayerHealth(PlayerHealthTransfer data)

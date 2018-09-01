@@ -33,7 +33,7 @@ Enemy.prototype.rollOver = function () {
 }
 
 Enemy.prototype.onEnemyCardMouseUp = function (enemyCard) {
-    var selectedEnemyTransfer = { "enemyId": this.id, "playerId": currentPlayer.id };
+    var selectedEnemyTransfer = { "enemyId": this.id };
     postJSON('/Game/ExecuteEnemyClickedActions', "{data:" + JSON.stringify(selectedEnemyTransfer) + "}", executePostEnemyClickEvents, error);
 
     // todo: code below is being moved to the server... pick up here 

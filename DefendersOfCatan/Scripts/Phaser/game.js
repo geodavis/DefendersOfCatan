@@ -81,6 +81,7 @@ GameStates.Game.prototype = {
 
     create: function () {
         game.stage.backgroundColor = "#ffffff"
+        
         var style = { font: "bold 32px Arial", fill: "#fff", boundsAlignH: "center", boundsAlignV: "middle" };
         textPhase = game.add.text(16, 16, 'Phase:', { fontSize: '32px', fill: '#FF9E2C' });
         //vm = new AppViewModel();
@@ -111,6 +112,14 @@ GameStates.Game.prototype = {
     },
 };
 
+//function markHoveredTile() {
+//    var tilePos = findHexTile();
+//    var tile = hexGrid.getByName("tile" + tilePos.x + "_" + tilePos.y);
+//    if (tile != null) {
+//        tile.alpha = 0.5;
+//    }
+//}
+
 function startNextGameState(d) {
     var gameState = d.Item;
     this.game.state.start(gameState, false, false);
@@ -140,6 +149,8 @@ function initializeBoard(d) {
     while (d.Item.length) tiles.push(d.Item.splice(0, 8)); // convert to 2-d as serialization converted to 1-d
 
     hexGrid = game.add.group();
+    hexGrid.inputEnableChildren = true;
+    //hexGrid.onChildInputOver.add(markHoveredTile, this);
     var hexCount = 0;
 
     //game.input.onTap.add(onTap);
@@ -432,6 +443,8 @@ function checkForEndGameState() {
     });
 
 }
+
+
 
     /**
     * @description Will tween a display object between two hex values

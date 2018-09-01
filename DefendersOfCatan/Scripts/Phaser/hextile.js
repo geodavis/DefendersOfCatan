@@ -17,8 +17,8 @@ HexTile = function (game, x, y, tileImage, isVertical, i, j, type, id) {
     this.name = "tile" + i + "_" + j;
     this.id = id;
     this.type = type;
-    this.i = i;
-    this.j = j;
+    //this.i = i;
+    //this.j = j;
     this.scale.setTo(.15, .15);
 
     if (isVertical) {
@@ -43,13 +43,25 @@ HexTile.prototype.constructor = HexTile;
 HexTile.prototype.rollOut = function () {
     //this.scale.x = 1;
     //this.scale.y = 1;
-    this.scale.setTo(.15, .15);
+    //this.scale.setTo(.15, .15);
+
+    /*var tilePos = findHexTile();
+    var tile = hexGrid.getByName("tile" + tilePos.x + "_" + tilePos.y);
+    if (tile != null) {
+        tile.alpha = 1;
+    }*/
 }
 
 HexTile.prototype.rollOver = function () {
     //this.scale.x = 0.9;
     //this.scale.y = 0.9;
-    this.scale.setTo(.14, .14);
+    //this.scale.setTo(.14, .14);
+
+    //var tilePos = findHexTile();
+    //var tile = hexGrid.getByName("tile" + tilePos.x + "_" + tilePos.y);
+    //if (tile != null) {
+    //    tile.alpha = 0.5;
+    //}
 }
 
 HexTile.prototype.reveal = function () {
@@ -90,7 +102,7 @@ function getNextOverrunTile(tile, tileNumber, tileCount) {
         var tile = hexGrid.getByName("tile" + neighbors[i].x + "_" + neighbors[i].y);
 
         if (($.inArray(tileNumber, splitOverrunData) != -1) && !tile.isEnemyTile()) { // if is enemy tile, do not consider that neighbor tile
-            if (!tile.isOverrun) { 
+            if (!tile.isOverrun) {
                 return tile;
             }
             else { // tile is overrun
@@ -125,7 +137,7 @@ HexTile.prototype.hasEnemyCard = function () {
 }
 
 function getResourceTypeBasedOnTileImage(tileImage) {
-    switch(tileImage) {
+    switch (tileImage) {
         case "hexagonrednoise":
             return ResourcesEnum.brick;
             break;
@@ -147,7 +159,11 @@ function getResourceTypeBasedOnTileImage(tileImage) {
 }
 
 HexTile.prototype.onTap = function () {
-    var clickedTileTransfer = { "clickedTileId": this.id };
+    //alert(this.id);
+    var tile = findHexTile();
+    var clickedTile = hexGrid.getByName("tile" + tile.x + "_" + tile.y);
+    var clickedTileTransfer = { "clickedTileId": clickedTile.id };
+
     postJSON('/Game/ExecuteTileClickedActions', "{data:" + JSON.stringify(clickedTileTransfer) + "}", executePostTileClickEvents, error);
 }
 

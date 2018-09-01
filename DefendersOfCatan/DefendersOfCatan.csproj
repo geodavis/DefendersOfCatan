@@ -225,6 +225,7 @@
     <Content Include="Content\Assets\EnemyCardB2.png" />
     <Content Include="Content\Assets\hexagon.png" />
     <Content Include="Content\Assets\HexagonOverrun.png" />
+    <Content Include="Content\Assets\HexagonRedMovable.png" />
     <Content Include="Content\Assets\marker.png" />
     <Content Include="Content\Assets\phaser2.png" />
     <Content Include="Content\Assets\PlayerBlue.png" />

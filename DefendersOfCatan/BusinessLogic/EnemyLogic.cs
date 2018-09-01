@@ -1,4 +1,5 @@
 ﻿using DefendersOfCatan.BusinessLogic.Repository;
+using DefendersOfCatan.Common;
 using DefendersOfCatan.DAL.DataModels;
 using DefendersOfCatan.Transfer;
 using System;
@@ -85,7 +86,17 @@ namespace DefendersOfCatan.BusinessLogic
                 return false;
             }
         }
+
+        public void RemoveEnemy(Enemy enemy, Tile tile)
+        {
+            enemyRepo.RemoveEnemy(enemy);
+
+            // Check if player is no longer overrun
+            var player = playerRepo.GetPlayerBasedOnColor((Enums.PlayerColor)tile.Type); // get the player color of the tile
+            if (playerLogic.CheckIfPlayerIsOverrun(player))
+            {
+                playerRepo.SetPlayerOverrun(player, true);
+            }
+        }
     }
-
-
 }

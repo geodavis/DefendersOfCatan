@@ -32,7 +32,7 @@ namespace DefendersOfCatan.BusinessLogic
 
             if (neighborTiles.Any(t => t.Id == selectedTile.Id) || selectedTile.Id == currentPlayerTile.Id)
             {
-                selectedTile.Players.Add(GetCurrentPlayer());
+                tileRepo.UpdateCurrentPlayerTile(selectedTile);
                 return true;
             }
             else

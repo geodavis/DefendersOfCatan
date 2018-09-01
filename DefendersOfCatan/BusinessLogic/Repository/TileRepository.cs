@@ -31,9 +31,10 @@ namespace DefendersOfCatan.BusinessLogic.Repository
             db.SaveChanges();
         }
 
-        public void UpdateTile(Tile tile)
+        public void UpdateCurrentPlayerTile(Tile tile)
         {
-
+            tile.Players.Add(GetCurrentPlayerBase()); // (For future reference) Passing player to this method causes issues with EF. It creates a new record, rather than updating an existing record. This is caused by passing by reference.
+            db.SaveChanges();
         }
     }
 }

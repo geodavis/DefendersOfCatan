@@ -24,6 +24,7 @@ GameStates.Preloader.prototype = {
         this.load.image('hexagonrednoise', '../../Content/Assets/hexagonrednoise.png');
         this.load.image('hexagonredwaves', '../../Content/Assets/hexagonredwaves.png');
         this.load.image('hexagonrednoisewaves', '../../Content/Assets/hexagonrednoisewaves.png');
+        this.load.image('hexagonredmovable', '../../Content/Assets/hexagonredmovable.png');
 
         this.load.image('hexagonyellow', '../../Content/Assets/hexagonyellow.png');
         this.load.image('hexagonyellownoise', '../../Content/Assets/hexagonyellownoise.png');
