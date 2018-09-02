@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using static DefendersOfCatan.Common.Enums;
 
 namespace DefendersOfCatan.BusinessLogic.Repository
 {
@@ -21,7 +22,7 @@ namespace DefendersOfCatan.BusinessLogic.Repository
             return GetCurrentPlayerBase();
         }
 
-        public Player GetPlayerBasedOnColor(Enums.PlayerColor playerColor)
+        public Player GetPlayerBasedOnColor(PlayerColor playerColor)
         {
             return GetGame().Players.Where(p => (int)p.Color == (int)playerColor).Single();
         }
@@ -32,7 +33,7 @@ namespace DefendersOfCatan.BusinessLogic.Repository
             db.SaveChanges();
         }
 
-        public bool GetPlayerOverrunBasedOnPlayerColor(Enums.PlayerColor playerColor)
+        public bool GetPlayerOverrunBasedOnPlayerColor(PlayerColor playerColor)
         {
             var playerToCheck = GetPlayerBasedOnColor(playerColor);
             if (playerToCheck.IsOverrun)
@@ -43,6 +44,28 @@ namespace DefendersOfCatan.BusinessLogic.Repository
             {
                 return false;
             }
+        }
+
+        public void AddResourceToCurrentPlayer(ResourceType resourceType)
+        {
+            var currentPlayer = GetCurrentPlayer();
+            var playerResource = currentPlayer.PlayerResources.Where(r => r.ResourceType == resourceType).Single();
+            playerResource.Qty += 1;
+            db.SaveChanges();
+        }
+
+        public void RemoveResourceFromCurrentPlayer(ResourceType resourceType, int qty)
+        {
+            var playerResource = GetCurrentPlayer().PlayerResources.Where(r => r.ResourceType == resourceType).Single();
+            playerResource.Qty -= qty;
+            db.SaveChanges();
+        }
+
+        public void AddItemToCurrentPlayer(ItemType itemType)
+        {
+            var playerItem = GetCurrentPlayer().PlayerItems.Where(i => i.ItemType == itemType).Single();
+            playerItem.Qty += 1;
+            db.SaveChanges();
         }
     }
 }

@@ -173,7 +173,7 @@ namespace DefendersOfCatan.Controllers
                     case GameState.PlayerResourceOrFight:
                         var resourceType = selectedTile.ResourceType;
                         result.Item.ResourceType = (int)resourceType;
-                        //AddResourceToPlayer(currentPlayer, resourceType);
+                        playerLogic.AddResourceToPlayer(resourceType);
                         break;
                     default:
                         Console.WriteLine("Error getting game state!");
@@ -259,28 +259,22 @@ namespace DefendersOfCatan.Controllers
                 result.Error = e.Message;
                 return ReturnJsonResult(result);
             }
-
         }
 
         [HttpGet]
-        public JsonResult PurchaseItem(int itemType)
+        public JsonResult PurchaseItem(ItemType itemType)
         {
-            var result = new ItemModel<Item> { Item = new Item() };
+            //var result = new ItemModel<Item> { Item = new Item() };
+            var result = new ItemModel<int>();
+            result.Item = (int)itemType;
+
             try
             {
-                // First check if player can purchase the item
-                
-                //var resourceCost = new ResourceCost { ResourceType = 0, Qty = 2 };
-                //var itemCost = new List<ResourceCost>();
-                //itemCost.Add(resourceCost);
-                //var item = new Item { ItemType = 0, ItemName = "Item1", ItemCost = itemCost };
-                //result.Item.GameItems.Add(item);
-
-                //resourceCost = new ResourceCost { ResourceType = 1, Qty = 2 };
-                //itemCost = new List<ResourceCost>();
-                //itemCost.Add(resourceCost);
-                //item = new Item { ItemType = 1, ItemName = "Item2", ItemCost = itemCost };
-                //result.Item.GameItems.Add(item);
+                if (!playerLogic.PurchaseItem(itemType))
+                {
+                    result.HasError = true;
+                    result.Error = "Cannot purchase this item.";
+                }
 
                 return ReturnJsonResult(result);
             }
@@ -400,12 +394,6 @@ namespace DefendersOfCatan.Controllers
                 return ReturnJsonResult(result);
             }
 
-        }
-
-        private void AddResourceToPlayer(Player player, ResourceType resourceType)
-        {
-            var playerResources = db.PlayerResources.Where(r => r.Player.Id == player.Id && (int)r.ResourceType == (int)resourceType).Single();
-            playerResources.Qty += 1;
         }
 
         [HttpGet]

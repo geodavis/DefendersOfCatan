@@ -19,7 +19,7 @@ HexTile = function (game, x, y, tileImage, isVertical, i, j, type, id) {
     this.type = type;
     //this.i = i;
     //this.j = j;
-    this.scale.setTo(.15, .15);
+    this.scale.setTo(1.5, 1.5);
 
     if (isVertical) {
         this.rotation = Math.PI / 2;

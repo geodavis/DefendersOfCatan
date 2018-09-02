@@ -5,6 +5,8 @@ using System.Web;
 using DefendersOfCatan.DAL.DataModels;
 using DefendersOfCatan.DAL;
 using DefendersOfCatan.BusinessLogic.Repository;
+using static DefendersOfCatan.Common.Enums;
+using DefendersOfCatan.DAL.DataModels.Items;
 
 namespace DefendersOfCatan.BusinessLogic
 {
@@ -12,6 +14,7 @@ namespace DefendersOfCatan.BusinessLogic
     {
         private PlayerRepository playerRepo = new PlayerRepository();
         private TileRepository tileRepo = new TileRepository();
+        private ItemRepository itemRepo = new ItemRepository();
         private TileLogic tileLogic = new TileLogic();
 
         public List<Player> GetPlayers()
@@ -41,6 +44,11 @@ namespace DefendersOfCatan.BusinessLogic
             }
         }
 
+        public void AddResourceToPlayer(ResourceType resourceType)
+        {
+            playerRepo.AddResourceToCurrentPlayer(resourceType);
+        }
+
         public bool CheckIfPlayerIsOverrun(Player player)
         {
             var isOverrun = false;
@@ -62,5 +70,62 @@ namespace DefendersOfCatan.BusinessLogic
 
             return isOverrun;
         }
+
+        public bool PurchaseItem(ItemType itemType)
+        {
+            var itemCost = itemRepo.GetItemByType(itemType).ItemCost;
+            var currentPlayer = GetCurrentPlayer();
+            var playerResources = currentPlayer.PlayerResources;
+
+            if (PlayerCanPurchaseItem(itemCost, playerResources))
+            {
+                // Take resources
+                foreach (var cost in itemCost)
+                {
+                    playerRepo.RemoveResourceFromCurrentPlayer((ResourceType)cost.ResourceType, cost.Qty);
+                }
+
+                // Save item to player
+                playerRepo.AddItemToCurrentPlayer(itemType);
+
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        private bool PlayerCanPurchaseItem(List<ResourceCost> itemCost, List<PlayerResource> playerResources)
+        {
+            var playerCanPurchase = false;
+
+            foreach (var cost in itemCost)
+            {
+                var requiredResourceType = cost.ResourceType;
+                var requiredQty = cost.Qty;
+
+                foreach (var resource in playerResources)
+                {
+                    var playerOwnedResourceType = resource.ResourceType;
+                    var playerOwnedResourceQty = resource.Qty;
+
+                    if (requiredResourceType == (int)playerOwnedResourceType)
+                    {
+                        if (playerOwnedResourceQty >= requiredQty)
+                        {
+                            playerCanPurchase = true;
+                        }
+                        else
+                        {
+                            playerCanPurchase = false;
+                        }
+                    }
+                }
+            }
+
+            return playerCanPurchase;
+        }
+
     }
 }

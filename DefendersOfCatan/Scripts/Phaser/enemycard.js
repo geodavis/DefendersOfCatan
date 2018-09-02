@@ -29,7 +29,7 @@ GameStates.EnemyCard.prototype = {
 };
 
 GameStates.EnemyCard.prototype.placeCard = function (enemy, tile) {
-    enemy.scale.setTo(1, 1);
+    //enemy.scale.setTo(1, 1);
     enemy.setAngle(tile.type);
     enemy.currentHexName = tile.name;
     tile.addChild(enemy);

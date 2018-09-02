@@ -76,32 +76,18 @@
     };
 
     self.purchaseItem = function (item) {
-        getJSONSync('/Game/PurchaseItem?itemType=' + item.itemType, updatePlayerItems, error); // URL, Success Function, Error Function
+        getJSONSync('/Game/PurchaseItem?itemType=' + item.itemType, self.updatePlayerItems, error); // URL, Success Function, Error Function
     };
 
     self.updatePlayerItems = function (d) {
-
-        var itemType = item.itemType;
-        var itemCost = item.itemCost;
-
-        // Take item cost resources away from player
-        //var cost = items.getItemCost(this.itemType);
-        //$.each(cost, function () { // loop each item cost resource
-        //    var requiredResourceType = this.ResourceType;
-        //    var requiredQty = this.Qty;
-
-        //    $.each(currentPlayer.resources(), function () { // check resource type and quantity is available for player
-        //        var playerOwnedResourceType = this.resourceType;
-        //        var playerOwnedResourceQty = this.resourceCount();
-        //        if (requiredResourceType == playerOwnedResourceType) { // If we need to consider this resource type
-        //            this.ResourceCount(this.ResourceCount() - requiredQty);
-        //        }
-        //    });
-        //});
-
-        // Add item to player inventory
-
-        alert('Test');
+        if (!d.HasError) {
+            // Add item to player inventory
+            currentPlayer.addItemToPlayer(d.Item);
+            // Decrement resources based on cost
+        }
+        else {
+            alert(d.Error);
+        }
     }
 
     self.setPurchasableItem = function () {

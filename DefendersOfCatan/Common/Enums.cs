@@ -34,6 +34,11 @@ namespace DefendersOfCatan.Common
             Wool,
             NoResource
         }
+        public enum ItemType
+        {
+            Item1,
+            Item2,
+        }
         public enum GameState
         {
             Initialization,
@@ -43,5 +48,6 @@ namespace DefendersOfCatan.Common
             PlayerMove,
             PlayerResourceOrFight
         }
+
     }
 }

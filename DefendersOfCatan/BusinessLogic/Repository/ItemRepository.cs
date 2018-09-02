@@ -3,16 +3,16 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using static DefendersOfCatan.Common.Enums;
 
 namespace DefendersOfCatan.BusinessLogic.Repository
 {
     public class ItemRepository : BaseRepository
     {
-        public Item GetItemByType(int type)
+        public Item GetItemByType(ItemType type)
         {
             var items = db.Items;
-
-            return new Item();// db.Items.Where(i => i.GameItems.Where(i => i.ItemType == type));
+            return db.Items.Where(i => i.ItemType == type).Single();
         }
 
         public void AddItems(List<Item> items)
