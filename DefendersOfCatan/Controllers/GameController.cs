@@ -264,7 +264,6 @@ namespace DefendersOfCatan.Controllers
         [HttpGet]
         public JsonResult PurchaseItem(ItemType itemType)
         {
-            //var result = new ItemModel<Item> { Item = new Item() };
             var result = new ItemModel<int>();
             result.Item = (int)itemType;
 

@@ -76,14 +76,30 @@
     };
 
     self.purchaseItem = function (item) {
-        getJSONSync('/Game/PurchaseItem?itemType=' + item.itemType, self.updatePlayerItems, error); // URL, Success Function, Error Function
+        getJSONSync('/Game/PurchaseItem?itemType=' + item.itemType, self.placeOrUpdatePlayerItems, error); // URL, Success Function, Error Function
     };
 
-    self.updatePlayerItems = function (d) {
+    self.placeOrUpdatePlayerItems = function (d) {
         if (!d.HasError) {
-            // Add item to player inventory
-            currentPlayer.addItemToPlayer(d.Item);
-            // Decrement resources based on cost
+            var itemType = d.Item
+
+            // Remove appropriate resources from player UI
+            // ToDo:
+
+            if (itemType == 5) { // This is an item card- add item to player inventory
+                
+                currentPlayer.addItemToPlayer(d.Item);
+            }
+            else // Prompt user to place immediately
+            {
+                // Highlight placeable tiles
+                // When the user clicks the tile, place the item
+                // ToDo: add purchase item game phase, add place item game phase
+            }
+
+
+            
+
         }
         else {
             alert(d.Error);

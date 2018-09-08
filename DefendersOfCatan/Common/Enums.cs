@@ -36,8 +36,19 @@ namespace DefendersOfCatan.Common
         }
         public enum ItemType
         {
-            Item1,
-            Item2,
+            Road,
+            Settlement,
+            City,
+            Walls,
+            ItemCard
+        }
+
+        public enum CardType
+        {
+            a,
+            b,
+            c,
+            d
         }
         public enum GameState
         {

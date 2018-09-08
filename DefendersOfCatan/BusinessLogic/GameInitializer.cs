@@ -48,10 +48,10 @@ namespace DefendersOfCatan.BusinessLogic
         {
             var players = new List<Player>
             {
-            new Player { Name = "GeoffR", Color = PlayerColor.Red, IsOverrun = false, Health = 5, PlayerResources = InitializePlayerResources(), PlayerItems = InitializePlayerItems() },
-            new Player { Name = "GeoffB", Color = PlayerColor.Blue, IsOverrun = false, Health = 5, PlayerResources = InitializePlayerResources(), PlayerItems = InitializePlayerItems() },
-            new Player { Name = "GeoffY", Color = PlayerColor.Yellow, IsOverrun = false, Health = 5, PlayerResources = InitializePlayerResources(), PlayerItems = InitializePlayerItems() },
-            new Player { Name = "GeoffG", Color = PlayerColor.Green, IsOverrun = false, Health = 5, PlayerResources = InitializePlayerResources(), PlayerItems = InitializePlayerItems() }
+                new Player { Name = "GeoffR", Color = PlayerColor.Red, IsOverrun = false, Health = 5, PlayerResources = InitializePlayerResources(), PlayerItems = InitializePlayerItems() },
+                new Player { Name = "GeoffB", Color = PlayerColor.Blue, IsOverrun = false, Health = 5, PlayerResources = InitializePlayerResources(), PlayerItems = InitializePlayerItems() },
+                new Player { Name = "GeoffY", Color = PlayerColor.Yellow, IsOverrun = false, Health = 5, PlayerResources = InitializePlayerResources(), PlayerItems = InitializePlayerItems() },
+                new Player { Name = "GeoffG", Color = PlayerColor.Green, IsOverrun = false, Health = 5, PlayerResources = InitializePlayerResources(), PlayerItems = InitializePlayerItems() }
             };
 
             foreach (var player in players)
@@ -85,13 +85,31 @@ namespace DefendersOfCatan.BusinessLogic
             var resourceCost = new ResourceCost { ResourceType = 0, Qty = 1 };
             var itemCost = new List<ResourceCost>();
             itemCost.Add(resourceCost);
-            var item = new Item { ItemType = ItemType.Item1, ItemName = "Item1", ItemCost = itemCost };
+            var item = new Item { ItemType = ItemType.Road, ItemName = "Item1", ItemCost = itemCost };
             items.Add(item);
 
             resourceCost = new ResourceCost { ResourceType = 1, Qty = 1 };
             itemCost = new List<ResourceCost>();
             itemCost.Add(resourceCost);
-            item = new Item { ItemType = ItemType.Item2, ItemName = "Item2", ItemCost = itemCost };
+            item = new Item { ItemType = ItemType.Settlement, ItemName = "Item2", ItemCost = itemCost };
+            items.Add(item);
+
+            resourceCost = new ResourceCost { ResourceType = 1, Qty = 1 };
+            itemCost = new List<ResourceCost>();
+            itemCost.Add(resourceCost);
+            item = new Item { ItemType = ItemType.City, ItemName = "Item2", ItemCost = itemCost };
+            items.Add(item);
+
+            resourceCost = new ResourceCost { ResourceType = 1, Qty = 1 };
+            itemCost = new List<ResourceCost>();
+            itemCost.Add(resourceCost);
+            item = new Item { ItemType = ItemType.Walls, ItemName = "Item2", ItemCost = itemCost };
+            items.Add(item);
+
+            resourceCost = new ResourceCost { ResourceType = 1, Qty = 1 };
+            itemCost = new List<ResourceCost>();
+            itemCost.Add(resourceCost);
+            item = new Item { ItemType = ItemType.ItemCard, ItemName = "Item2", ItemCost = itemCost };
             items.Add(item);
 
             itemRepo.AddItems(items);          

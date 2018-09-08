@@ -13,7 +13,7 @@
     this.input.useHandCursor = true;
     this.events.onInputOut.add(this.rollOut, this);
     this.events.onInputOver.add(this.rollOver, this);
-    //this.scale.setTo(5, 5);
+    this.scale.setTo(.75, .75);
     this.resources = ko.observableArray([new PlayerResource(ResourcesEnum.brick, 0),
                       new PlayerResource(ResourcesEnum.grain, 0),
                       new PlayerResource(ResourcesEnum.ore, 0),
@@ -21,7 +21,9 @@
                       new PlayerResource(ResourcesEnum.wool, 0)]);
     this.items = ko.observableArray([
                     new PlayerItem(items.items()[0].itemType, 0),
-                    new PlayerItem(items.items()[1].itemType, 0)
+                    new PlayerItem(items.items()[1].itemType, 0),
+                    new PlayerItem(items.items()[2].itemType, 0),
+                    new PlayerItem(items.items()[3].itemType, 0)
                   ]);
 
     this.addResourceToPlayer = function (resourceType) {

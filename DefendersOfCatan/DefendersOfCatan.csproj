@@ -219,6 +219,8 @@
     <Content Include="Content\Assets\app.css" />
     <Content Include="Content\Assets\Background.png" />
     <Content Include="Content\Assets\Barbarian.png" />
+    <Content Include="Content\Assets\brick.png" />
+    <Content Include="Content\Assets\brick1.png" />
     <Content Include="Content\Assets\clay.png" />
     <Content Include="Content\Assets\clayHex.gif" />
     <Content Include="Content\Assets\close.png" />
@@ -229,12 +231,14 @@
     <Content Include="Content\Assets\EnemyCardB0.png" />
     <Content Include="Content\Assets\EnemyCardB1.png" />
     <Content Include="Content\Assets\EnemyCardB2.png" />
+    <Content Include="Content\Assets\grain.png" />
     <Content Include="Content\Assets\grains.png" />
     <Content Include="Content\Assets\grass.png" />
     <Content Include="Content\Assets\hexagon.png" />
     <Content Include="Content\Assets\HexagonOverrun.png" />
     <Content Include="Content\Assets\HexagonRedMovable.png" />
     <Content Include="Content\Assets\marker.png" />
+    <Content Include="Content\Assets\ore.png" />
     <Content Include="Content\Assets\oreHex.gif" />
     <Content Include="Content\Assets\phaser2.png" />
     <Content Include="Content\Assets\PlayerBlue.png" />
@@ -275,7 +279,9 @@
     <Content Include="Content\Assets\HexagonYellowNoiseWaves.png" />
     <Content Include="Content\Assets\HexagonYellowWaves.png" />
     <Content Include="Content\Assets\wheatHex.gif" />
+    <Content Include="Content\Assets\wood.png" />
     <Content Include="Content\Assets\woodHex.gif" />
+    <Content Include="Content\Assets\wool.png" />
     <Content Include="Content\bootstrap-grid.css" />
     <Content Include="Content\bootstrap-grid.min.css" />
     <Content Include="Content\bootstrap-reboot.css" />

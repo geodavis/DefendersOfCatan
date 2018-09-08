@@ -4,19 +4,19 @@
     this.resourceCount = ko.observable(qty);
     switch (resourceType) {
         case ResourcesEnum.brick:
-            this.imagePath = '../../Content/Assets/hexagonred.png'
+            this.imagePath = '../../Content/Assets/brick.png'
             break;
         case ResourcesEnum.grain:
-            this.imagePath = '../../Content/Assets/hexagonyellow.png'
+            this.imagePath = '../../Content/Assets/grain.png'
             break;
         case ResourcesEnum.ore:
-            this.imagePath = '../../Content/Assets/hexagongray.png'
+            this.imagePath = '../../Content/Assets/ore.png'
             break;
         case ResourcesEnum.wood:
-            this.imagePath = '../../Content/Assets/hexagonbrown.png'
+            this.imagePath = '../../Content/Assets/wood.png'
             break;
         case ResourcesEnum.wool:
-            this.imagePath = '../../Content/Assets/hexagongreen.png'
+            this.imagePath = '../../Content/Assets/wool.png'
             break;
         default:
 
