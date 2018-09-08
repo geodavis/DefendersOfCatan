@@ -11,6 +11,7 @@ window.onload = function () {
     game.state.add('WorldGenerator', GameStates.WorldGenerator);
     game.state.add('MainMenu', GameStates.MainMenu);
     game.state.add('Game', GameStates.Game);
+    game.state.add('PlayerPurchase', GameStates.PlayerPurchase);
     game.state.add('PlayerMove', GameStates.PlayerMove);
     game.state.add('PlayerResourceOrFight', GameStates.PlayerResourceOrFight);
 

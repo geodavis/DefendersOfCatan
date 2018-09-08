@@ -342,6 +342,7 @@
     <Content Include="Scripts\Phaser\barbarian.js" />
     <Content Include="Scripts\Phaser\enemymove.js" />
     <Content Include="Scripts\Phaser\item.js" />
+    <Content Include="Scripts\Phaser\playerpurchase.js" />
     <Content Include="Scripts\Phaser\player_res_or_fight.js" />
     <Content Include="Scripts\Phaser\enemyoverrun.js" />
     <Content Include="Scripts\Knockout\KOModels\players_vm.js" />

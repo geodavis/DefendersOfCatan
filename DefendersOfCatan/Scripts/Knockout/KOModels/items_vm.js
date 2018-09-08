@@ -1,6 +1,8 @@
 ﻿items_vm = function (game, items) {
     var self = this;
     self.items = ko.observableArray();
+    self.purchasePhase = ko.observable(false);
+
 
     self.item = function () {
         var self = this;
@@ -73,6 +75,10 @@
         });
 
         return itemCost;
+    };
+
+    self.declinePurchase = function () {
+        getJSONSync('/Game/GetNextGameState', startNextGameState, error); // URL, Success Function, Error Function
     };
 
     self.purchaseItem = function (item) {
