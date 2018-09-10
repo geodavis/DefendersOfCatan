@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
-namespace DefendersOfCatan.DAL.DataModels.Items
+namespace DefendersOfCatan.DAL.DataModels
 {
     public class ResourceCost
     {

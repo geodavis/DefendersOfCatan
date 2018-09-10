@@ -1,21 +1,21 @@
-﻿items_vm = function (game, items) {
+﻿developments_vm = function (game, developments) {
     var self = this;
-    self.items = ko.observableArray();
+    self.developments = ko.observableArray();
     self.purchasePhase = ko.observable(false);
 
 
-    self.item = function () {
+    self.development = function () {
         var self = this;
-        self.itemType = '';
+        self.developmentType = '';
         self.imagePath = '';
-        self.itemName = '';
+        self.developmentName = '';
         self.resourceCostPaths = [];
         self.currentPlayerCanPurchase = ko.observable(false);
     };
 
-    self.getImagePath = function (itemType) {
+    self.getImagePath = function (developmentType) {
         var path = '';
-        switch (itemType) {
+        switch (developmentType) {
             case ItemsEnum.Item1:
                 path = '../../Content/Assets/hexagonred.png'
                 break;
@@ -37,9 +37,9 @@
         return path;
     };
 
-    self.getResourceCostArray = function (itemCost) {
+    self.getResourceCostArray = function (developmentCost) {
         var costArray = [];
-        $.each(itemCost, function () {
+        $.each(developmentCost, function () {
             for (i = 0; i < this.Qty; i++) {
                 switch (this.ResourceType) {
                     case ResourcesEnum.brick:
@@ -66,35 +66,35 @@
         return costArray;
     };
 
-    self.getItemCost = function (itemType) {
-        var itemCost;
-        $.each(this.items(), function () {
-            if (this.itemType == itemType) {
-                itemCost = this.itemCost;
-            }
-        });
+    //self.getItemCost = function (itemType) {
+    //    var itemCost;
+    //    $.each(this.items(), function () {
+    //        if (this.itemType == itemType) {
+    //            itemCost = this.itemCost;
+    //        }
+    //    });
 
-        return itemCost;
-    };
+    //    return itemCost;
+    //};
 
     self.declinePurchase = function () {
         getJSONSync('/Game/GetNextGameState', startNextGameState, error); // URL, Success Function, Error Function
     };
 
-    self.purchaseItem = function (item) {
-        getJSONSync('/Game/PurchaseItem?itemType=' + item.itemType, self.placeOrUpdatePlayerItems, error); // URL, Success Function, Error Function
+    self.purchaseDevelopment = function (development) {
+        getJSONSync('/Game/PurchaseDevelopment?developmentType=' + development.developmentType, self.placeOrUpdatePlayerDevelopments, error); // URL, Success Function, Error Function
     };
 
-    self.placeOrUpdatePlayerItems = function (d) {
+    self.placeOrUpdatePlayerDevelopments = function (d) {
         if (!d.HasError) {
-            var itemType = d.Item
+            var developmentType = d.Item
 
             // Remove appropriate resources from player UI
             // ToDo:
 
-            if (itemType == 5) { // This is an item card- add item to player inventory
+            if (developmentType == 5) { // This is an item card- add item to player inventory
                 
-                currentPlayer.addItemToPlayer(d.Item);
+                currentPlayer.addDevelopmentToPlayer(d.Item);
             }
             else // Prompt user to place immediately
             {
@@ -112,19 +112,19 @@
         }
     }
 
-    self.setPurchasableItem = function () {
+    self.setPurchasableDevelopment = function () {
 
     }
 
-    // Set item array here
-    $.each(items, function (index, value) {
-        var item = new self.item();
-        item.itemType = this.ItemType;
-        item.itemName = this.ItemName;
-        item.imagePath = self.getImagePath(this.ItemType);
-        item.itemCost = this.ItemCost;
-        item.resourceCostPaths = self.getResourceCostArray(this.ItemCost);
-        self.items.push(item);
+    // Set development array here
+    $.each(developments, function (index, value) {
+        var development = new self.development();
+        development.developmentType = this.DevelopmentType;
+        development.developmentName = this.DevelopmentTypeReadable;
+        development.imagePath = self.getImagePath(this.DevelopmentType);
+        development.developmentCost = this.DevelopmentCost;
+        development.resourceCostPaths = self.getResourceCostArray(this.DevelopmentCost);
+        self.developments.push(development);
     });
     
 };

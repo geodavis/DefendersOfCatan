@@ -61,10 +61,10 @@ namespace DefendersOfCatan.BusinessLogic.Repository
             db.SaveChanges();
         }
 
-        public void AddItemToCurrentPlayer(ItemType itemType)
+        public void AddDevelopmentToCurrentPlayer(DevelopmentType developmentType)
         {
-            var playerItem = GetCurrentPlayer().PlayerItems.Where(i => i.ItemType == itemType).Single();
-            playerItem.Qty += 1;
+            var playerDevelopment = GetCurrentPlayer().PlayerDevelopments.Where(i => i.DevelopmentType == developmentType).Single();
+            playerDevelopment.Qty += 1;
             db.SaveChanges();
         }
     }

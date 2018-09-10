@@ -12,6 +12,6 @@ namespace DefendersOfCatan.DAL.DataModels
         public bool IsOverrun { get; set; }
         public int Health { get; set; }
         public virtual List<PlayerResource> PlayerResources { get; set; }
-        public virtual List<PlayerItem> PlayerItems { get; set; }
+        public virtual List<PlayerDevelopment> PlayerDevelopments { get; set; }
     }
 }

@@ -2,10 +2,10 @@
 
 namespace DefendersOfCatan.DAL.DataModels
 {
-    public class PlayerItem
+    public class PlayerDevelopment
     {
         public int Id { get; set; }
-        public ItemType ItemType { get; set; }
+        public DevelopmentType DevelopmentType { get; set; }
         public int Qty { get; set; }
     }
 }

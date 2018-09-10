@@ -172,11 +172,11 @@
     <Compile Include="BusinessLogic\EnemyLogic.cs" />
     <Compile Include="BusinessLogic\GameInitializer.cs" />
     <Compile Include="BusinessLogic\GameStateLogic.cs" />
-    <Compile Include="BusinessLogic\ItemLogic.cs" />
+    <Compile Include="BusinessLogic\DevelopmentLogic.cs" />
     <Compile Include="BusinessLogic\PlayerLogic.cs" />
     <Compile Include="BusinessLogic\Repository\BaseRepository.cs" />
     <Compile Include="BusinessLogic\Repository\EnemyRepository.cs" />
-    <Compile Include="BusinessLogic\Repository\ItemRepository.cs" />
+    <Compile Include="BusinessLogic\Repository\DevelopmentRepository.cs" />
     <Compile Include="BusinessLogic\Repository\PlayerRepository.cs" />
     <Compile Include="BusinessLogic\Repository\TileRepository.cs" />
     <Compile Include="BusinessLogic\TileLogic.cs" />
@@ -187,7 +187,7 @@
     <Compile Include="Controllers\GameController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
-    <Compile Include="DAL\DataModels\PlayerItem.cs" />
+    <Compile Include="DAL\DataModels\PlayerDevelopment.cs" />
     <Compile Include="DAL\GameContext.cs" />
     <Compile Include="DAL\GameDBInitializer.cs" />
     <Compile Include="Global.asax.cs">
@@ -197,14 +197,15 @@
     <Compile Include="DAL\DataModels\Enemy.cs" />
     <Compile Include="DAL\DataModels\Game.cs" />
     <Compile Include="Models\IdentityModels.cs" />
-    <Compile Include="DAL\DataModels\Items\Item.cs" />
-    <Compile Include="DAL\DataModels\Items\ResourceCost.cs" />
+    <Compile Include="DAL\DataModels\Development.cs" />
+    <Compile Include="DAL\DataModels\ResourceCost.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="DAL\DataModels\Player.cs" />
     <Compile Include="DAL\DataModels\PlayerResource.cs" />
     <Compile Include="DAL\DataModels\Tile.cs" />
     <Compile Include="Transfer\BoardDataTransfer.cs" />
     <Compile Include="Transfer\ClickedTileTransfer.cs" />
+    <Compile Include="Transfer\DevelopmentTransfer.cs" />
     <Compile Include="Transfer\EnemyTileTransfer.cs" />
     <Compile Include="Transfer\ClickedEnemyTransfer.cs" />
     <Compile Include="Transfer\PlayerHealthTransfer.cs" />
@@ -332,9 +333,9 @@
     <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
     <Content Include="Scripts\Knockout\knockout-3.4.2.js" />
     <Content Include="Scripts\Knockout\KOModels\game_vm.js" />
-    <Content Include="Scripts\Knockout\KOModels\items_vm.js" />
+    <Content Include="Scripts\Knockout\KOModels\developments_vm.js" />
     <Content Include="Scripts\Knockout\KOModels\player_vm.js" />
-    <Content Include="Scripts\Models\PlayerItem.js" />
+    <Content Include="Scripts\Models\PlayerDevelopment.js" />
     <Content Include="Scripts\Models\PlayerResource.js" />
     <Content Include="Scripts\modernizr-2.6.2.js" />
     <Content Include="Scripts\Phaser\app.js" />
@@ -416,6 +417,7 @@
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Content\Assets\Tilemaps\" />
+    <Folder Include="DAL\DataModels\Items\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />

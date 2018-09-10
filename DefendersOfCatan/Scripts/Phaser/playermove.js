@@ -6,13 +6,13 @@ GameStates.PlayerMove = function (game) {
 GameStates.PlayerMove.prototype = {
     create: function () {
         textPhase.text = 'Phase: Move';
-        items.purchasePhase(false);
+        developments.purchasePhase(false);
         getJSONSync('/Game/GetCurrentPlayerNeighbors', setMovableNeighbors, error); // URL, Success Function, Error Function
 
         // Highlight new moveable tiles
         //highlightMoveableTiles();
 
-        currentPlayer.setPurchasableItems();
+        currentPlayer.setPurchasableDevelopments();
         
         // call next state
         //this.state.start('MainMenu');

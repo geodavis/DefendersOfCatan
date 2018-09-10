@@ -6,7 +6,6 @@ using DefendersOfCatan.DAL.DataModels;
 using DefendersOfCatan.DAL;
 using DefendersOfCatan.BusinessLogic.Repository;
 using static DefendersOfCatan.Common.Enums;
-using DefendersOfCatan.DAL.DataModels.Items;
 
 namespace DefendersOfCatan.BusinessLogic
 {
@@ -14,7 +13,7 @@ namespace DefendersOfCatan.BusinessLogic
     {
         private PlayerRepository playerRepo = new PlayerRepository();
         private TileRepository tileRepo = new TileRepository();
-        private ItemRepository itemRepo = new ItemRepository();
+        private DevelopmentRepository developmentRepo = new DevelopmentRepository();
         private TileLogic tileLogic = new TileLogic();
 
         public List<Player> GetPlayers()
@@ -71,22 +70,22 @@ namespace DefendersOfCatan.BusinessLogic
             return isOverrun;
         }
 
-        public bool PurchaseItem(ItemType itemType)
+        public bool PurchaseDevelopment(DevelopmentType developmentType)
         {
-            var itemCost = itemRepo.GetItemByType(itemType).ItemCost;
+            var developmentCost = developmentRepo.GetDevelopmentByType(developmentType).DevelopmentCost;
             var currentPlayer = GetCurrentPlayer();
             var playerResources = currentPlayer.PlayerResources;
 
-            if (PlayerCanPurchaseItem(itemCost, playerResources))
+            if (PlayerCanPurchaseDevelopment(developmentCost, playerResources))
             {
                 // Take resources
-                foreach (var cost in itemCost)
+                foreach (var cost in developmentCost)
                 {
                     playerRepo.RemoveResourceFromCurrentPlayer((ResourceType)cost.ResourceType, cost.Qty);
                 }
 
-                // Save item to player
-                playerRepo.AddItemToCurrentPlayer(itemType);
+                // Save development to player
+                playerRepo.AddDevelopmentToCurrentPlayer(developmentType);
 
                 return true;
             }
@@ -96,11 +95,11 @@ namespace DefendersOfCatan.BusinessLogic
             }
         }
 
-        private bool PlayerCanPurchaseItem(List<ResourceCost> itemCost, List<PlayerResource> playerResources)
+        private bool PlayerCanPurchaseDevelopment(List<ResourceCost> developmentCost, List<PlayerResource> playerResources)
         {
             var playerCanPurchase = false;
 
-            foreach (var cost in itemCost)
+            foreach (var cost in developmentCost)
             {
                 var requiredResourceType = cost.ResourceType;
                 var requiredQty = cost.Qty;

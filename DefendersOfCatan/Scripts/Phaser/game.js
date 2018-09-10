@@ -88,7 +88,7 @@ GameStates.Game.prototype = {
         
         //vm.updateFirstName("TEST");
         getBoardData();
-        getItems();
+        getDevelopments();
         getPlayers();
         getEnemies();
         // ToDo: Make this a common function and call the common in all places
@@ -131,8 +131,8 @@ function getBoardData() {
 
 }
 
-function getItems() {
-    getJSONSync('/Game/GetItems', initializeItems, error); // URL, Success Function, Error Function
+function getDevelopments() {
+    getJSONSync('/Game/GetDevelopments', initializeItems, error); // URL, Success Function, Error Function
 }
 
 function getPlayers() {
@@ -215,9 +215,9 @@ function initializeBoard(d) {
 }
 
 function initializeItems(d) {
-    items = new items_vm(game, d.Item);
-    var element = document.getElementById('items');
-    ko.applyBindings(items, element);
+    developments = new developments_vm(game, d.Item);
+    var element = document.getElementById('developments');
+    ko.applyBindings(developments, element);
 
 }
 

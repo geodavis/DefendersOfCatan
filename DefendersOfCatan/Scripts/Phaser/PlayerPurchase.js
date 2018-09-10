@@ -5,7 +5,7 @@
 GameStates.PlayerPurchase.prototype = {
     create: function () {
         textPhase.text = 'Phase: Purchase';
-        items.purchasePhase(true);
+        developments.purchasePhase(true);
     },
 
     update: function () {

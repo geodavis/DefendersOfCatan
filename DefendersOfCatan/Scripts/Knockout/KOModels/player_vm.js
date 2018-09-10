@@ -19,11 +19,11 @@
                       new PlayerResource(ResourcesEnum.ore, 0),
                       new PlayerResource(ResourcesEnum.wood, 0),
                       new PlayerResource(ResourcesEnum.wool, 0)]);
-    this.items = ko.observableArray([
-                    new PlayerItem(items.items()[0].itemType, 0),
-                    new PlayerItem(items.items()[1].itemType, 0),
-                    new PlayerItem(items.items()[2].itemType, 0),
-                    new PlayerItem(items.items()[3].itemType, 0)
+    this.developments = ko.observableArray([
+                    new PlayerDevelopment(developments.developments()[0].developmentType, 0),
+                    new PlayerDevelopment(developments.developments()[1].developmentType, 0),
+                    new PlayerDevelopment(developments.developments()[2].developmentType, 0),
+                    new PlayerDevelopment(developments.developments()[3].developmentType, 0)
                   ]);
 
     this.addResourceToPlayer = function (resourceType) {
@@ -35,11 +35,11 @@
         });
     };
 
-    this.addItemToPlayer = function (itemType) {
-        $.each(this.items(), function () {
-            if (this.itemType == itemType) {
-                tempItemCount = this.itemCount() + 1;
-                this.itemCount(tempItemCount);
+    this.addDevelopmentToPlayer = function (developmentType) {
+        $.each(this.developments(), function () {
+            if (this.developmentType == developmentType) {
+                tempCount = this.developmentCount() + 1;
+                this.developmentCount(tempCount);
             }
         });
     };
@@ -72,10 +72,10 @@ Player.prototype.setPlayerOverrun = function (isOverrun) {
     }
 }
 
-Player.prototype.setPurchasableItems = function () { // ToDo: Move this to the items vm
+Player.prototype.setPurchasableDevelopments = function () { // ToDo: Move this to the items vm
     var self = this;
     // Loop all store items and check player resources for what they can purchase
-    $.each(items.items(), function () { // Loop store items
+    $.each(developments.developments(), function () { // Loop store items
         var playerCanPurchase = false;
 
         // Loop resource cost of item

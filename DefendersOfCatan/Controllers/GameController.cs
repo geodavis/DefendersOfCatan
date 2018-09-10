@@ -2,7 +2,6 @@
 using DefendersOfCatan.DAL;
 using DefendersOfCatan.DAL.DataModels;
 using DefendersOfCatan.Transfer;
-using DefendersOfCatan.DAL.DataModels.Items;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,7 +24,7 @@ namespace DefendersOfCatan.Controllers
         private TileLogic tileLogic = new TileLogic();
         private GameStateLogic gameStateLogic = new GameStateLogic();
         private EnemyLogic enemyLogic = new EnemyLogic();
-        private ItemLogic itemLogic = new ItemLogic();
+        private DevelopmentLogic developmentLogic = new DevelopmentLogic();
 
         // GET: Game
         public ActionResult Index()
@@ -36,7 +35,7 @@ namespace DefendersOfCatan.Controllers
             var capitalTile = game.Tiles.Where(t => t.Type == TileType.Capital).Single();
             game.Players = gameInitializer.InitializePlayers(capitalTile);
             game.Enemies = gameInitializer.InitializeEnemies();
-            gameInitializer.InitializeItems();
+            gameInitializer.InitializeDevelopments();
 
             db.Game.Add(game);
             db.SaveChanges();
@@ -162,6 +161,18 @@ namespace DefendersOfCatan.Controllers
                         enemyLogic.AddEnemyToTile(data);
                         result.Item.EnemyId = selectedEnemy.Id;
                         break;
+                    case GameState.PlayerPurchase:
+                        // Get the item the player just purchased; If no item in inventory, return error message
+                        var HasItemToPlace = developmentLogic.PlacePurchasedDevelopment();
+
+                        // Save the item to the tile
+
+                        // Take player resources
+
+                        // Send return message to update UI
+
+
+                        break;
                     case GameState.PlayerMove:
                         result.Item.PlayerId = currentPlayer.Id;
                         if (!playerLogic.MovePlayerToTile(data.ClickedTileId))
@@ -245,12 +256,12 @@ namespace DefendersOfCatan.Controllers
         }
 
         [HttpGet]
-        public JsonResult GetItems()
+        public JsonResult GetDevelopments()
         {
-            var result = new ItemModel<List<Item>> { Item = new List<Item>() };
+            var result = new ItemModel<List<DevelopmentTransfer>> { Item = new List<DevelopmentTransfer>() };
             try
             {
-                result.Item = itemLogic.GetItems();
+                result.Item = developmentLogic.GetDevelopments();
                 return ReturnJsonResult(result);
             }
             catch (Exception e)
@@ -262,14 +273,14 @@ namespace DefendersOfCatan.Controllers
         }
 
         [HttpGet]
-        public JsonResult PurchaseItem(ItemType itemType)
+        public JsonResult PurchaseDevelopment(DevelopmentType developmentType)
         {
             var result = new ItemModel<int>();
-            result.Item = (int)itemType;
+            result.Item = (int)developmentType;
 
             try
             {
-                if (!playerLogic.PurchaseItem(itemType))
+                if (!playerLogic.PurchaseDevelopment(developmentType))
                 {
                     result.HasError = true;
                     result.Error = "Cannot purchase this item.";

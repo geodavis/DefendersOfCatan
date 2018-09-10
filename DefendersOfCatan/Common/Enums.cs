@@ -34,13 +34,13 @@ namespace DefendersOfCatan.Common
             Wool,
             NoResource
         }
-        public enum ItemType
+        public enum DevelopmentType
         {
             Road,
             Settlement,
             City,
             Walls,
-            ItemCard
+            Card
         }
 
         public enum CardType

@@ -1,5 +1,4 @@
 ﻿using DefendersOfCatan.DAL.DataModels;
-using DefendersOfCatan.DAL.DataModels.Items;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Data.Entity.ModelConfiguration.Conventions;
@@ -20,7 +19,7 @@ namespace DefendersOfCatan.DAL
 
         public DbSet<Tile> Tiles { get; set; }
 
-        public DbSet<Item> Items { get; set; }
+        public DbSet<Development> Developments { get; set; }
 
         public DbSet<PlayerResource> PlayerResources { get; set; }
 
