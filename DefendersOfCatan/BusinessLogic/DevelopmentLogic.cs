@@ -5,12 +5,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using static DefendersOfCatan.Common.Enums;
 
 namespace DefendersOfCatan.BusinessLogic
 {
     public class DevelopmentLogic
     {
         private DevelopmentRepository developmentRepo = new DevelopmentRepository();
+        private TileRepository tileRepo = new TileRepository();
 
         public List<DevelopmentTransfer> GetDevelopments()
         {
@@ -28,17 +30,18 @@ namespace DefendersOfCatan.BusinessLogic
             return developmentsTransfer;
         }
 
-        public bool PlacePurchasedDevelopment()
+        public DevelopmentType PlacePurchasedDevelopment(int tileId)
         {
             var hasDevelopmentToPlace = false;
-            var currentPlayerDevelopmentsWithQty = developmentRepo.GetCurrentPlayerBase().PlayerDevelopments.Where(i => i.Qty > 0).Single();
+            var currentPlayerDevelopmentsWithQty = developmentRepo.GetCurrentPlayerBase().PlayerDevelopments.Where(i => i.Qty > 0 && i.DevelopmentType != DevelopmentType.Card).Single();
+            var developmentType = currentPlayerDevelopmentsWithQty.DevelopmentType;
             if (currentPlayerDevelopmentsWithQty != null)
             {
-                // ToDo: Add building to Tile
                 hasDevelopmentToPlace = true;
+                tileRepo.AddDevelopmentToTile(tileId, developmentType);
             }
 
-            return hasDevelopmentToPlace;
+            return developmentType;
         }
     }
 }

@@ -103,7 +103,7 @@
                 // ToDo: add purchase item game phase, add place item game phase
             }
 
-
+            getJSONSync('/Game/GetNextGameState', startNextGameState, error); // URL, Success Function, Error Function
             
 
         }

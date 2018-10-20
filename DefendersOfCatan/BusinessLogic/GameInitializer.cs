@@ -26,7 +26,8 @@ namespace DefendersOfCatan.BusinessLogic
                 for (int y = 0; y <= TileLayout.GetUpperBound(1); y++) // col
                 {
                     var tile = new Tile { LocationX = y, LocationY = x, Type = (TileType)TileLayout[x, y], Name = "Tile" + x.ToString() + y.ToString() };
-                
+                    tile.Developments = new List<TileDevelopment>();
+
                     if (tile.Type == TileType.Resource)
                     {
                         tile.ResourceType = randomResourceTypes[i];
@@ -121,7 +122,7 @@ namespace DefendersOfCatan.BusinessLogic
 
             for (int i = 0; i < playerResourceValues.Length; i++)
             {
-                playerResources.Add(new PlayerResource { ResourceType = (ResourceType)playerResourceValues.GetValue(i), Qty = 0 });
+                playerResources.Add(new PlayerResource { ResourceType = (ResourceType)playerResourceValues.GetValue(i), Qty = 5 });
             }
 
             return playerResources;

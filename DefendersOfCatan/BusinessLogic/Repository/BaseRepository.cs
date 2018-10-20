@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using static DefendersOfCatan.Common.Enums;
 
 namespace DefendersOfCatan.BusinessLogic.Repository
 {
@@ -24,6 +25,10 @@ namespace DefendersOfCatan.BusinessLogic.Repository
         public Player GetCurrentPlayerBase()
         {
             return GetGame().CurrentPlayer;
+        }
+        public Development GetDevelopmentByType(DevelopmentType type)
+        {
+            return db.Developments.Where(i => i.DevelopmentType == type).Single();
         }
 
         public void Save()

@@ -3,11 +3,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using static DefendersOfCatan.Common.Enums;
 
 namespace DefendersOfCatan.BusinessLogic.Repository
 {
     public class TileRepository : BaseRepository
     {
+        private DevelopmentRepository developmentRepo = new DevelopmentRepository();
+
         public Tile GetCurrentPlayerTile()
         {
             var game = GetGame();
@@ -34,6 +37,16 @@ namespace DefendersOfCatan.BusinessLogic.Repository
         public void UpdateCurrentPlayerTile(Tile tile)
         {
             tile.Players.Add(GetCurrentPlayerBase()); // (For future reference) Passing player to this method causes issues with EF. It creates a new record, rather than updating an existing record. This is caused by passing by reference.
+            db.SaveChanges();
+        }
+
+        public void AddDevelopmentToTile(int tileId, DevelopmentType developmentType)
+        {
+            var development = GetDevelopmentByType(developmentType);
+            var tile = GetTileById(tileId);
+            var tileDevelopment = new TileDevelopment();
+            tileDevelopment.Development = development;
+            tile.Developments.Add(tileDevelopment);
             db.SaveChanges();
         }
     }

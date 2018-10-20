@@ -53,6 +53,8 @@ GameStates.Preloader.prototype = {
         this.load.image('enemycardB2', '../../Content/Assets/enemycardB2.png');
         //this.load.image('barbarian', '../../Content/Assets/barbarian.png');
 
+        this.load.image('settlementBlue', '../../Content/Assets/settlementBlue.png');
+
     },
 
     create: function () {

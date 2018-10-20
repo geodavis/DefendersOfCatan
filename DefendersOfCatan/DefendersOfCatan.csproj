@@ -187,6 +187,7 @@
     <Compile Include="Controllers\GameController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
+    <Compile Include="DAL\DataModels\TileDevelopment.cs" />
     <Compile Include="DAL\DataModels\PlayerDevelopment.cs" />
     <Compile Include="DAL\GameContext.cs" />
     <Compile Include="DAL\GameDBInitializer.cs" />
@@ -247,6 +248,7 @@
     <Content Include="Content\Assets\PlayerYellow.png" />
     <Content Include="Content\Assets\preloader-bar.png" />
     <Content Include="Content\Assets\rock.png" />
+    <Content Include="Content\Assets\SettlementBlue.png" />
     <Content Include="Content\Assets\sheepHex.gif" />
     <Content Include="Content\Assets\Spritesheets\dude.png" />
     <Content Include="Content\Assets\star.png" />
@@ -343,6 +345,7 @@
     <Content Include="Scripts\Phaser\barbarian.js" />
     <Content Include="Scripts\Phaser\enemymove.js" />
     <Content Include="Scripts\Phaser\item.js" />
+    <Content Include="Scripts\Phaser\playerplacepurchase.js" />
     <Content Include="Scripts\Phaser\playerpurchase.js" />
     <Content Include="Scripts\Phaser\player_res_or_fight.js" />
     <Content Include="Scripts\Phaser\enemyoverrun.js" />
