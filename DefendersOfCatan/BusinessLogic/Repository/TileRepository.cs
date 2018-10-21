@@ -49,5 +49,11 @@ namespace DefendersOfCatan.BusinessLogic.Repository
             tile.Developments.Add(tileDevelopment);
             db.SaveChanges();
         }
+
+        public List<TileDevelopment> GetDevelopments(int tileId)
+        {
+            var tile = GetTileById(tileId);
+            return tile.Developments;
+        }
     }
 }

@@ -69,6 +69,17 @@ namespace DefendersOfCatan.BusinessLogic
             return overrunTile;
         }
 
+        public bool TileHasSettlement(int tileId)
+        {
+            var tileHasSettlement = false;
+            var tileDevelopments = tileRepo.GetDevelopments(tileId);
+            if (tileDevelopments.Any(t => t.Development.DevelopmentType == DevelopmentType.Settlement))
+            {
+                tileHasSettlement = true;
+            }
+            return tileHasSettlement;
+        }
+
         private Tile GetNextOverrunTile(Tile tile, string tileNumber, int tileCount)
         {
             // Get next tile in line

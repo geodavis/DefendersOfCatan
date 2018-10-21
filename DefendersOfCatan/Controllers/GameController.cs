@@ -184,7 +184,15 @@ namespace DefendersOfCatan.Controllers
                     case GameState.PlayerResourceOrFight:
                         var resourceType = selectedTile.ResourceType;
                         result.Item.ResourceType = (int)resourceType;
-                        playerLogic.AddResourceToPlayer(resourceType);
+                        if (tileLogic.TileHasSettlement(data.ClickedTileId))
+                        {
+                            playerLogic.AddResourceToPlayer(resourceType);
+                        }
+                        else
+                        {
+                            result.HasError = true;
+                            result.Error = "No settlement on tile.";
+                        }
                         break;
                     default:
                         Console.WriteLine("Error getting game state!");

@@ -9,6 +9,6 @@ namespace DefendersOfCatan.DAL.DataModels
     public class TileDevelopment
     {
         public int Id { get; set; }
-        public Development Development { get; set; }
+        public virtual Development Development { get; set; }
     }
 }

@@ -45,6 +45,7 @@ namespace DefendersOfCatan.BusinessLogic
 
         public void AddResourceToPlayer(ResourceType resourceType)
         {
+
             playerRepo.AddResourceToCurrentPlayer(resourceType);
         }
 

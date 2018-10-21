@@ -184,7 +184,10 @@ function executePostTileClickEvents(d) {
 
                 break;
             case 'PlayerPlacePurchase':
-                alert('Purchase Placed!');
+                // ToDo: Add development sprite to UI
+                var tile = HexTile.prototype.getTileById(d.Item.ClickedTileId);
+                var development = new Development(game, 0, 0, 0);
+                tile.addChild(development);
                 break;
             case 'PlayerMove':
                 var tile = HexTile.prototype.getTileById(d.Item.ClickedTileId);
