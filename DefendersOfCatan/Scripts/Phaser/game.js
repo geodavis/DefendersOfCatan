@@ -426,7 +426,6 @@ function moveToNextPlayer(d) {
             updateLogText(currentPlayer.name + "'s turn.");
         }
     });
-
 }
 
 function checkForEndGameState() {

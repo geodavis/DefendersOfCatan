@@ -53,6 +53,7 @@ namespace DefendersOfCatan.Common
         public enum GameState
         {
             Initialization,
+            InitialPlacement,
             EnemyMove,
             EnemyOverrun,
             EnemyCard,

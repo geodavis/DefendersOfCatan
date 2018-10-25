@@ -5,6 +5,7 @@ window.onload = function () {
     //  Add the States your game has.
     game.state.add('Boot', GameStates.Boot);
     game.state.add('Preloader', GameStates.Preloader);
+    game.state.add('InitialPlacement', GameStates.InitialPlacement);
     game.state.add('EnemyMove', GameStates.EnemyMove);
     game.state.add('EnemyOverrun', GameStates.EnemyOverrun);
     game.state.add('EnemyCard', GameStates.EnemyCard);

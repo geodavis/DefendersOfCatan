@@ -344,6 +344,7 @@
     <Content Include="Scripts\Phaser\boot.js" />
     <Content Include="Scripts\Phaser\barbarian.js" />
     <Content Include="Scripts\Phaser\development.js" />
+    <Content Include="Scripts\Phaser\initialplacement.js" />
     <Content Include="Scripts\Phaser\enemymove.js" />
     <Content Include="Scripts\Phaser\item.js" />
     <Content Include="Scripts\Phaser\playerplacepurchase.js" />

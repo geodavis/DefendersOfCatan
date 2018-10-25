@@ -176,6 +176,18 @@ function executePostTileClickEvents(d) {
         var gameState = d.Item.GameState;
 
         switch (gameState) {
+            case 'InitialPlacement':
+                GameStates.InitialPlacement.prototype.placeInitialSettlement(d.Item.ClickedTileId);
+
+                if (d.Item.PlayerId == 4) {
+                    getJSONSync('/Game/GetNextGameState', startNextGameState, error); // URL, Success Function, Error Function
+                }
+
+                // Get the next player
+                getJSONSync('/Game/MoveToNextPlayer', moveToNextPlayer, error); // URL, Success Function, Error Function
+
+                
+                break;
             case 'EnemyCard':
                 // ToDo: if you click on the hex where another card has been placed, it does not prevent placement. Need to check if card already exists on hex.
                 var enemy = Enemy.prototype.getEnemyById(d.Item.EnemyId);
@@ -184,7 +196,6 @@ function executePostTileClickEvents(d) {
 
                 break;
             case 'PlayerPlacePurchase':
-                // ToDo: Add development sprite to UI
                 var tile = HexTile.prototype.getTileById(d.Item.ClickedTileId);
                 var development = new Development(game, 0, 0, 0);
                 tile.addChild(development);
@@ -201,7 +212,11 @@ function executePostTileClickEvents(d) {
             default:
                 // ToDo:
         }
-        getJSONSync('/Game/GetNextGameState', startNextGameState, error); // URL, Success Function, Error Function
+
+        if (gameState != 'InitialPlacement') {
+            getJSONSync('/Game/GetNextGameState', startNextGameState, error); // URL, Success Function, Error Function
+        }
+
 
     }
 

@@ -32,15 +32,20 @@ namespace DefendersOfCatan.BusinessLogic
 
         public DevelopmentType PlacePurchasedDevelopment(int tileId)
         {
-            var hasDevelopmentToPlace = false;
             var currentPlayerDevelopmentsWithQty = developmentRepo.GetCurrentPlayerBase().PlayerDevelopments.Where(i => i.Qty > 0 && i.DevelopmentType != DevelopmentType.Card).Single();
             var developmentType = currentPlayerDevelopmentsWithQty.DevelopmentType;
             if (currentPlayerDevelopmentsWithQty != null)
             {
-                hasDevelopmentToPlace = true;
                 tileRepo.AddDevelopmentToTile(tileId, developmentType);
             }
 
+            return developmentType;
+        }
+
+        public DevelopmentType PlaceInitialSettlement(int tileId)
+        {
+            var developmentType = DevelopmentType.Settlement;
+            tileRepo.AddDevelopmentToTile(tileId, developmentType);
             return developmentType;
         }
     }

@@ -154,8 +154,12 @@ namespace DefendersOfCatan.Controllers
                 var currentPlayer = playerLogic.GetCurrentPlayer();
                 result.Item.GameState = gameState.ToString();
                 result.Item.ClickedTileId = selectedTile.Id;
+                result.Item.PlayerId = currentPlayer.Id;
                 switch (gameState)
                 {
+                    case GameState.InitialPlacement:
+                        result.Item.DevelopmentType = (int)developmentLogic.PlaceInitialSettlement(data.ClickedTileId);
+                        break;
                     case GameState.EnemyCard:
                         var selectedEnemy = db.Enemies.Where(e => e.IsSelected == true).Single();
                         enemyLogic.AddEnemyToTile(data);
@@ -164,12 +168,6 @@ namespace DefendersOfCatan.Controllers
                     case GameState.PlayerPlacePurchase:
                         // Get the item the player just purchased; If no item in inventory, return error message
                         var developmentType = developmentLogic.PlacePurchasedDevelopment(data.ClickedTileId);
-
-                        // Save the item to the tile
-
-                        // Take player resources
-
-                        // Send return message to update UI - TODO: take this development type and place it on the tile in the UI on return message
                         result.Item.DevelopmentType = (int)developmentType;
 
                         break;

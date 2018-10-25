@@ -29,7 +29,7 @@ namespace DefendersOfCatan.BusinessLogic
         {
             var currentEnumIndex = (int)gameState;
             var gameStateEnumValues = Enum.GetValues(typeof(GameState));
-            return currentEnumIndex == gameStateEnumValues.Length - 1 ? (GameState)gameStateEnumValues.GetValue(1) : (GameState)gameStateEnumValues.GetValue(currentEnumIndex + 1);
+            return currentEnumIndex == gameStateEnumValues.Length - 1 ? (GameState)gameStateEnumValues.GetValue(2) : (GameState)gameStateEnumValues.GetValue(currentEnumIndex + 1);
         }
     }
 }
