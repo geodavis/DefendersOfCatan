@@ -10,6 +10,7 @@ namespace DefendersOfCatan.DAL.DataModels
         public string Name { get; set; }
         public PlayerColor Color { get; set; }
         public bool IsOverrun { get; set; }
+        public bool HasPurchasedItems { get; set; }
         public int Health { get; set; }
         public virtual List<PlayerResource> PlayerResources { get; set; }
         public virtual List<PlayerDevelopment> PlayerDevelopments { get; set; }

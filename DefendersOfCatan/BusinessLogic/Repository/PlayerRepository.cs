@@ -24,7 +24,7 @@ namespace DefendersOfCatan.BusinessLogic.Repository
 
         public Player GetPlayerBasedOnColor(PlayerColor playerColor)
         {
-            return GetGame().Players.Where(p => (int)p.Color == (int)playerColor).Single();
+            return GetGame().Players.Single(p => (int)p.Color == (int)playerColor);
         }
 
         public void SetPlayerOverrun(Player player, bool isOverrun)
@@ -49,22 +49,33 @@ namespace DefendersOfCatan.BusinessLogic.Repository
         public void AddResourceToCurrentPlayer(ResourceType resourceType)
         {
             var currentPlayer = GetCurrentPlayer();
-            var playerResource = currentPlayer.PlayerResources.Where(r => r.ResourceType == resourceType).Single();
+            var playerResource = currentPlayer.PlayerResources.Single(r => r.ResourceType == resourceType);
             playerResource.Qty += 1;
             db.SaveChanges();
         }
 
         public void RemoveResourceFromCurrentPlayer(ResourceType resourceType, int qty)
         {
-            var playerResource = GetCurrentPlayer().PlayerResources.Where(r => r.ResourceType == resourceType).Single();
+            var playerResource = GetCurrentPlayer().PlayerResources.Single(r => r.ResourceType == resourceType);
             playerResource.Qty -= qty;
             db.SaveChanges();
         }
 
         public void AddDevelopmentToCurrentPlayer(DevelopmentType developmentType)
         {
-            var playerDevelopment = GetCurrentPlayer().PlayerDevelopments.Where(i => i.DevelopmentType == developmentType).Single();
+            var player = GetCurrentPlayer();
+            var playerDevelopment = player.PlayerDevelopments.Single(i => i.DevelopmentType == developmentType);
             playerDevelopment.Qty += 1;
+            player.HasPurchasedItems = true;
+            db.SaveChanges();
+        }
+
+        public void RemoveDevelopmentFromCurrentPlayer(DevelopmentType developmentType)
+        {
+            var player = GetCurrentPlayer();
+            var playerDevelopment = player.PlayerDevelopments.Single(i => i.DevelopmentType == developmentType);
+            playerDevelopment.Qty -= 1;
+            player.HasPurchasedItems = false;
             db.SaveChanges();
         }
     }

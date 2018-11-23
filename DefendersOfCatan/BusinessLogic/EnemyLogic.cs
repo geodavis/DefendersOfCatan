@@ -35,13 +35,14 @@ namespace DefendersOfCatan.BusinessLogic
             // Check current player for barbarian advancement
             foreach (var tile in game.Tiles)
             {
-                if (((int)game.CurrentPlayer.Color == (int)tile.Type) && tile.Enemy != null && tile.Enemy.HasBarbarian)
+                if ((int)game.CurrentPlayer.Color == (int)tile.Type && tile.Enemy != null && tile.Enemy.HasBarbarian)
                 {
                     var barbarianIndex = tile.Enemy.BarbarianIndex + 1;
 
                     // Reset barbarian index if it hits 3, and overrun the appropriate tile
                     if (barbarianIndex == 2) // put this back to 3
                     {
+                        // ToDo: First check if tile has city, settlement, walls, ... if so, remove those before flipping the tile
                         var overrunTile = tileLogic.SetOverrunTile(tile);
                         tiles.Add(overrunTile);
                         barbarianIndex = 0; // Reset barbarian index

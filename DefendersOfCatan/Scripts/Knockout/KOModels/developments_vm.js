@@ -100,10 +100,11 @@
             {
                 // Highlight placeable tiles
                 // When the user clicks the tile, place the item
-                // ToDo: add purchase item game phase, add place item game phase
+                // ToDo: prompt player to place purchased items
+                // when player clicks on a hex, place the item tile click events
             }
 
-            getJSONSync('/Game/GetNextGameState', startNextGameState, error); // URL, Success Function, Error Function
+            //getJSONSync('/Game/GetNextGameState', startNextGameState, error); // URL, Success Function, Error Function
             
 
         }

@@ -17,31 +17,31 @@ namespace DefendersOfCatan.Controllers
 {
     public class GameController : Controller
     {
-        private GameContext db = new GameContext();
-        private GameInitializer gameInitializer = new GameInitializer();
-        private Game game = new Game();
-        private PlayerLogic playerLogic = new PlayerLogic();
-        private TileLogic tileLogic = new TileLogic();
-        private GameStateLogic gameStateLogic = new GameStateLogic();
-        private EnemyLogic enemyLogic = new EnemyLogic();
-        private DevelopmentLogic developmentLogic = new DevelopmentLogic();
+        private readonly GameContext _db = new GameContext();
+        private readonly GameInitializer _gameInitializer = new GameInitializer();
+        private readonly Game _game = new Game();
+        private readonly PlayerLogic _playerLogic = new PlayerLogic();
+        private readonly TileLogic _tileLogic = new TileLogic();
+        private readonly GameStateLogic _gameStateLogic = new GameStateLogic();
+        private readonly EnemyLogic _enemyLogic = new EnemyLogic();
+        private readonly DevelopmentLogic _developmentLogic = new DevelopmentLogic();
 
         // GET: Game
         public ActionResult Index()
         {
-            game.GameState = GameState.Initialization;
+            _game.GameState = GameState.Initialization;
 
-            game.Tiles = gameInitializer.InitializeTiles();
-            var capitalTile = game.Tiles.Where(t => t.Type == TileType.Capital).Single();
-            game.Players = gameInitializer.InitializePlayers(capitalTile);
-            game.Enemies = gameInitializer.InitializeEnemies();
-            gameInitializer.InitializeDevelopments();
+            _game.Tiles = _gameInitializer.InitializeTiles();
+            var capitalTile = _game.Tiles.Single(t => t.Type == TileType.Capital);
+            _game.Players = _gameInitializer.InitializePlayers(capitalTile);
+            _game.Enemies = _gameInitializer.InitializeEnemies();
+            _gameInitializer.InitializeDevelopments();
 
-            db.Game.Add(game);
-            db.SaveChanges();
+            _db.Game.Add(_game);
+            _db.SaveChanges();
 
-            game.CurrentPlayer = game.Players[0];
-            db.SaveChanges();
+            _game.CurrentPlayer = _game.Players[0];
+            _db.SaveChanges();
 
             return View();
         }
@@ -52,9 +52,9 @@ namespace DefendersOfCatan.Controllers
             var result = new ItemModel<ClickedEnemyTransfer>();
             try
             {
-                var enemy = db.Enemies.Where(e => e.Id == data.EnemyId).Single();
+                var enemy = _db.Enemies.Single(e => e.Id == data.EnemyId);
                 enemy.IsSelected = true;
-                db.SaveChanges();
+                _db.SaveChanges();
                 result.Item = data;
                 return ReturnJsonResult(result);
             }
@@ -72,8 +72,8 @@ namespace DefendersOfCatan.Controllers
             var result = new ItemModel<ClickedEnemyTransfer>();
             try
             {
-                var gameState = gameStateLogic.GetCurrentGameState();
-                var enemy = db.Enemies.Where(e => e.Id == data.EnemyId).Single();
+                var gameState = _gameStateLogic.GetCurrentGameState();
+                var enemy = _db.Enemies.Single(e => e.Id == data.EnemyId);
                 result.Item = new ClickedEnemyTransfer() { EnemyId = enemy.Id, GameState = gameState.ToString() };
                 switch (gameState)
                 {
@@ -84,16 +84,16 @@ namespace DefendersOfCatan.Controllers
                         // ToDo: Implement error handling (pass error to client)
                         break;
                     case GameState.PlayerResourceOrFight:
-                        var currentPlayer = playerLogic.GetCurrentPlayer();
-                        var tiles = db.Tiles.ToList();
+                        var currentPlayer = _playerLogic.GetCurrentPlayer();
+                        var tiles = _db.Tiles.ToList();
                         var currentPlayerTile = tiles.Where(t => t.Players.Contains(currentPlayer)).Single();
                         var enemyTile = tiles.Where(t => t.Enemy != null && t.Enemy.Id == enemy.Id).Single();
                         result.Item.EnemyTileId = enemyTile.Id;
-                        var neighborTiles = tileLogic.GetNeighborTiles(currentPlayerTile);
+                        var neighborTiles = _tileLogic.GetNeighborTiles(currentPlayerTile);
 
                         if (neighborTiles.Contains(enemyTile))
                         {
-                            enemyLogic.RemoveEnemy(enemy, enemyTile);
+                            _enemyLogic.RemoveEnemy(enemy, enemyTile);
                         }
                         else
                         {
@@ -107,7 +107,7 @@ namespace DefendersOfCatan.Controllers
                         break;
                 }
 
-                db.SaveChanges();
+                _db.SaveChanges();
 
                 return ReturnJsonResult(result);
             }
@@ -126,7 +126,7 @@ namespace DefendersOfCatan.Controllers
 
             try
             {
-                var neighboringTiles = tileLogic.GetNeighborTiles(tileLogic.GetCurrentPlayerTile());
+                var neighboringTiles = _tileLogic.GetNeighborTiles(_tileLogic.GetCurrentPlayerTile());
                 foreach (var neighboringTile in neighboringTiles)
                 {
                     result.Item.Add(neighboringTile.Id);
@@ -145,35 +145,37 @@ namespace DefendersOfCatan.Controllers
         [HttpPost]
         public JsonResult ExecuteTileClickedActions(ClickedTileTransfer data)
         {
-            var result = new ItemModel<ClickedTileTransfer>();
-            result.Item = new ClickedTileTransfer();
+            var result = new ItemModel<ClickedTileTransfer>
+            {
+                Item = new ClickedTileTransfer()
+            };
             try
             {
-                var gameState = gameStateLogic.GetCurrentGameState();
-                var selectedTile = db.Tiles.Where(t => t.Id == data.ClickedTileId).Single();
-                var currentPlayer = playerLogic.GetCurrentPlayer();
+                var gameState = _gameStateLogic.GetCurrentGameState();
+                var selectedTile = _db.Tiles.Where(t => t.Id == data.ClickedTileId).Single();
+                var currentPlayer = _playerLogic.GetCurrentPlayer();
                 result.Item.GameState = gameState.ToString();
                 result.Item.ClickedTileId = selectedTile.Id;
                 result.Item.PlayerId = currentPlayer.Id;
                 switch (gameState)
                 {
                     case GameState.InitialPlacement:
-                        result.Item.DevelopmentType = (int)developmentLogic.PlaceInitialSettlement(data.ClickedTileId);
+                        result.Item.DevelopmentType = (int)_developmentLogic.PlaceInitialSettlement(data.ClickedTileId);
                         break;
                     case GameState.EnemyCard:
-                        var selectedEnemy = db.Enemies.Where(e => e.IsSelected == true).Single();
-                        enemyLogic.AddEnemyToTile(data);
+                        var selectedEnemy = _db.Enemies.Single(e => e.IsSelected);
+                        _enemyLogic.AddEnemyToTile(data);
                         result.Item.EnemyId = selectedEnemy.Id;
                         break;
-                    case GameState.PlayerPlacePurchase:
+                    case GameState.PlayerPurchase:
                         // Get the item the player just purchased; If no item in inventory, return error message
-                        var developmentType = developmentLogic.PlacePurchasedDevelopment(data.ClickedTileId);
+                        var developmentType = _developmentLogic.PlacePurchasedDevelopment(data.ClickedTileId);
                         result.Item.DevelopmentType = (int)developmentType;
 
                         break;
                     case GameState.PlayerMove:
                         result.Item.PlayerId = currentPlayer.Id;
-                        if (!playerLogic.MovePlayerToTile(data.ClickedTileId))
+                        if (!_playerLogic.MovePlayerToTile(data.ClickedTileId))
                         {
                             result.HasError = true;
                             result.Error = "You cannot move to that tile.";
@@ -182,9 +184,9 @@ namespace DefendersOfCatan.Controllers
                     case GameState.PlayerResourceOrFight:
                         var resourceType = selectedTile.ResourceType;
                         result.Item.ResourceType = (int)resourceType;
-                        if (tileLogic.TileHasSettlement(data.ClickedTileId))
+                        if (_tileLogic.TileHasSettlement(data.ClickedTileId))
                         {
-                            playerLogic.AddResourceToPlayer(resourceType);
+                            _playerLogic.AddResourceToPlayer(resourceType);
                         }
                         else
                         {
@@ -197,7 +199,7 @@ namespace DefendersOfCatan.Controllers
                         break;
                 }
 
-                db.SaveChanges();
+                _db.SaveChanges();
                 return ReturnJsonResult(result);
             }
             catch (Exception e)
@@ -214,7 +216,7 @@ namespace DefendersOfCatan.Controllers
             var result = new ItemModel<string>();
             try
             {
-                result.Item = gameStateLogic.UpdateGameState().ToString();
+                result.Item = _gameStateLogic.UpdateGameState().ToString();
                 return ReturnJsonResult(result);
             }
             catch (Exception e)
@@ -231,7 +233,7 @@ namespace DefendersOfCatan.Controllers
             var result = new ItemModel<List<Tile>> { Item = new List<Tile>() };
             try
             {
-                var game = db.GetSet<Game>().FirstOrDefault();
+                var game = _db.GetSet<Game>().FirstOrDefault();
                 result.Item = game.Tiles;
                 return ReturnJsonResult(result);
             }
@@ -249,7 +251,7 @@ namespace DefendersOfCatan.Controllers
             var result = new ItemModel<List<Player>> { Item = new List<Player>() };
             try
             {
-                var players = playerLogic.GetPlayers();
+                var players = _playerLogic.GetPlayers();
                 result.Item = players;
                 return ReturnJsonResult(result);
             }
@@ -267,7 +269,7 @@ namespace DefendersOfCatan.Controllers
             var result = new ItemModel<List<DevelopmentTransfer>> { Item = new List<DevelopmentTransfer>() };
             try
             {
-                result.Item = developmentLogic.GetDevelopments();
+                result.Item = _developmentLogic.GetDevelopments();
                 return ReturnJsonResult(result);
             }
             catch (Exception e)
@@ -281,12 +283,14 @@ namespace DefendersOfCatan.Controllers
         [HttpGet]
         public JsonResult PurchaseDevelopment(DevelopmentType developmentType)
         {
-            var result = new ItemModel<int>();
-            result.Item = (int)developmentType;
+            var result = new ItemModel<int>
+            {
+                Item = (int)developmentType
+            };
 
             try
             {
-                if (!playerLogic.PurchaseDevelopment(developmentType))
+                if (!_playerLogic.PurchaseDevelopment(developmentType))
                 {
                     result.HasError = true;
                     result.Error = "Cannot purchase this item.";
@@ -300,7 +304,6 @@ namespace DefendersOfCatan.Controllers
                 result.Error = e.Message;
                 return ReturnJsonResult(result);
             }
-
         }
 
         [HttpGet]
@@ -309,7 +312,7 @@ namespace DefendersOfCatan.Controllers
             var result = new ItemModel<List<Enemy>> { Item = new List<Enemy>() };
             try
             {
-                result.Item = enemyLogic.GetEnemies();
+                result.Item = _enemyLogic.GetEnemies();
                 return ReturnJsonResult(result);
             }
             catch (Exception e)
@@ -348,9 +351,9 @@ namespace DefendersOfCatan.Controllers
 
             try
             {
-                var player = db.GetSet<Player>().Single(e => e.Id == data.Id);
+                var player = _db.GetSet<Player>().Single(e => e.Id == data.Id);
                 player.Health = data.Health;
-                db.SaveChanges();
+                _db.SaveChanges();
                 result.Item = "Successfully Updated Player Health!";
                 return ReturnJsonResult(result);
             }
@@ -371,9 +374,9 @@ namespace DefendersOfCatan.Controllers
 
             try
             {
-                var player = db.GetSet<Player>().Single(e => e.Id == data.Id);
+                var player = _db.GetSet<Player>().Single(e => e.Id == data.Id);
                 player.IsOverrun = data.IsOverrun;
-                db.SaveChanges();
+                _db.SaveChanges();
                 result.Item = "Successfully Updated Player Overrun!";
                 return ReturnJsonResult(result);
             }
@@ -394,10 +397,10 @@ namespace DefendersOfCatan.Controllers
 
             try
             {
-                var tile = db.Tiles.Where(t => t.Id == data.TileId).Single();
-                var player = db.Players.Where(e => e.Id == data.PlayerId).Single();
+                var tile = _db.Tiles.Single(t => t.Id == data.TileId);
+                var player = _db.Players.Single(e => e.Id == data.PlayerId);
                 tile.Players.Add(player);
-                db.SaveChanges();
+                _db.SaveChanges();
 
                 result.Item = data;
                 return ReturnJsonResult(result);
@@ -420,7 +423,7 @@ namespace DefendersOfCatan.Controllers
             // In this phase, we progress any barbarians tied to the current players tiles
             try
             {
-                result.Item = enemyLogic.ExecuteEnemyMovePhase();
+                result.Item = _enemyLogic.ExecuteEnemyMovePhase();
                 return ReturnJsonResult(result);
             }
             catch (Exception e)
@@ -438,28 +441,28 @@ namespace DefendersOfCatan.Controllers
 
             try
             {
-                var game = db.Game.FirstOrDefault();
-                var currentPlayer = playerLogic.GetCurrentPlayer();
+                var game = _db.Game.FirstOrDefault();
+                var currentPlayer = _playerLogic.GetCurrentPlayer();
 
                 switch (currentPlayer.Color)
                 {
                     case PlayerColor.Red:
-                        game.CurrentPlayer = game.Players.Where(p => p.Color == PlayerColor.Blue).Single();
+                        game.CurrentPlayer = game.Players.Single(p => p.Color == PlayerColor.Blue);
                         break;
                     case PlayerColor.Blue:
-                        game.CurrentPlayer = game.Players.Where(p => p.Color == PlayerColor.Yellow).Single();
+                        game.CurrentPlayer = game.Players.Single(p => p.Color == PlayerColor.Yellow);
                         break;
                     case PlayerColor.Yellow:
-                        game.CurrentPlayer = game.Players.Where(p => p.Color == PlayerColor.Green).Single();
+                        game.CurrentPlayer = game.Players.Single(p => p.Color == PlayerColor.Green);
                         break;
                     case PlayerColor.Green:
-                        game.CurrentPlayer = game.Players.Where(p => p.Color == PlayerColor.Red).Single();
+                        game.CurrentPlayer = game.Players.Single(p => p.Color == PlayerColor.Red);
                         break;
                     default:
                         Console.WriteLine("Error getting next player!");
                         break;
                 }
-                db.SaveChanges();
+                _db.SaveChanges();
 
                 result.Item = (int)game.CurrentPlayer.Color;
                 return ReturnJsonResult(result);

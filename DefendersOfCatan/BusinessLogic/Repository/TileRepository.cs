@@ -44,9 +44,20 @@ namespace DefendersOfCatan.BusinessLogic.Repository
         {
             var development = GetDevelopmentByType(developmentType);
             var tile = GetTileById(tileId);
-            var tileDevelopment = new TileDevelopment();
-            tileDevelopment.Development = development;
+            var tileDevelopment = new TileDevelopment
+            {
+                Development = development
+            };
             tile.Developments.Add(tileDevelopment);
+            db.SaveChanges();
+        }
+
+        public void RemoveDevelopmentFromTile(int tileId, DevelopmentType developmentType)
+        {
+            var development = GetDevelopmentByType(developmentType);
+            var tile = GetTileById(tileId);
+            var tileDevelopment = new TileDevelopment {Development = development};
+            tile.Developments.Remove(tileDevelopment);
             db.SaveChanges();
         }
 

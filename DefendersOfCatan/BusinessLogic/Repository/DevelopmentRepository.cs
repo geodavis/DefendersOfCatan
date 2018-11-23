@@ -9,10 +9,10 @@ namespace DefendersOfCatan.BusinessLogic.Repository
 {
     public class DevelopmentRepository : BaseRepository
     {
-        public Development GetDevelopmentByType(DevelopmentType type)
-        {
-            return db.Developments.Where(i => i.DevelopmentType == type).Single();
-        }
+        //public Development GetDevelopmentByType(DevelopmentType type)
+        //{
+        //    return db.Developments.Where(i => i.DevelopmentType == type).Single();
+        //}
 
         public void AddDevelopments(List<Development> developments)
         {

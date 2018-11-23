@@ -58,7 +58,7 @@ namespace DefendersOfCatan.Common
             EnemyOverrun,
             EnemyCard,
             PlayerPurchase,
-            PlayerPlacePurchase,
+            //PlayerPlacePurchase,
             PlayerMove,
             PlayerResourceOrFight
         }

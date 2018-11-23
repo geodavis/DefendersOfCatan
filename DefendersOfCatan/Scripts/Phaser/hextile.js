@@ -195,9 +195,10 @@ function executePostTileClickEvents(d) {
                 GameStates.EnemyCard.prototype.placeCard(enemy, tile);
 
                 break;
-            case 'PlayerPlacePurchase':
+            case 'PlayerPurchase':
                 var tile = HexTile.prototype.getTileById(d.Item.ClickedTileId);
-                var development = new Development(game, 0, 0, 0);
+                var developmentType = d.Item.DevelopmentType;
+                var development = new Development(game, 0, 0, developmentType);
                 tile.addChild(development);
                 break;
             case 'PlayerMove':

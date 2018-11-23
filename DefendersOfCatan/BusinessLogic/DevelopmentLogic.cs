@@ -11,20 +11,23 @@ namespace DefendersOfCatan.BusinessLogic
 {
     public class DevelopmentLogic
     {
-        private DevelopmentRepository developmentRepo = new DevelopmentRepository();
-        private TileRepository tileRepo = new TileRepository();
+        private readonly DevelopmentRepository _developmentRepo = new DevelopmentRepository();
+        private readonly TileRepository _tileRepo = new TileRepository();
+        private readonly PlayerRepository _playerRepo = new PlayerRepository();
 
         public List<DevelopmentTransfer> GetDevelopments()
         {
             var developmentsTransfer = new List<DevelopmentTransfer>();
-            var developments = developmentRepo.GetDevelopments();
+            var developments = _developmentRepo.GetDevelopments();
 
             foreach (var development in developments)
             {
-                var developmentTransfer = new DevelopmentTransfer();
-                developmentTransfer.DevelopmentType = development.DevelopmentType;
-                developmentTransfer.DevelopmentCost = development.DevelopmentCost;
-                developmentTransfer.DevelopmentTypeReadable = development.DevelopmentType.ToString();
+                var developmentTransfer = new DevelopmentTransfer
+                {
+                    DevelopmentType = development.DevelopmentType,
+                    DevelopmentCost = development.DevelopmentCost,
+                    DevelopmentTypeReadable = development.DevelopmentType.ToString()
+                };
                 developmentsTransfer.Add(developmentTransfer);
             }
             return developmentsTransfer;
@@ -32,12 +35,15 @@ namespace DefendersOfCatan.BusinessLogic
 
         public DevelopmentType PlacePurchasedDevelopment(int tileId)
         {
-            var currentPlayerDevelopmentsWithQty = developmentRepo.GetCurrentPlayerBase().PlayerDevelopments.Where(i => i.Qty > 0 && i.DevelopmentType != DevelopmentType.Card).Single();
+            var currentPlayerDevelopmentsWithQty = _developmentRepo.GetCurrentPlayerBase().PlayerDevelopments.Single(i => i.Qty > 0 && i.DevelopmentType != DevelopmentType.Card);
             var developmentType = currentPlayerDevelopmentsWithQty.DevelopmentType;
             if (currentPlayerDevelopmentsWithQty != null)
             {
-                tileRepo.AddDevelopmentToTile(tileId, developmentType);
+                _tileRepo.AddDevelopmentToTile(tileId, developmentType);
             }
+
+            // Remove development from player
+            _playerRepo.RemoveDevelopmentFromCurrentPlayer(developmentType);
 
             return developmentType;
         }
@@ -45,8 +51,14 @@ namespace DefendersOfCatan.BusinessLogic
         public DevelopmentType PlaceInitialSettlement(int tileId)
         {
             var developmentType = DevelopmentType.Settlement;
-            tileRepo.AddDevelopmentToTile(tileId, developmentType);
+            _tileRepo.AddDevelopmentToTile(tileId, developmentType);
             return developmentType;
+        }
+
+        public void RemoveSettlement(int tileId)
+        {
+            var developmentType = DevelopmentType.Settlement;
+            _tileRepo.RemoveDevelopmentFromTile(tileId, developmentType);
         }
     }
 }

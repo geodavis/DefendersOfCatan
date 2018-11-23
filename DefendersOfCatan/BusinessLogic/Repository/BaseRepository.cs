@@ -28,7 +28,7 @@ namespace DefendersOfCatan.BusinessLogic.Repository
         }
         public Development GetDevelopmentByType(DevelopmentType type)
         {
-            return db.Developments.Where(i => i.DevelopmentType == type).Single();
+            return db.Developments.Single(i => i.DevelopmentType == type);
         }
 
         public void Save()
