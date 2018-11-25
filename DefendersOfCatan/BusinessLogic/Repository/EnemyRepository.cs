@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using DefendersOfCatan.DAL;
 
 namespace DefendersOfCatan.BusinessLogic.Repository
 {
@@ -17,19 +18,18 @@ namespace DefendersOfCatan.BusinessLogic.Repository
 
         public Enemy GetEnemy(int id)
         {
-            return GetGame().Enemies.Where(e => e.Id == id).Single();
+            return GetGame().Enemies.Single(e => e.Id == id);
         }
 
         public Enemy GetSelectedEnemy()
         {
-            return GetGame().Enemies.Where(e => e.IsSelected == true).Single();
+            return GetGame().Enemies.Single(e => e.IsSelected);
         }
 
-        public void PlaceEnemy(Enemy enemy, Tile tile)
+        public void SetEnemyPlaced(Enemy enemy)
         {
             enemy.IsSelected = false;
             enemy.HasBeenPlaced = true;
-            tile.Enemy = enemy;
             db.SaveChanges();
         }
 

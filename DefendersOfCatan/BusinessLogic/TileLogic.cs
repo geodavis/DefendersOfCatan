@@ -55,9 +55,9 @@ namespace DefendersOfCatan.BusinessLogic
         private void AddNeighbor(int x, int y, List<Tile> neighboringTiles)
         {
             var tiles = tileRepo.GetTiles();
-            if (tiles.Where(t => t.LocationX == x && t.LocationY == y).Any())
+            if (tiles.Any(t => t.LocationX == x && t.LocationY == y))
             {
-                neighboringTiles.Add(tiles.Where(t => t.LocationX == x && t.LocationY == y).Single());
+                neighboringTiles.Add(tiles.Single(t => t.LocationX == x && t.LocationY == y));
             }
         }
 
@@ -65,7 +65,15 @@ namespace DefendersOfCatan.BusinessLogic
         {
             var tileNumber = Globals.HexOverrunData[tile.LocationY, tile.LocationX];
             var overrunTile = GetNextOverrunTile(tile, tileNumber, 0);
-            tileRepo.SetOverrunTile(overrunTile);
+            if (!TileHasSettlement(overrunTile.Id))
+            {
+                tileRepo.SetOverrunTile(overrunTile);
+            }
+            else
+            {
+                tileRepo.RemoveDevelopmentFromTile(overrunTile.Id, DevelopmentType.Settlement);
+            }
+
             return overrunTile;
         }
 

@@ -4,17 +4,19 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using static DefendersOfCatan.Common.Enums;
+using DefendersOfCatan.DAL;
 
 namespace DefendersOfCatan.BusinessLogic.Repository
 {
     public class TileRepository : BaseRepository
     {
         private DevelopmentRepository developmentRepo = new DevelopmentRepository();
+        private EnemyRepository enemyRepo = new EnemyRepository();
 
         public Tile GetCurrentPlayerTile()
         {
             var game = GetGame();
-            var currentPlayer = GetCurrentPlayerBase(); 
+            var currentPlayer = GetCurrentPlayerBase();
             return game.Tiles.Where(t => t.Players.Any(p => p.Id == currentPlayer.Id)).Single();
         }
 
@@ -25,7 +27,7 @@ namespace DefendersOfCatan.BusinessLogic.Repository
 
         public Tile GetTileById(int tileId)
         {
-            return GetGame().Tiles.Where(t => t.Id == tileId).Single();
+            return GetGame().Tiles.Single(t => t.Id == tileId);
         }
 
         public void SetOverrunTile(Tile tile)
@@ -56,7 +58,7 @@ namespace DefendersOfCatan.BusinessLogic.Repository
         {
             var development = GetDevelopmentByType(developmentType);
             var tile = GetTileById(tileId);
-            var tileDevelopment = new TileDevelopment {Development = development};
+            var tileDevelopment = new TileDevelopment { Development = development };
             tile.Developments.Remove(tileDevelopment);
             db.SaveChanges();
         }
@@ -65,6 +67,15 @@ namespace DefendersOfCatan.BusinessLogic.Repository
         {
             var tile = GetTileById(tileId);
             return tile.Developments;
+        }
+
+        public void AddEnemyToTile(int enemyId, int tileId)
+        {
+            //var enemy = enemyRepo.GetEnemy(enemyId);
+            var tile = GetTileById(tileId);
+            tile.Enemy = enemyRepo.GetEnemy(enemyId);
+            //db.Entry(tile.Enemy).State = System.Data.Entity.EntityState.Modified; // ToDo: make single data context that all repos use
+            db.SaveChanges();
         }
     }
 }

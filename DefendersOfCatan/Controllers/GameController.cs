@@ -152,7 +152,7 @@ namespace DefendersOfCatan.Controllers
             try
             {
                 var gameState = _gameStateLogic.GetCurrentGameState();
-                var selectedTile = _db.Tiles.Where(t => t.Id == data.ClickedTileId).Single();
+                var selectedTile = _db.Tiles.Single(t => t.Id == data.ClickedTileId);
                 var currentPlayer = _playerLogic.GetCurrentPlayer();
                 result.Item.GameState = gameState.ToString();
                 result.Item.ClickedTileId = selectedTile.Id;

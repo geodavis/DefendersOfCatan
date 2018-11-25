@@ -1,5 +1,6 @@
 ﻿//  Here is a custom game object
 Development = function (game, x, y, developmentType) {
+    this.developmentType = developmentType;
     var developmentImage = this.getDevelopmentImageBasedOnType(developmentType);
     Phaser.Sprite.call(this, game, x, y, developmentImage);
     //this.id = enemy.Id;
@@ -8,7 +9,7 @@ Development = function (game, x, y, developmentType) {
     //this.currentHexName = enemy.CurrentHexName;
     //this.playerColor = enemy.PlayerColor; // assign each card a player color
     //this.anchor.setTo(0.5, 0.5);
-    //this.name = "development";
+    this.name = "development";
     //this.hasBeenPlaced = false;
     //this.inputEnabled = true;
     //this.input.useHandCursor = true;

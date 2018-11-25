@@ -1,5 +1,6 @@
 ﻿using DefendersOfCatan.BusinessLogic.Repository;
 using DefendersOfCatan.Common;
+using DefendersOfCatan.DAL;
 using DefendersOfCatan.DAL.DataModels;
 using DefendersOfCatan.Transfer;
 using System;
@@ -16,6 +17,7 @@ namespace DefendersOfCatan.BusinessLogic
         private TileRepository tileRepo = new TileRepository();
         private PlayerLogic playerLogic = new PlayerLogic();
         private PlayerRepository playerRepo = new PlayerRepository();
+
 
         public List<Enemy> GetEnemies()
         {
@@ -42,7 +44,6 @@ namespace DefendersOfCatan.BusinessLogic
                     // Reset barbarian index if it hits 3, and overrun the appropriate tile
                     if (barbarianIndex == 2) // put this back to 3
                     {
-                        // ToDo: First check if tile has city, settlement, walls, ... if so, remove those before flipping the tile
                         var overrunTile = tileLogic.SetOverrunTile(tile);
                         tiles.Add(overrunTile);
                         barbarianIndex = 0; // Reset barbarian index
@@ -62,7 +63,8 @@ namespace DefendersOfCatan.BusinessLogic
             var enemy = enemyRepo.GetSelectedEnemy();
             if (CanEnemyBeAddedToTile(enemy, tile))
             {
-                enemyRepo.PlaceEnemy(enemy, tile);
+                tileRepo.AddEnemyToTile(enemy.Id, tile.Id);
+                enemyRepo.SetEnemyPlaced(enemy);
                 var player = playerRepo.GetPlayerBasedOnColor(tile.PlayerColor);
                 if (playerLogic.CheckIfPlayerIsOverrun(player))
                 {
@@ -78,14 +80,7 @@ namespace DefendersOfCatan.BusinessLogic
         private bool CanEnemyBeAddedToTile(Enemy enemy, Tile tile)
         {
             var playerIsOverrun = playerRepo.GetPlayerOverrunBasedOnPlayerColor(enemy.PlayerColor);
-            if (tile.IsEnemyTile() && ((int)tile.Type == (int)enemy.PlayerColor) || playerIsOverrun)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+            return tile.IsEnemyTile() && ((int)tile.Type == (int)enemy.PlayerColor) || playerIsOverrun ? true : false;
         }
 
         public void RemoveEnemy(Enemy enemy, Tile tile)

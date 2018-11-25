@@ -10,7 +10,7 @@ GameStates.EnemyMove.prototype = {
         //var playerColor = game.rnd.integerInRange(3, 6)
         
         // Execute Enemy Move phase
-        getJSONSync('/Game/ExecuteEnemyMovePhase', GameStates.EnemyMove.prototype.updateBarbarians, error); // URL, Success Function, Error Function
+        getJSONSync('/Game/ExecuteEnemyMovePhase', GameStates.EnemyMove.prototype.updateEnemyMovePhase, error); // URL, Success Function, Error Function
         
 
     },
@@ -28,15 +28,24 @@ GameStates.EnemyMove.prototype = {
     }
 };
 
-GameStates.EnemyMove.prototype.updateBarbarians = function (d) {
+GameStates.EnemyMove.prototype.updateEnemyMovePhase = function (d) {
     // Advance barbarians
-    // alert('test');
+    // ToDo: Remove settlement if barbarian hits and settlement exists. This occurs rather than flipping tile.
     if (d.HasError) {
         alert(d.Error);
     }
     else {
         $.each(d.Item, function () { // loop each tile
             var tile = HexTile.prototype.getTileById(this.Id);
+            // First check if settlement exists. If so, remove settlement from UI
+            $.each(tile.children, function () {
+                if (this.name == 'development' && this.type == 1) // 1 = settlement
+                {
+                    tile.removeChild(this); // ToDo: TEST THIS LOGIC TO ENSURE SETTLEMENT GETS REMOVED
+                }
+            });
+
+            // Next, reset barbarian index and update UI
             if (this.Enemy != null) {
                 var barbarianIndex = this.Enemy.BarbarianIndex;
                 $.each(tile.children, function () { // loop each child on tile
