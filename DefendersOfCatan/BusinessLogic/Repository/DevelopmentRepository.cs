@@ -1,4 +1,5 @@
-﻿using DefendersOfCatan.DAL.DataModels;
+﻿using DefendersOfCatan.DAL;
+using DefendersOfCatan.DAL.DataModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,8 +8,17 @@ using static DefendersOfCatan.Common.Enums;
 
 namespace DefendersOfCatan.BusinessLogic.Repository
 {
-    public class DevelopmentRepository : BaseRepository
+    public interface IDevelopmentRepository
     {
+        void AddDevelopments(List<Development> developments);
+    }
+    public class DevelopmentRepository : BaseRepository, IDevelopmentRepository
+    {
+        public DevelopmentRepository() { }
+        public DevelopmentRepository(IGameContext db) : base(db)
+        {
+
+        }
         //public Development GetDevelopmentByType(DevelopmentType type)
         //{
         //    return db.Developments.Where(i => i.DevelopmentType == type).Single();
@@ -18,14 +28,14 @@ namespace DefendersOfCatan.BusinessLogic.Repository
         {
             foreach (var development in developments)
             {
-                db.Developments.Add(development);
+                _db.GetSet<Development>().Add(development);
             }
-            db.SaveChanges();
+            _db.SaveChanges();
         }
 
         public List<Development> GetDevelopments()
         {
-            return db.Developments.ToList();
+            return _db.GetSet<Development>().ToList();
         }
 
     }

@@ -1,5 +1,4 @@
 ﻿using DefendersOfCatan.Common;
-using DefendersOfCatan.Models;
 using System;
 using System.Collections.Generic;
 using DefendersOfCatan.DAL.DataModels;
@@ -7,13 +6,44 @@ using static DefendersOfCatan.Common.Enums;
 using static DefendersOfCatan.Common.Globals;
 using static DefendersOfCatan.Common.Constants;
 using DefendersOfCatan.BusinessLogic.Repository;
+using System.Linq;
 
 namespace DefendersOfCatan.BusinessLogic
 {
-    
-    public class GameInitializer
+
+    public interface IGameInitializer
     {
-        private DevelopmentRepository developmentRepo = new DevelopmentRepository();
+        void InitializeGame();
+    }
+
+    public class GameInitializer : IGameInitializer
+    {
+        private readonly IDevelopmentRepository _developmentRepo;
+        private readonly IGameRepository _gameRepo;
+
+        public GameInitializer(IGameRepository gameRepo, IDevelopmentRepository developmentRepo)
+        {
+            _gameRepo = gameRepo;
+            _developmentRepo = developmentRepo;
+        }
+
+        public void InitializeGame()
+        {
+            var game = new Game();
+            game.GameState = Enums.GameState.Initialization;
+            game.Tiles = InitializeTiles();
+            var capitalTile = game.Tiles.Single(t => t.Type == TileType.Capital);
+            game.Players = InitializePlayers(capitalTile);
+            game.Enemies = InitializeEnemies();
+            _gameRepo.AddGame(game);
+
+            // Set current player after players have been added to the db
+            game.CurrentPlayer = game.Players[0];
+            _gameRepo.Save();
+
+            InitializeDevelopments();
+
+        }
 
         public List<Tile> InitializeTiles()
         {
@@ -112,7 +142,7 @@ namespace DefendersOfCatan.BusinessLogic
             development = new Development { DevelopmentType = DevelopmentType.Card, DevelopmentName = "Dev5", DevelopmentCost = developmentCost };
             developments.Add(development);
 
-            developmentRepo.AddDevelopments(developments);          
+            _developmentRepo.AddDevelopments(developments);          
         }
 
         private List<PlayerResource> InitializePlayerResources()

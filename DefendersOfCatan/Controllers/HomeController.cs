@@ -11,7 +11,9 @@ namespace DefendersOfCatan.Controllers
     public class HomeController : Controller
     {
 
-        private GameContext db = new GameContext();
+        //private GameContext db = new GameContext();
+
+        public HomeController() { }
 
         public ActionResult Index()
         {
@@ -49,7 +51,7 @@ namespace DefendersOfCatan.Controllers
             //player.Gold = data.gold;
             //player.PositionX = data.positionX;
             //player.PositionY = data.positionY;
-            db.SaveChanges();
+            //db.SaveChanges();
 
             return ReturnJsonResult("Successfully saved!");
         }

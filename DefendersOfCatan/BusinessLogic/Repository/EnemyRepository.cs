@@ -8,9 +8,13 @@ using DefendersOfCatan.DAL;
 
 namespace DefendersOfCatan.BusinessLogic.Repository
 {
-    public class EnemyRepository : BaseRepository
+    public interface IEnemyRepository
     {
 
+    }
+    public class EnemyRepository : BaseRepository, IEnemyRepository
+    {
+        public EnemyRepository() { }
         public List<Enemy> GetEnemies()
         {
             return GetGame().Enemies;
@@ -30,7 +34,7 @@ namespace DefendersOfCatan.BusinessLogic.Repository
         {
             enemy.IsSelected = false;
             enemy.HasBeenPlaced = true;
-            db.SaveChanges();
+            _db.SaveChanges();
         }
 
         public void UpdateEnemy(UpdateEnemyTransfer enemyTransfer)
@@ -38,19 +42,19 @@ namespace DefendersOfCatan.BusinessLogic.Repository
             var enemy = GetEnemy(enemyTransfer.Id);
             enemy.HasBeenPlaced = enemyTransfer.HasBeenPlaced;
             enemy.BarbarianIndex = enemyTransfer.BarbarianIndex;
-            db.SaveChanges();
+            _db.SaveChanges();
         }
 
         public void UpdateBarbarianIndex(Enemy enemy, int barbarianIndex)
         {
             enemy.BarbarianIndex = barbarianIndex;
-            db.SaveChanges();
+            _db.SaveChanges();
         }
 
         public void RemoveEnemy(Enemy enemy)
         {
             enemy.IsRemoved = true;
-            db.SaveChanges();
+            _db.SaveChanges();
         }
     }
 }

@@ -9,11 +9,20 @@ using static DefendersOfCatan.Common.Enums;
 
 namespace DefendersOfCatan.BusinessLogic.Repository
 {
-    public class PlayerRepository : BaseRepository
+    public interface IPlayerRepository
     {
+        List<Player> GetPlayers();
+    }
+    public class PlayerRepository : BaseRepository, IPlayerRepository
+    {
+        public PlayerRepository() { }
+        public PlayerRepository(IGameContext db) : base(db)
+        {
+
+        }
         public List<Player> GetPlayers()
         {
-            var players = db.Game.FirstOrDefault().Players;
+            var players = _db.GetSet<Game>().FirstOrDefault().Players;
             return players;
         }
 
@@ -30,7 +39,7 @@ namespace DefendersOfCatan.BusinessLogic.Repository
         public void SetPlayerOverrun(Player player, bool isOverrun)
         {
             player.IsOverrun = isOverrun;
-            db.SaveChanges();
+            _db.SaveChanges();
         }
 
         public bool GetPlayerOverrunBasedOnPlayerColor(PlayerColor playerColor)
@@ -51,14 +60,14 @@ namespace DefendersOfCatan.BusinessLogic.Repository
             var currentPlayer = GetCurrentPlayer();
             var playerResource = currentPlayer.PlayerResources.Single(r => r.ResourceType == resourceType);
             playerResource.Qty += 1;
-            db.SaveChanges();
+            _db.SaveChanges();
         }
 
         public void RemoveResourceFromCurrentPlayer(ResourceType resourceType, int qty)
         {
             var playerResource = GetCurrentPlayer().PlayerResources.Single(r => r.ResourceType == resourceType);
             playerResource.Qty -= qty;
-            db.SaveChanges();
+            _db.SaveChanges();
         }
 
         public void AddDevelopmentToCurrentPlayer(DevelopmentType developmentType)
@@ -67,7 +76,7 @@ namespace DefendersOfCatan.BusinessLogic.Repository
             var playerDevelopment = player.PlayerDevelopments.Single(i => i.DevelopmentType == developmentType);
             playerDevelopment.Qty += 1;
             player.HasPurchasedItems = true;
-            db.SaveChanges();
+            _db.SaveChanges();
         }
 
         public void RemoveDevelopmentFromCurrentPlayer(DevelopmentType developmentType)
@@ -76,7 +85,7 @@ namespace DefendersOfCatan.BusinessLogic.Repository
             var playerDevelopment = player.PlayerDevelopments.Single(i => i.DevelopmentType == developmentType);
             playerDevelopment.Qty -= 1;
             player.HasPurchasedItems = false;
-            db.SaveChanges();
+            _db.SaveChanges();
         }
     }
 }

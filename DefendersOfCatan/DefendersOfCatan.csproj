@@ -51,6 +51,14 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="StructureMap, Version=4.7.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\StructureMap.4.7.0\lib\net45\StructureMap.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="StructureMap.Web, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\structuremap.web.4.0.0.315\lib\net40\StructureMap.Web.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
@@ -177,6 +185,7 @@
     <Compile Include="BusinessLogic\Repository\BaseRepository.cs" />
     <Compile Include="BusinessLogic\Repository\EnemyRepository.cs" />
     <Compile Include="BusinessLogic\Repository\DevelopmentRepository.cs" />
+    <Compile Include="BusinessLogic\Repository\GameRepository.cs" />
     <Compile Include="BusinessLogic\Repository\PlayerRepository.cs" />
     <Compile Include="BusinessLogic\Repository\TileRepository.cs" />
     <Compile Include="BusinessLogic\TileLogic.cs" />

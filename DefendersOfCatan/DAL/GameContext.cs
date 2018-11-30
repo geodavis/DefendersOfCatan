@@ -5,12 +5,17 @@ using System.Data.Entity.ModelConfiguration.Conventions;
 
 namespace DefendersOfCatan.DAL
 {
-    public class GameContext : DbContext
+    public interface IGameContext
     {
-        public GameContext() : base("GameContext")
-        {
+        DbSet<T> GetSet<T>() where T : class;
+        void Add<T>(T item) where T : class;
+        int SaveChanges();
+    }
 
-        }
+    public class GameContext : DbContext, IGameContext
+    {
+        public GameContext() : base("GameContext") { }
+
         public DbSet<Game> Game { get; set; }
 
         public DbSet<Player> Players { get; set; }

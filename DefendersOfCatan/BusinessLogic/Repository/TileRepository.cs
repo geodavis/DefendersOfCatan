@@ -8,10 +8,13 @@ using DefendersOfCatan.DAL;
 
 namespace DefendersOfCatan.BusinessLogic.Repository
 {
-    public class TileRepository : BaseRepository
+    public interface ITileRepository { }
+    public class TileRepository : BaseRepository, ITileRepository
     {
         private DevelopmentRepository developmentRepo = new DevelopmentRepository();
         private EnemyRepository enemyRepo = new EnemyRepository();
+
+        public TileRepository() { }
 
         public Tile GetCurrentPlayerTile()
         {
@@ -33,13 +36,13 @@ namespace DefendersOfCatan.BusinessLogic.Repository
         public void SetOverrunTile(Tile tile)
         {
             tile.IsOverrun = true;
-            db.SaveChanges();
+            _db.SaveChanges();
         }
 
         public void UpdateCurrentPlayerTile(Tile tile)
         {
             tile.Players.Add(GetCurrentPlayerBase()); // (For future reference) Passing player to this method causes issues with EF. It creates a new record, rather than updating an existing record. This is caused by passing by reference.
-            db.SaveChanges();
+            _db.SaveChanges();
         }
 
         public void AddDevelopmentToTile(int tileId, DevelopmentType developmentType)
@@ -51,7 +54,7 @@ namespace DefendersOfCatan.BusinessLogic.Repository
                 Development = development
             };
             tile.Developments.Add(tileDevelopment);
-            db.SaveChanges();
+            _db.SaveChanges();
         }
 
         public void RemoveDevelopmentFromTile(int tileId, DevelopmentType developmentType)
@@ -60,7 +63,7 @@ namespace DefendersOfCatan.BusinessLogic.Repository
             var tile = GetTileById(tileId);
             var tileDevelopment = new TileDevelopment { Development = development };
             tile.Developments.Remove(tileDevelopment);
-            db.SaveChanges();
+            _db.SaveChanges();
         }
 
         public List<TileDevelopment> GetDevelopments(int tileId)
@@ -75,7 +78,7 @@ namespace DefendersOfCatan.BusinessLogic.Repository
             var tile = GetTileById(tileId);
             tile.Enemy = enemyRepo.GetEnemy(enemyId);
             //db.Entry(tile.Enemy).State = System.Data.Entity.EntityState.Modified; // ToDo: make single data context that all repos use
-            db.SaveChanges();
+            _db.SaveChanges();
         }
     }
 }

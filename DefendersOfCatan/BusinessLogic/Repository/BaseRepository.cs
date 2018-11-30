@@ -8,18 +8,26 @@ using static DefendersOfCatan.Common.Enums;
 
 namespace DefendersOfCatan.BusinessLogic.Repository
 {
-    public class BaseRepository
+    interface IBaseRepository
     {
-        protected readonly GameContext db;
+        void Save();
+        void Add(object item);
 
-        public BaseRepository()
+    }
+    public class BaseRepository : IBaseRepository
+    {
+        protected readonly IGameContext _db;
+
+        public BaseRepository() { }
+
+        public BaseRepository(IGameContext db)
         {
-            db = new GameContext();
+            _db = db;
         }
 
         public Game GetGame()
         {
-            return db.Game.Single();
+            return _db.GetSet<Game>().Single();
         }
 
         public Player GetCurrentPlayerBase()
@@ -28,12 +36,17 @@ namespace DefendersOfCatan.BusinessLogic.Repository
         }
         public Development GetDevelopmentByType(DevelopmentType type)
         {
-            return db.Developments.Single(i => i.DevelopmentType == type);
+            return _db.GetSet<Development>().Single(i => i.DevelopmentType == type);
         }
 
         public void Save()
         {
-            db.SaveChanges();
+            _db.SaveChanges();
+        }
+
+        public void Add(object item)
+        {
+            _db.Add(item);
         }
     }
 }
