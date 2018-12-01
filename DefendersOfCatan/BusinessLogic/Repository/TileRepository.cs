@@ -8,19 +8,35 @@ using DefendersOfCatan.DAL;
 
 namespace DefendersOfCatan.BusinessLogic.Repository
 {
-    public interface ITileRepository { }
+    public interface ITileRepository
+    {
+        List<Tile> GetTiles();
+        void AddDevelopmentToTile(int tileId, DevelopmentType developmentType);
+        void RemoveDevelopmentFromTile(int tileId, DevelopmentType developmentType);
+        Tile GetTileById(int tileId);
+        void AddEnemyToTile(int enemyId, int tileId);
+        Tile GetCurrentPlayerTile();
+        void UpdateCurrentPlayerTile(Tile tile);
+        void SetOverrunTile(Tile tile);
+        List<TileDevelopment> GetDevelopments(int tileId);
+    }
     public class TileRepository : BaseRepository, ITileRepository
     {
-        private DevelopmentRepository developmentRepo = new DevelopmentRepository();
-        private EnemyRepository enemyRepo = new EnemyRepository();
+        private readonly IDevelopmentRepository _developmentRepo;
+        private readonly IEnemyRepository _enemyRepo;
 
         public TileRepository() { }
+        public TileRepository(IGameContext db, IDevelopmentRepository developmentRepo, IEnemyRepository enemyRepo) : base(db)
+        {
+            _developmentRepo = developmentRepo;
+            _enemyRepo = enemyRepo;
+        }
 
         public Tile GetCurrentPlayerTile()
         {
             var game = GetGame();
             var currentPlayer = GetCurrentPlayerBase();
-            return game.Tiles.Where(t => t.Players.Any(p => p.Id == currentPlayer.Id)).Single();
+            return game.Tiles.Single(t => t.Players.Any(p => p.Id == currentPlayer.Id));
         }
 
         public List<Tile> GetTiles()
@@ -76,7 +92,7 @@ namespace DefendersOfCatan.BusinessLogic.Repository
         {
             //var enemy = enemyRepo.GetEnemy(enemyId);
             var tile = GetTileById(tileId);
-            tile.Enemy = enemyRepo.GetEnemy(enemyId);
+            tile.Enemy = _enemyRepo.GetEnemy(enemyId);
             //db.Entry(tile.Enemy).State = System.Data.Entity.EntityState.Modified; // ToDo: make single data context that all repos use
             _db.SaveChanges();
         }

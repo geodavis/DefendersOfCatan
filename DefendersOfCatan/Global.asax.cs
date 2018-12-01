@@ -1,4 +1,5 @@
-﻿using DefendersOfCatan.BusinessLogic.Repository;
+﻿using DefendersOfCatan.BusinessLogic;
+using DefendersOfCatan.BusinessLogic.Repository;
 using DefendersOfCatan.DAL;
 using StructureMap;
 using StructureMap.Web;
@@ -31,11 +32,16 @@ namespace DefendersOfCatan
                  });
                  _.For<IGameContext>().HybridHttpOrThreadLocalScoped().Use<GameContext>();
                  _.For<IDevelopmentRepository>().Use<DevelopmentRepository>();
+                 _.For<IDevelopmentLogic>().Use<DevelopmentLogic>();
                  _.For<IBaseRepository>().Use<BaseRepository>();
                  _.For<IEnemyRepository>().Use<EnemyRepository>();
                  _.For<IGameRepository>().Use<GameRepository>();
                  _.For<IPlayerRepository>().Use<PlayerRepository>();
                  _.For<ITileRepository>().Use<TileRepository>();
+                 _.For<IGameStateLogic>().Use<GameStateLogic>();
+                 _.For<IPlayerLogic>().Use<PlayerLogic>();
+                 _.For<ITileLogic>().Use<TileLogic>();
+                 _.For<IEnemyLogic>().Use<EnemyLogic>();
 
                  ControllerBuilder.Current.SetControllerFactory(new StructureMapControllerFactory());
 

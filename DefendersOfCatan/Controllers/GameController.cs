@@ -23,19 +23,29 @@ namespace DefendersOfCatan.Controllers
 
 
         private readonly Game _game = new Game();
-        private readonly PlayerLogic _playerLogic = new PlayerLogic();
-        private readonly TileLogic _tileLogic = new TileLogic();
-        private readonly GameStateLogic _gameStateLogic = new GameStateLogic();
-        private readonly EnemyLogic _enemyLogic = new EnemyLogic();
-        private readonly DevelopmentLogic _developmentLogic = new DevelopmentLogic();
+        private readonly IPlayerLogic _playerLogic;
+        private readonly ITileLogic _tileLogic;
+        private readonly IGameStateLogic _gameStateLogic;
+        private readonly IEnemyLogic _enemyLogic;
+        private readonly IDevelopmentLogic _developmentLogic;
         private readonly IPlayerRepository _playerRepo;
+        private readonly IEnemyRepository _enemyRepo;
+        private readonly ITileRepository _tileRepo;
 
-        public GameController(IGameInitializer gameInitializer, IGameContext db, IPlayerRepository playerRepo)
+        public GameController(IGameInitializer gameInitializer, IGameContext db, IPlayerRepository playerRepo,
+            IEnemyRepository enemyRepo, ITileRepository tileRepo, IDevelopmentLogic developmentLogic,
+            IGameStateLogic gameStateLogic, IPlayerLogic playerLogic, ITileLogic tileLogic, IEnemyLogic enemyLogic)
         {
             _gameInitializer = gameInitializer;
             _db = db;
             _playerRepo = playerRepo;
-
+            _enemyRepo = enemyRepo;
+            _tileRepo = tileRepo;
+            _developmentLogic = developmentLogic;
+            _gameStateLogic = gameStateLogic;
+            _playerLogic = playerLogic;
+            _tileLogic = tileLogic;
+            _enemyLogic = enemyLogic;
         }
 
         // GET: Game
@@ -74,21 +84,21 @@ namespace DefendersOfCatan.Controllers
             try
             {
                 var gameState = _gameStateLogic.GetCurrentGameState();
-                var enemy = _db.GetSet<Enemy>().Single(e => e.Id == data.EnemyId);
-                result.Item = new ClickedEnemyTransfer() { EnemyId = enemy.Id, GameState = gameState.ToString() };
+                var enemy = _enemyRepo.GetEnemy(data.EnemyId);
+                result.Item = new ClickedEnemyTransfer { EnemyId = enemy.Id, GameState = gameState.ToString() };
                 switch (gameState)
                 {
                     case GameState.EnemyCard:
-                        enemy.IsSelected = true;
+                        _enemyRepo.SetSelectedEnemy(data.EnemyId);
                         break;
                     case GameState.PlayerMove:
                         // ToDo: Implement error handling (pass error to client)
                         break;
                     case GameState.PlayerResourceOrFight:
                         var currentPlayer = _playerLogic.GetCurrentPlayer();
-                        var tiles = _db.GetSet<Tile>().ToList();
-                        var currentPlayerTile = tiles.Where(t => t.Players.Contains(currentPlayer)).Single();
-                        var enemyTile = tiles.Where(t => t.Enemy != null && t.Enemy.Id == enemy.Id).Single();
+                        var tiles = _tileRepo.GetTiles();
+                        var currentPlayerTile = tiles.Single(t => t.Players.Contains(currentPlayer));
+                        var enemyTile = tiles.Single(t => t.Enemy != null && t.Enemy.Id == enemy.Id);
                         result.Item.EnemyTileId = enemyTile.Id;
                         var neighborTiles = _tileLogic.GetNeighborTiles(currentPlayerTile);
 
@@ -153,8 +163,8 @@ namespace DefendersOfCatan.Controllers
             try
             {
                 var gameState = _gameStateLogic.GetCurrentGameState();
-                var selectedTile = _db.GetSet<Tile>().Single(t => t.Id == data.ClickedTileId);
-                var currentPlayer = _playerLogic.GetCurrentPlayer();
+                var selectedTile = _tileRepo.GetTileById(data.ClickedTileId);
+                var currentPlayer = _playerRepo.GetCurrentPlayer();
                 result.Item.GameState = gameState.ToString();
                 result.Item.ClickedTileId = selectedTile.Id;
                 result.Item.PlayerId = currentPlayer.Id;
@@ -164,9 +174,7 @@ namespace DefendersOfCatan.Controllers
                         result.Item.DevelopmentType = (int)_developmentLogic.PlaceInitialSettlement(data.ClickedTileId);
                         break;
                     case GameState.EnemyCard:
-                        var selectedEnemy = _db.GetSet<Enemy>().Single(e => e.IsSelected);
-                        _enemyLogic.AddEnemyToTile(data);
-                        result.Item.EnemyId = selectedEnemy.Id;
+                        result.Item.EnemyId = _enemyLogic.AddEnemyToTile(data).Id;
                         break;
                     case GameState.PlayerPurchase:
                         // Get the item the player just purchased; If no item in inventory, return error message
@@ -234,8 +242,7 @@ namespace DefendersOfCatan.Controllers
             var result = new ItemModel<List<Tile>> { Item = new List<Tile>() };
             try
             {
-                var game = _db.GetSet<Game>().FirstOrDefault();
-                result.Item = game.Tiles;
+                result.Item = _tileRepo.GetTiles();
                 return ReturnJsonResult(result);
             }
             catch (Exception e)
@@ -313,7 +320,7 @@ namespace DefendersOfCatan.Controllers
             var result = new ItemModel<List<Enemy>> { Item = new List<Enemy>() };
             try
             {
-                result.Item = _enemyLogic.GetEnemies();
+                result.Item = _enemyRepo.GetEnemies();
                 return ReturnJsonResult(result);
             }
             catch (Exception e)

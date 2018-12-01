@@ -9,12 +9,23 @@ using static DefendersOfCatan.Common.Enums;
 
 namespace DefendersOfCatan.BusinessLogic
 {
-    public class TileLogic
+    public interface ITileLogic
     {
-        private TileRepository tileRepo = new TileRepository();
+        Tile GetCurrentPlayerTile();
+        Tile SetOverrunTile(Tile tile);
+        List<Tile> GetNeighborTiles(Tile tile);
+        bool TileHasSettlement(int tileId);
+    }
+    public class TileLogic : ITileLogic
+    {
+        private readonly ITileRepository _tileRepo;
+        public TileLogic(ITileRepository tileRepo)
+        {           
+            _tileRepo = tileRepo;
+        }
         public Tile GetCurrentPlayerTile()
         {
-            return tileRepo.GetCurrentPlayerTile();
+            return _tileRepo.GetCurrentPlayerTile();
         }
 
         public List<Tile> GetNeighborTiles(Tile tile)
@@ -54,7 +65,7 @@ namespace DefendersOfCatan.BusinessLogic
         
         private void AddNeighbor(int x, int y, List<Tile> neighboringTiles)
         {
-            var tiles = tileRepo.GetTiles();
+            var tiles = _tileRepo.GetTiles();
             if (tiles.Any(t => t.LocationX == x && t.LocationY == y))
             {
                 neighboringTiles.Add(tiles.Single(t => t.LocationX == x && t.LocationY == y));
@@ -67,11 +78,11 @@ namespace DefendersOfCatan.BusinessLogic
             var overrunTile = GetNextOverrunTile(tile, tileNumber, 0);
             if (!TileHasSettlement(overrunTile.Id))
             {
-                tileRepo.SetOverrunTile(overrunTile);
+                _tileRepo.SetOverrunTile(overrunTile);
             }
             else
             {
-                tileRepo.RemoveDevelopmentFromTile(overrunTile.Id, DevelopmentType.Settlement);
+                _tileRepo.RemoveDevelopmentFromTile(overrunTile.Id, DevelopmentType.Settlement);
             }
 
             return overrunTile;
@@ -80,7 +91,7 @@ namespace DefendersOfCatan.BusinessLogic
         public bool TileHasSettlement(int tileId)
         {
             var tileHasSettlement = false;
-            var tileDevelopments = tileRepo.GetDevelopments(tileId);
+            var tileDevelopments = _tileRepo.GetDevelopments(tileId);
             if (tileDevelopments.Any(t => t.Development.DevelopmentType == DevelopmentType.Settlement))
             {
                 tileHasSettlement = true;

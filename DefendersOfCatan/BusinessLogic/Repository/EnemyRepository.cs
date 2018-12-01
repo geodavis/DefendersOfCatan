@@ -10,11 +10,26 @@ namespace DefendersOfCatan.BusinessLogic.Repository
 {
     public interface IEnemyRepository
     {
-
+        List<Enemy> GetEnemies();
+        Enemy GetEnemy(int id);
+        Enemy GetSelectedEnemy();
+        void UpdateEnemy(UpdateEnemyTransfer enemyTransfer);
+        Game GetGame();
+        void UpdateBarbarianIndex(Enemy enemy, int barbarianIndex);
+        void SetEnemyPlaced(Enemy enemy);
+        void RemoveEnemy(Enemy enemy);
+        void SetSelectedEnemy(int id);
     }
     public class EnemyRepository : BaseRepository, IEnemyRepository
     {
         public EnemyRepository() { }
+
+        public EnemyRepository(IGameContext db) : base(db)
+        {
+
+        }
+
+
         public List<Enemy> GetEnemies()
         {
             return GetGame().Enemies;
@@ -23,6 +38,13 @@ namespace DefendersOfCatan.BusinessLogic.Repository
         public Enemy GetEnemy(int id)
         {
             return GetGame().Enemies.Single(e => e.Id == id);
+        }
+
+        public void SetSelectedEnemy(int id)
+        {
+            var enemy = GetGame().Enemies.Single(e => e.Id == id);
+            enemy.IsSelected = true;
+            _db.SaveChanges();
         }
 
         public Enemy GetSelectedEnemy()

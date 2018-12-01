@@ -11,6 +11,9 @@ namespace DefendersOfCatan.BusinessLogic.Repository
     public interface IDevelopmentRepository
     {
         void AddDevelopments(List<Development> developments);
+        List<Development> GetDevelopments();
+        Player GetCurrentPlayerBase();
+        Development GetDevelopmentByType(DevelopmentType type);
     }
     public class DevelopmentRepository : BaseRepository, IDevelopmentRepository
     {
@@ -19,10 +22,6 @@ namespace DefendersOfCatan.BusinessLogic.Repository
         {
 
         }
-        //public Development GetDevelopmentByType(DevelopmentType type)
-        //{
-        //    return db.Developments.Where(i => i.DevelopmentType == type).Single();
-        //}
 
         public void AddDevelopments(List<Development> developments)
         {

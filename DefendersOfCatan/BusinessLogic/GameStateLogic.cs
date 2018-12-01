@@ -1,27 +1,32 @@
 ﻿using DefendersOfCatan.BusinessLogic.Repository;
-using DefendersOfCatan.DAL.DataModels;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 using static DefendersOfCatan.Common.Enums;
 
 namespace DefendersOfCatan.BusinessLogic
 {
-    public class GameStateLogic
+    public interface IGameStateLogic
     {
-        private BaseRepository baseRepo = new BaseRepository();
+        GameState GetCurrentGameState();
+        GameState UpdateGameState();
+    }
+    public class GameStateLogic : IGameStateLogic
+    {
+        private readonly IBaseRepository _baseRepo;
+        public GameStateLogic(IBaseRepository baseRepo)
+        {
+            _baseRepo = baseRepo;
+        }
 
         public GameState GetCurrentGameState()
         {
-            return baseRepo.GetGame().GameState;
+            return _baseRepo.GetGame().GameState;
         }
         public GameState UpdateGameState()
         {
-            var game = baseRepo.GetGame();
+            var game = _baseRepo.GetGame();
             var nextGameState = GetNextGameState(game.GameState);
             game.GameState = nextGameState;
-            baseRepo.Save(); // save game state to DB
+            _baseRepo.Save(); // save game state to DB
             return game.GameState;
         }
 

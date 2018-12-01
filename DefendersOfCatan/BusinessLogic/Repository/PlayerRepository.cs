@@ -12,6 +12,16 @@ namespace DefendersOfCatan.BusinessLogic.Repository
     public interface IPlayerRepository
     {
         List<Player> GetPlayers();
+        Player GetCurrentPlayer();
+        void RemoveDevelopmentFromCurrentPlayer(DevelopmentType developmentType);
+        Player GetPlayerBasedOnColor(PlayerColor playerColor);
+        void SetPlayerOverrun(Player player, bool isOverrun);
+        bool GetPlayerOverrunBasedOnPlayerColor(PlayerColor playerColor);
+        void AddResourceToCurrentPlayer(ResourceType resourceType);
+        void RemoveResourceFromCurrentPlayer(ResourceType resourceType, int qty);
+        void AddDevelopmentToCurrentPlayer(DevelopmentType developmentType);
+
+
     }
     public class PlayerRepository : BaseRepository, IPlayerRepository
     {

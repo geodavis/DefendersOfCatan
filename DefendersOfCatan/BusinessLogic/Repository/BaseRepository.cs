@@ -8,10 +8,12 @@ using static DefendersOfCatan.Common.Enums;
 
 namespace DefendersOfCatan.BusinessLogic.Repository
 {
-    interface IBaseRepository
+    public interface IBaseRepository
     {
         void Save();
         void Add(object item);
+        Player GetCurrentPlayerBase();
+        Game GetGame();
 
     }
     public class BaseRepository : IBaseRepository

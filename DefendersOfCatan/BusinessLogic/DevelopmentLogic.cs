@@ -9,11 +9,26 @@ using static DefendersOfCatan.Common.Enums;
 
 namespace DefendersOfCatan.BusinessLogic
 {
-    public class DevelopmentLogic
+    public interface IDevelopmentLogic
     {
-        private readonly DevelopmentRepository _developmentRepo = new DevelopmentRepository();
-        private readonly TileRepository _tileRepo = new TileRepository();
-        private readonly PlayerRepository _playerRepo = new PlayerRepository();
+        List<DevelopmentTransfer> GetDevelopments();
+        DevelopmentType PlaceInitialSettlement(int tileId);
+        DevelopmentType PlacePurchasedDevelopment(int tileId);
+
+    }
+    public class DevelopmentLogic : IDevelopmentLogic
+    {
+        private readonly IDevelopmentRepository _developmentRepo;
+        private readonly ITileRepository _tileRepo;
+        private readonly IPlayerRepository _playerRepo;
+
+        public DevelopmentLogic(IDevelopmentRepository developmentRepo, ITileRepository tileRepo, IPlayerRepository playerRepo)
+        {
+            _developmentRepo = developmentRepo;
+            _tileRepo = tileRepo;
+            _playerRepo = playerRepo;
+
+        }
 
         public List<DevelopmentTransfer> GetDevelopments()
         {

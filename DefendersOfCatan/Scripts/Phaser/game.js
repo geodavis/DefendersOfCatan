@@ -121,14 +121,18 @@ GameStates.Game.prototype = {
 //}
 
 function startNextGameState(d) {
-    var gameState = d.Item;
-    this.game.state.start(gameState, false, false);
+    if (d.HasError) {
+        alert('Error occurred during game state transition: ' + d.Error);
+    }
+    else {
+        var gameState = d.Item;
+        this.game.state.start(gameState, false, false);
+    }
 }
 
 function getBoardData() {
     // Get resource tile types from the server
     getJSONSync('/Game/GetBoardData', initializeBoard, error); // URL, Success Function, Error Function
-
 }
 
 function getDevelopments() {
@@ -146,72 +150,77 @@ function getEnemies() {
 }
 
 function initializeBoard(d) {
-    while (d.Item.length) tiles.push(d.Item.splice(0, 8)); // convert to 2-d as serialization converted to 1-d
-
-    hexGrid = game.add.group();
-    hexGrid.inputEnableChildren = true;
-    //hexGrid.onChildInputOver.add(markHoveredTile, this);
-    var hexCount = 0;
-
-    //game.input.onTap.add(onTap);
-    //var style = { font: "32px Arial", fill: "#ff0044", wordWrap: true, wordWrapWidth: hexagonWidth, align: "center", backgroundColor: "#ffff00" };
-
-    //tileLayout =
-    //    [
-    //    [9, 9, 0, 0, 1, 1, 9, 9],
-    //    [9, 0, 7, 7, 7, 1, 9, 9],
-    //    [9, 8, 7, 7, 7, 7, 8, 9],
-    //    [8, 7, 7, 6, 7, 7, 8, 9],
-    //    [9, 8, 7, 7, 7, 7, 8, 9],
-    //    [9, 3, 7, 7, 7, 2, 9, 9],
-    //    [9, 9, 3, 3, 2, 2, 9, 9]
-    //    ];
-
-    // Enemy hexes go 35, 36, 37; 46, 47, 48; 53, 54, 55; 64, 65, 66 (e.g. 35 goes from tile type 3 -> 5, then increment the next)
-    hexOverrunData =
-    [
-    ['0', '0', '36', '37', '46', '47', '0', '0'],
-    ['0', '35', '36,54', '37,46,53,66', '47,65', '48', '0', '0'],
-    ['0', '7', '35,55', '36,46,54,66', '37,47,53,65', '48,64', '7', '0'],
-    ['7', '1', '35,46,55,66', '36,47,54,65', '37,48,53,64', '1', '7', '0'],
-    ['0', '7', '46,66', '35,47,55,65', '36,48,54,64', '37,53', '7', '0'],
-    ['0', '66', '47,65', '35,48,55,64', '36,54', '53', '0', '0'],
-    ['0', '0', '65', '64', '55', '54', '0', '0']
-    ];
-    
-    //tileLayout = transpose(tileLayout); - for vertical view
-
-    var verticalOffset = hexTileHeight * 3 / 4;
-    var horizontalOffset = hexTileWidth;
-    var startX;
-    var startY;
-    var startXInit = hexTileWidth / 2;
-    var startYInit = hexTileHeight / 2;
-
-    for (var i = 0; i < tiles.length; i++) {
-        if (i % 2 !== 0) {
-            startX = 2 * startXInit;
-        } else {
-            startX = startXInit;
-        }
-        startY = startYInit + (i * verticalOffset);
-        for (var j = 0; j < tiles[0].length; j++) {
-            if (tiles[i][j] != tileTypes.hidden) {
-                var tileId = tiles[i][j].Id;
-                var tileType = tiles[i][j].Type;
-                var resourceType = tiles[i][j].ResourceType;
-                var hexTile = new HexTile(game, startX, startY, getTileImage(tileType, resourceType), false, i, j, tileType, tileId);
-                hexGrid.add(hexTile);
-            }
-
-            startX += horizontalOffset;
-        }
+    if (d.HasError) {
+        alert('Error occurred during board initialization: ' + d.Error);
     }
-    hexGrid.x = 50;
-    hexGrid.y = 50;
+    else {
+        while (d.Item.length) tiles.push(d.Item.splice(0, 8)); // convert to 2-d as serialization converted to 1-d
 
-    var element = document.getElementById('sidebar-right');
-    ko.applyBindings(game_vm, element);
+        hexGrid = game.add.group();
+        hexGrid.inputEnableChildren = true;
+        //hexGrid.onChildInputOver.add(markHoveredTile, this);
+        var hexCount = 0;
+
+        //game.input.onTap.add(onTap);
+        //var style = { font: "32px Arial", fill: "#ff0044", wordWrap: true, wordWrapWidth: hexagonWidth, align: "center", backgroundColor: "#ffff00" };
+
+        //tileLayout =
+        //    [
+        //    [9, 9, 0, 0, 1, 1, 9, 9],
+        //    [9, 0, 7, 7, 7, 1, 9, 9],
+        //    [9, 8, 7, 7, 7, 7, 8, 9],
+        //    [8, 7, 7, 6, 7, 7, 8, 9],
+        //    [9, 8, 7, 7, 7, 7, 8, 9],
+        //    [9, 3, 7, 7, 7, 2, 9, 9],
+        //    [9, 9, 3, 3, 2, 2, 9, 9]
+        //    ];
+
+        // Enemy hexes go 35, 36, 37; 46, 47, 48; 53, 54, 55; 64, 65, 66 (e.g. 35 goes from tile type 3 -> 5, then increment the next)
+        hexOverrunData =
+        [
+        ['0', '0', '36', '37', '46', '47', '0', '0'],
+        ['0', '35', '36,54', '37,46,53,66', '47,65', '48', '0', '0'],
+        ['0', '7', '35,55', '36,46,54,66', '37,47,53,65', '48,64', '7', '0'],
+        ['7', '1', '35,46,55,66', '36,47,54,65', '37,48,53,64', '1', '7', '0'],
+        ['0', '7', '46,66', '35,47,55,65', '36,48,54,64', '37,53', '7', '0'],
+        ['0', '66', '47,65', '35,48,55,64', '36,54', '53', '0', '0'],
+        ['0', '0', '65', '64', '55', '54', '0', '0']
+        ];
+
+        //tileLayout = transpose(tileLayout); - for vertical view
+
+        var verticalOffset = hexTileHeight * 3 / 4;
+        var horizontalOffset = hexTileWidth;
+        var startX;
+        var startY;
+        var startXInit = hexTileWidth / 2;
+        var startYInit = hexTileHeight / 2;
+
+        for (var i = 0; i < tiles.length; i++) {
+            if (i % 2 !== 0) {
+                startX = 2 * startXInit;
+            } else {
+                startX = startXInit;
+            }
+            startY = startYInit + (i * verticalOffset);
+            for (var j = 0; j < tiles[0].length; j++) {
+                if (tiles[i][j] != tileTypes.hidden) {
+                    var tileId = tiles[i][j].Id;
+                    var tileType = tiles[i][j].Type;
+                    var resourceType = tiles[i][j].ResourceType;
+                    var hexTile = new HexTile(game, startX, startY, getTileImage(tileType, resourceType), false, i, j, tileType, tileId);
+                    hexGrid.add(hexTile);
+                }
+
+                startX += horizontalOffset;
+            }
+        }
+        hexGrid.x = 50;
+        hexGrid.y = 50;
+
+        var element = document.getElementById('sidebar-right');
+        ko.applyBindings(game_vm, element);
+    }
 }
 
 function initializeItems(d) {
@@ -237,20 +246,25 @@ function initializePlayers(d) {
 };
 
 function initializeEnemyCards(d) {
-    var enemies = d.Item;
-    enemyCards = game.add.group();
-    for (i = 0; i < enemies.length; i++) {
-        var image = 'enemycard';
-        if (enemies[i].HasBarbarian) {
-            image = 'enemycardB0';
-        }
-        
-        var enemy = new Enemy(game, 0, 0, image, enemies[i]);
-        enemyCards.add(enemy);
+    if (d.HasError) {
+        alert(d.Error);
     }
+    else {
+        var enemies = d.Item;
+        enemyCards = game.add.group();
+        for (i = 0; i < enemies.length; i++) {
+            var image = 'enemycard';
+            if (enemies[i].HasBarbarian) {
+                image = 'enemycardB0';
+            }
 
-    enemyCards.x = 500;
-    enemyCards.y = 50;
+            var enemy = new Enemy(game, 0, 0, image, enemies[i]);
+            enemyCards.add(enemy);
+        }
+
+        enemyCards.x = 500;
+        enemyCards.y = 50;
+    }
 }
 
 function findHexTile() {
