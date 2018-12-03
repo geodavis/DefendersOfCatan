@@ -54,7 +54,7 @@ GameStates.Preloader.prototype = {
         //this.load.image('barbarian', '../../Content/Assets/barbarian.png');
 
         this.load.image('settlementBlue', '../../Content/Assets/settlementBlue.png');
-
+        this.load.image('settlementPlacement', '../../Content/Assets/settlementPlacement.png');
     },
 
     create: function () {

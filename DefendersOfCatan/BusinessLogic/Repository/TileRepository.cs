@@ -19,6 +19,7 @@ namespace DefendersOfCatan.BusinessLogic.Repository
         void UpdateCurrentPlayerTile(Tile tile);
         void SetOverrunTile(Tile tile);
         List<TileDevelopment> GetDevelopments(int tileId);
+        List<Tile> GetPlaceableTiles(DevelopmentType developmentType);
     }
     public class TileRepository : BaseRepository, ITileRepository
     {
@@ -75,10 +76,8 @@ namespace DefendersOfCatan.BusinessLogic.Repository
 
         public void RemoveDevelopmentFromTile(int tileId, DevelopmentType developmentType)
         {
-            var development = GetDevelopmentByType(developmentType);
             var tile = GetTileById(tileId);
-            var tileDevelopment = new TileDevelopment { Development = development };
-            tile.Developments.Remove(tileDevelopment);
+            tile.Developments.RemoveAll(d => d.Development.DevelopmentType == developmentType);
             _db.SaveChanges();
         }
 
@@ -90,11 +89,14 @@ namespace DefendersOfCatan.BusinessLogic.Repository
 
         public void AddEnemyToTile(int enemyId, int tileId)
         {
-            //var enemy = enemyRepo.GetEnemy(enemyId);
             var tile = GetTileById(tileId);
             tile.Enemy = _enemyRepo.GetEnemy(enemyId);
-            //db.Entry(tile.Enemy).State = System.Data.Entity.EntityState.Modified; // ToDo: make single data context that all repos use
             _db.SaveChanges();
+        }
+
+        public List<Tile> GetPlaceableTiles(DevelopmentType developmentType)
+        {
+            return GetGame().Tiles.Where(t => !t.Developments.Any() && t.Type == TileType.Resource).ToList();
         }
     }
 }

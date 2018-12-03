@@ -200,6 +200,16 @@ function executePostTileClickEvents(d) {
                 var developmentType = d.Item.DevelopmentType;
                 var development = new Development(game, 0, 0, developmentType);
                 tile.addChild(development);
+
+                // Remove placement image from tiles
+                $.each(hexGrid.children, function () { // loop each tile
+                    var gridTile = this;
+                    $.each(gridTile.children, function () { // loop each child of tile
+                        if (this.name == 'placeable') {
+                            gridTile.removeChild(this);
+                        }
+                    });
+                });
                 break;
             case 'PlayerMove':
                 var tile = HexTile.prototype.getTileById(d.Item.ClickedTileId);

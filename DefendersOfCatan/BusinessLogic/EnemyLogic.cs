@@ -40,32 +40,36 @@ namespace DefendersOfCatan.BusinessLogic
             _enemyRepo.UpdateEnemy(enemyTransfer);
         }
 
-        public List<Tile> ExecuteEnemyMovePhase()
+        public EnemyMoveTransfer ExecuteEnemyMovePhase()
         {
-            var game = _enemyRepo.GetGame();
+            var enemyMoveTransfer = new EnemyMoveTransfer { BarbarianTiles = new List<Tile>(), OverrunTiles = new List<Tile>(), OverrunDevelopments = new List<Development>() };
             var tiles = new List<Tile>();
 
             // Check current player for barbarian advancement
-            foreach (var tile in game.Tiles)
+            foreach (var tile in _tileRepo.GetTiles())
             {
-                if ((int)game.CurrentPlayer.Color == (int)tile.Type && tile.Enemy != null && tile.Enemy.HasBarbarian)
+                if ((int)_playerRepo.GetCurrentPlayer().Color == (int)tile.Type && tile.Enemy != null && tile.Enemy.HasBarbarian)
                 {
                     var barbarianIndex = tile.Enemy.BarbarianIndex + 1;
-
+                    var barbarianStrength = tile.Enemy.Strength;
                     // Reset barbarian index if it hits 3, and overrun the appropriate tile
                     if (barbarianIndex == 2) // put this back to 3
                     {
                         var overrunTile = _tileLogic.SetOverrunTile(tile);
-                        tiles.Add(overrunTile);
+                        enemyMoveTransfer.OverrunTiles.Add(overrunTile); // Add tile to overrun
                         barbarianIndex = 0; // Reset barbarian index
+                        if (barbarianStrength != 5) // Barbarian strength starts at 1 and has a max of 5
+                        {
+                            barbarianStrength++;
+                        }
                     }
 
-                    _enemyRepo.UpdateBarbarianIndex(tile.Enemy, barbarianIndex);
-                    tiles.Add(tile);
+                    _enemyRepo.UpdateBarbarian(tile.Enemy, barbarianIndex, barbarianStrength);
+                    enemyMoveTransfer.BarbarianTiles.Add(tile); // Add tile to update barbarian index of
                 }
             }
 
-            return tiles;
+            return enemyMoveTransfer; // ToDo: Return any developments removed by barbarian attack so that UI can be updated
         }
 
         public Enemy AddEnemyToTile(ClickedTileTransfer tileTransfer)

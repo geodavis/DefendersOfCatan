@@ -6,6 +6,7 @@ using DefendersOfCatan.DAL.DataModels;
 using DefendersOfCatan.DAL;
 using DefendersOfCatan.BusinessLogic.Repository;
 using static DefendersOfCatan.Common.Enums;
+using DefendersOfCatan.Transfer;
 
 namespace DefendersOfCatan.BusinessLogic
 {
@@ -86,8 +87,7 @@ namespace DefendersOfCatan.BusinessLogic
         public bool PurchaseDevelopment(DevelopmentType developmentType)
         {
             var developmentCost = _developmentRepo.GetDevelopmentByType(developmentType).DevelopmentCost;
-            var currentPlayer = GetCurrentPlayer();
-            var playerResources = currentPlayer.PlayerResources;
+            var playerResources = GetCurrentPlayer().PlayerResources;
 
             if (PlayerCanPurchaseDevelopment(developmentCost, playerResources))
             {
@@ -99,7 +99,6 @@ namespace DefendersOfCatan.BusinessLogic
 
                 // Save development to player
                 _playerRepo.AddDevelopmentToCurrentPlayer(developmentType);
-
                 return true;
             }
             else

@@ -58,26 +58,6 @@ namespace DefendersOfCatan.Controllers
         }
 
         [HttpPost]
-        public JsonResult SetSelectedEnemy(ClickedEnemyTransfer data)
-        {
-            var result = new ItemModel<ClickedEnemyTransfer>();
-            try
-            {
-                var enemy = _db.GetSet<Enemy>().Single(e => e.Id == data.EnemyId);
-                enemy.IsSelected = true;
-                _db.SaveChanges();
-                result.Item = data;
-                return ReturnJsonResult(result);
-            }
-            catch (Exception e)
-            {
-                result.HasError = true;
-                result.Error = e.Message;
-                return ReturnJsonResult(result);
-            }
-        }
-
-        [HttpPost]
         public JsonResult ExecuteEnemyClickedActions(ClickedEnemyTransfer data)
         {
             var result = new ItemModel<ClickedEnemyTransfer>();
@@ -291,14 +271,15 @@ namespace DefendersOfCatan.Controllers
         [HttpGet]
         public JsonResult PurchaseDevelopment(DevelopmentType developmentType)
         {
-            var result = new ItemModel<int>
-            {
-                Item = (int)developmentType
-            };
+            // ToDo: Need to pass back all placeable tiles
+            var result = new ItemModel<PurchaseDevelopmentTransfer> { Item = new PurchaseDevelopmentTransfer() };
 
             try
             {
-                if (!_playerLogic.PurchaseDevelopment(developmentType))
+                result.Item.CanPurchase = _playerLogic.PurchaseDevelopment(developmentType);
+                result.Item.DevelopmentType = developmentType;
+                result.Item.Tiles = _tileRepo.GetPlaceableTiles(developmentType);
+                if (!result.Item.CanPurchase)
                 {
                     result.HasError = true;
                     result.Error = "Cannot purchase this item.";
@@ -426,9 +407,12 @@ namespace DefendersOfCatan.Controllers
         [HttpGet]
         public JsonResult ExecuteEnemyMovePhase()
         {
-            var result = new ItemModel<List<Tile>> { Item = new List<Tile>() };
+            var result = new ItemModel<EnemyMoveTransfer>();
 
             // In this phase, we progress any barbarians tied to the current players tiles
+            // ToDo: Barbarians start at strength 1, and progress +1 every time they hit;
+            // to defeat, you must roll at least their strength;
+            // they also do more damage (take out more developments) when they hit as they get stronger
             try
             {
                 result.Item = _enemyLogic.ExecuteEnemyMovePhase();

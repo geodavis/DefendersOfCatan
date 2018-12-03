@@ -216,12 +216,14 @@
     <Compile Include="Transfer\BoardDataTransfer.cs" />
     <Compile Include="Transfer\ClickedTileTransfer.cs" />
     <Compile Include="Transfer\DevelopmentTransfer.cs" />
+    <Compile Include="Transfer\EnemyMoveTransfer.cs" />
     <Compile Include="Transfer\EnemyTileTransfer.cs" />
     <Compile Include="Transfer\ClickedEnemyTransfer.cs" />
     <Compile Include="Transfer\PlayerHealthTransfer.cs" />
     <Compile Include="Transfer\PlayerOverrunTransfer.cs" />
     <Compile Include="Transfer\PlayerResourceTransfer.cs" />
     <Compile Include="Transfer\PlayerTileTransfer.cs" />
+    <Compile Include="Transfer\PurchaseDevelopmentTransfer.cs" />
     <Compile Include="Transfer\UpdateEnemyTransfer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
@@ -258,6 +260,7 @@
     <Content Include="Content\Assets\preloader-bar.png" />
     <Content Include="Content\Assets\rock.png" />
     <Content Include="Content\Assets\SettlementBlue.png" />
+    <Content Include="Content\Assets\SettlementPlacement.png" />
     <Content Include="Content\Assets\sheepHex.gif" />
     <Content Include="Content\Assets\Spritesheets\dude.png" />
     <Content Include="Content\Assets\star.png" />
@@ -356,6 +359,7 @@
     <Content Include="Scripts\Phaser\initialplacement.js" />
     <Content Include="Scripts\Phaser\enemymove.js" />
     <Content Include="Scripts\Phaser\item.js" />
+    <Content Include="Scripts\Phaser\placeable.js" />
     <Content Include="Scripts\Phaser\playerplacepurchase.js" />
     <Content Include="Scripts\Phaser\playerpurchase.js" />
     <Content Include="Scripts\Phaser\player_res_or_fight.js" />

@@ -15,7 +15,7 @@ namespace DefendersOfCatan.BusinessLogic.Repository
         Enemy GetSelectedEnemy();
         void UpdateEnemy(UpdateEnemyTransfer enemyTransfer);
         Game GetGame();
-        void UpdateBarbarianIndex(Enemy enemy, int barbarianIndex);
+        void UpdateBarbarian(Enemy enemy, int barbarianIndex, int strength);
         void SetEnemyPlaced(Enemy enemy);
         void RemoveEnemy(Enemy enemy);
         void SetSelectedEnemy(int id);
@@ -67,9 +67,10 @@ namespace DefendersOfCatan.BusinessLogic.Repository
             _db.SaveChanges();
         }
 
-        public void UpdateBarbarianIndex(Enemy enemy, int barbarianIndex)
+        public void UpdateBarbarian(Enemy enemy, int barbarianIndex, int strength)
         {
             enemy.BarbarianIndex = barbarianIndex;
+            enemy.Strength = strength;
             _db.SaveChanges();
         }
 

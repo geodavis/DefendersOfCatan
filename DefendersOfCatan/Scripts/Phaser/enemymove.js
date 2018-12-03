@@ -45,6 +45,7 @@ GameStates.EnemyMove.prototype.updateEnemyMovePhase = function (d) {
                 }
             });
 
+            //ToDo: Update logic to look for new list of tiles specific to barbarian or overrun. remove development appropriately.
             // Next, reset barbarian index and update UI
             if (this.Enemy != null) {
                 var barbarianIndex = this.Enemy.BarbarianIndex;

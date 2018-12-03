@@ -87,7 +87,8 @@
 
     self.placeOrUpdatePlayerDevelopments = function (d) {
         if (!d.HasError) {
-            var developmentType = d.Item
+            var developmentType = d.Item.DevelopmentType;
+            var tilesCanPlace = d.Item.Tiles;
 
             // Remove appropriate resources from player UI
             // ToDo:
@@ -102,6 +103,14 @@
                 // When the user clicks the tile, place the item
                 // ToDo: prompt player to place purchased items
                 // when player clicks on a hex, place the item tile click events
+
+                // Check if tile has settlement. Need this value from the server. Highlight all resource tiles without settlements
+
+               $.each(tilesCanPlace, function () {
+                   var placeable = new Placeable(game, 0, 0, 0);
+                   var tile = HexTile.prototype.getTileById(this.Id);
+                   tile.addChild(placeable);
+                });
             }
 
             //getJSONSync('/Game/GetNextGameState', startNextGameState, error); // URL, Success Function, Error Function
