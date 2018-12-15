@@ -12,7 +12,7 @@ namespace DefendersOfCatan.BusinessLogic
     public interface ITileLogic
     {
         Tile GetCurrentPlayerTile();
-        Tile SetOverrunTile(Tile tile);
+        Tile GetOverrunTile(Tile tile);
         List<Tile> GetNeighborTiles(Tile tile);
         bool TileHasSettlement(int tileId);
     }
@@ -72,19 +72,10 @@ namespace DefendersOfCatan.BusinessLogic
             }
         }
 
-        public Tile SetOverrunTile(Tile tile)
+        public Tile GetOverrunTile(Tile tile)
         {
             var tileNumber = Globals.HexOverrunData[tile.LocationY, tile.LocationX];
             var overrunTile = GetNextOverrunTile(tile, tileNumber, 0);
-            if (!TileHasSettlement(overrunTile.Id))
-            {
-                _tileRepo.SetOverrunTile(overrunTile);
-            }
-            else
-            {
-                _tileRepo.RemoveDevelopmentFromTile(overrunTile.Id, DevelopmentType.Settlement);
-            }
-
             return overrunTile;
         }
 

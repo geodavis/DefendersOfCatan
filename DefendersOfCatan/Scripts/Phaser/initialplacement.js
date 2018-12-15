@@ -23,6 +23,6 @@ GameStates.InitialPlacement.prototype = {
 
 GameStates.InitialPlacement.prototype.placeInitialSettlement = function (tileId) {
     var tile = HexTile.prototype.getTileById(tileId);
-    var development = new Development(game, 0, 0, 0); // always a settlement for initial placement
+    var development = new Development(game, 0, 0, 1); // always a settlement for initial placement
     tile.addChild(development);
 }

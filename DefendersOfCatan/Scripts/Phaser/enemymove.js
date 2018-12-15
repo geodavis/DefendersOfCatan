@@ -29,46 +29,47 @@ GameStates.EnemyMove.prototype = {
 };
 
 GameStates.EnemyMove.prototype.updateEnemyMovePhase = function (d) {
-    // Advance barbarians
-    // ToDo: Remove settlement if barbarian hits and settlement exists. This occurs rather than flipping tile.
+    // Advance barbarians - overrun tiles or remove developments as necessary
     if (d.HasError) {
         alert(d.Error);
     }
     else {
-        $.each(d.Item, function () { // loop each tile
+        // Loop barbarian tiles
+        $.each(d.Item.BarbarianTiles, function () {
             var tile = HexTile.prototype.getTileById(this.Id);
-            // First check if settlement exists. If so, remove settlement from UI
-            $.each(tile.children, function () {
-                if (this.name == 'development' && this.type == 1) // 1 = settlement
-                {
-                    tile.removeChild(this); // ToDo: TEST THIS LOGIC TO ENSURE SETTLEMENT GETS REMOVED
+            var barbarianIndex = this.Enemy.BarbarianIndex;
+            $.each(tile.children, function () { // loop each child on tile
+                if (this.name == 'enemycard') {
+                    switch (barbarianIndex) {
+                        case 0:
+                            this.loadTexture('enemycardB0', 0, false);
+                            break;
+                        case 1:
+                            this.loadTexture('enemycardB1', 0, false);
+                            break;
+                        default:
+                            alert('Barbarian index out of range!');
+                    }
                 }
             });
+        });
 
-            //ToDo: Update logic to look for new list of tiles specific to barbarian or overrun. remove development appropriately.
-            // Next, reset barbarian index and update UI
-            if (this.Enemy != null) {
-                var barbarianIndex = this.Enemy.BarbarianIndex;
-                $.each(tile.children, function () { // loop each child on tile
-                    if (this.name == 'enemycard') {
-                        switch (barbarianIndex) {
-                            case 0:
-                                this.loadTexture('enemycardB0', 0, false);
-                                break;
-                            case 1:
-                                this.loadTexture('enemycardB1', 0, false);
+        // Loop overrun tiles
+        $.each(d.Item.OverrunTiles, function () {
+            var tile = HexTile.prototype.getTileById(this.Id);
+            tile.loadTexture('hexagonoverrun', 0, false);
+        });
 
-                                break;
-                            default:
-                                alert('Barbarian index out of range!');
-                        }
-                    }
-                });
-            }
-            else {
-                tile.loadTexture('hexagonoverrun', 0, false);
-            }
-
+        // Loop overrun developments
+        $.each(d.Item.OverrunDevelopments, function () {
+            var tile = HexTile.prototype.getTileById(this.Tile.Id);
+            var developmentType = this.DevelopmentType;
+            $.each(tile.children, function () {
+                if (this.name == 'development' && this.developmentType == developmentType) // 1 = settlement;
+                {
+                    tile.removeChild(this);
+                }
+            });
         });
     }
 

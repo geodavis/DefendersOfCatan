@@ -3,6 +3,7 @@ using DefendersOfCatan.Common;
 using DefendersOfCatan.DAL.DataModels;
 using DefendersOfCatan.Transfer;
 using System.Collections.Generic;
+using static DefendersOfCatan.Common.Enums;
 
 namespace DefendersOfCatan.BusinessLogic
 {
@@ -10,7 +11,7 @@ namespace DefendersOfCatan.BusinessLogic
     {
         Enemy AddEnemyToTile(ClickedTileTransfer tileTransfer);
         void RemoveEnemy(Enemy enemy, Tile tile);
-        List<Tile> ExecuteEnemyMovePhase();
+        EnemyMoveTransfer ExecuteEnemyMovePhase();
     }
     public class EnemyLogic : IEnemyLogic
     {
@@ -42,7 +43,7 @@ namespace DefendersOfCatan.BusinessLogic
 
         public EnemyMoveTransfer ExecuteEnemyMovePhase()
         {
-            var enemyMoveTransfer = new EnemyMoveTransfer { BarbarianTiles = new List<Tile>(), OverrunTiles = new List<Tile>(), OverrunDevelopments = new List<Development>() };
+            var enemyMoveTransfer = new EnemyMoveTransfer { BarbarianTiles = new List<Tile>(), OverrunTiles = new List<Tile>(), OverrunDevelopments = new List<OverrunTileDevelopment>() };
             var tiles = new List<Tile>();
 
             // Check current player for barbarian advancement
@@ -53,10 +54,20 @@ namespace DefendersOfCatan.BusinessLogic
                     var barbarianIndex = tile.Enemy.BarbarianIndex + 1;
                     var barbarianStrength = tile.Enemy.Strength;
                     // Reset barbarian index if it hits 3, and overrun the appropriate tile
-                    if (barbarianIndex == 2) // put this back to 3
+                    if (barbarianIndex == 1) // put this back to 3
                     {
-                        var overrunTile = _tileLogic.SetOverrunTile(tile);
-                        enemyMoveTransfer.OverrunTiles.Add(overrunTile); // Add tile to overrun
+                        var overrunTile = _tileLogic.GetOverrunTile(tile);
+                        if (!_tileLogic.TileHasSettlement(overrunTile.Id))
+                        {
+                            _tileRepo.SetOverrunTile(overrunTile);
+                            enemyMoveTransfer.OverrunTiles.Add(overrunTile); // Add tile to overrun
+                        }
+                        else
+                        {
+                            _tileRepo.RemoveDevelopmentFromTile(overrunTile.Id, DevelopmentType.Settlement);
+                            enemyMoveTransfer.OverrunDevelopments.Add(new OverrunTileDevelopment { DevelopmentType = DevelopmentType.Settlement, Tile = overrunTile }); // Add development to remove from tile
+                        }
+
                         barbarianIndex = 0; // Reset barbarian index
                         if (barbarianStrength != 5) // Barbarian strength starts at 1 and has a max of 5
                         {
