@@ -3,6 +3,7 @@ using DefendersOfCatan.Common;
 using DefendersOfCatan.DAL.DataModels;
 using DefendersOfCatan.Transfer;
 using System.Collections.Generic;
+using System.Linq;
 using static DefendersOfCatan.Common.Enums;
 
 namespace DefendersOfCatan.BusinessLogic
@@ -10,7 +11,7 @@ namespace DefendersOfCatan.BusinessLogic
     public interface IEnemyLogic
     {
         Enemy AddEnemyToTile(ClickedTileTransfer tileTransfer);
-        void RemoveEnemy(Enemy enemy, Tile tile);
+        Tile RemoveEnemy(int enemyId);
         EnemyMoveTransfer ExecuteEnemyMovePhase();
     }
     public class EnemyLogic : IEnemyLogic
@@ -111,15 +112,28 @@ namespace DefendersOfCatan.BusinessLogic
             return tile.IsEnemyTile() && ((int)tile.Type == (int)enemy.PlayerColor) || playerIsOverrun ? true : false;
         }
 
-        public void RemoveEnemy(Enemy enemy, Tile tile)
+        public Tile RemoveEnemy(int enemyId)
         {
-            _enemyRepo.RemoveEnemy(enemy);
+            var enemy = _enemyRepo.GetEnemy(enemyId);
+            var currentPlayerTile = _tileRepo.GetCurrentPlayerTile();
+            var enemyTile = _tileRepo.GetTiles().Single(t => t.Enemy != null && t.Enemy.Id == enemyId);
+            var neighborTiles = _tileLogic.GetNeighborTiles(currentPlayerTile);
 
-            // Check if player is no longer overrun
-            var player = _playerRepo.GetPlayerBasedOnColor((Enums.PlayerColor)tile.Type); // get the player color of the tile
-            if (_playerLogic.CheckIfPlayerIsOverrun(player))
+            if (neighborTiles.Contains(enemyTile))
             {
-                _playerRepo.SetPlayerOverrun(player, true);
+                _enemyRepo.RemoveEnemy(enemy);
+
+                // Check if player is no longer overrun
+                var player = _playerRepo.GetPlayerBasedOnColor((PlayerColor)enemyTile.Type); // get the player color of the enemy tile
+                if (_playerLogic.CheckIfPlayerIsOverrun(player))
+                {
+                    _playerRepo.SetPlayerOverrun(player, false);
+                }
+                return enemyTile;
+            }
+            else
+            {
+                return null;
             }
         }
     }

@@ -40,8 +40,7 @@ GameStates.PlayerResourceOrFight.prototype.removeEnemy = function (enemyTileId) 
 
     // Advance to the next player and phase
     getJSONSync('/Game/MoveToNextPlayer', moveToNextPlayer, error); // URL, Success Function, Error Function
-    //game.state.start('EnemyMove', false, false);
-
+    getJSONSync('/Game/GetNextGameState', startNextGameState, error); // URL, Success Function, Error Function
 }
 
 

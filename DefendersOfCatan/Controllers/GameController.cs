@@ -75,16 +75,10 @@ namespace DefendersOfCatan.Controllers
                         // ToDo: Implement error handling (pass error to client)
                         break;
                     case GameState.PlayerResourceOrFight:
-                        var currentPlayer = _playerLogic.GetCurrentPlayer();
-                        var tiles = _tileRepo.GetTiles();
-                        var currentPlayerTile = tiles.Single(t => t.Players.Contains(currentPlayer));
-                        var enemyTile = tiles.Single(t => t.Enemy != null && t.Enemy.Id == enemy.Id);
-                        result.Item.EnemyTileId = enemyTile.Id;
-                        var neighborTiles = _tileLogic.GetNeighborTiles(currentPlayerTile);
-
-                        if (neighborTiles.Contains(enemyTile))
+                        var enemyTile =_enemyLogic.RemoveEnemy(data.EnemyId);
+                        if (enemyTile != null)
                         {
-                            _enemyLogic.RemoveEnemy(enemy, enemyTile);
+                            result.Item.EnemyTileId = enemyTile.Id;
                         }
                         else
                         {
@@ -97,8 +91,6 @@ namespace DefendersOfCatan.Controllers
                         Console.WriteLine("Error getting game state!");
                         break;
                 }
-
-                _db.SaveChanges();
 
                 return ReturnJsonResult(result);
             }
