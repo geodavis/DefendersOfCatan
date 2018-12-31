@@ -35,36 +35,6 @@ Enemy.prototype.rollOver = function () {
 Enemy.prototype.onEnemyCardMouseUp = function (enemyCard) {
     var selectedEnemyTransfer = { "enemyId": this.id };
     postJSON('/Game/ExecuteEnemyClickedActions', "{data:" + JSON.stringify(selectedEnemyTransfer) + "}", executePostEnemyClickEvents, error);
-
-    // todo: code below is being moved to the server... pick up here 
-    //switch (game.state.getCurrentState().key) { // switch on game state
-    //    case 'EnemyCard': // Enemy card phase means we select the card to place and set selected flag to true
-
-    //        var selectedEnemyTransfer = { "enemyId": this.id, "playerId": currentPlayer.id };
-    //        postJSON('/Game/SetSelectedEnemy', "{data:" + JSON.stringify(selectedEnemyTransfer) + "}", highlightEnemyPlacementTiles, error);
-            
-    //        break;
-    //    case 'PlayerMove':
-    //            // ToDo: error handling
-    //        break;
-    //    case 'PlayerResourceOrFight':
-    //        var enemyTile = hexGrid.getByName(this.currentHexName);
-    //        var playerTile = hexGrid.getByName(currentPlayer.currentHexName);
-
-    //        // If enemy card is a neighbor to the current player, remove the card from play
-    //        if (isNeighbor(playerTile, enemyTile)) {
-    //            // Send enemy to server to be removed
-    //            var enemyTransfer = { "enemyId": enemyCard.id, "tileId": enemyTile.id };
-    //            postJSON('/Game/RemoveEnemy', "{data:" + JSON.stringify(enemyTransfer) + "}", GameStates.PlayerResourceOrFight.prototype.removeEnemy, error);
-    //        }
-    //        else {
-    //            alert('Not in range to attack!');
-    //        }
-
-    //        break;
-    //    default:
-    //        // ToDo:
-    //}
 }
 
 function executePostEnemyClickEvents(d) {
@@ -80,7 +50,23 @@ function executePostEnemyClickEvents(d) {
                 // ToDo: error handling
                 break;
             case 'PlayerResourceOrFight':
-                GameStates.PlayerResourceOrFight.prototype.removeEnemy(d.Item.EnemyTileId)
+                var roll = d.Item.DiceRolls[0]; // first dice foll
+
+                $.each(diceGroup.children, function () {
+                    if (this.number == roll) {
+                        this.visible = true;
+                    }
+                    else {
+                        this.visible = false;
+                    }
+                });
+
+                if (d.Item.EnemyHit) {
+                    GameStates.PlayerResourceOrFight.prototype.removeEnemy(d.Item.EnemyTileId)
+                }
+                // Advance to the next player and phase
+                getJSONSync('/Game/MoveToNextPlayer', moveToNextPlayer, error); // URL, Success Function, Error Function
+                getJSONSync('/Game/GetNextGameState', startNextGameState, error); // URL, Success Function, Error Function
                 break;
             default:
                 alert("Game state unknown!");

@@ -17,6 +17,7 @@ var playerColors = Object.freeze({"red": 0, "blue": 1, "yellow": 2, "green": 3})
 var ResourcesEnum = Object.freeze({ "brick": 0, "ore": 1, "wood": 2, "grain": 3, "wool": 4 }); //https://stackoverflow.com/questions/287903/what-is-the-preferred-syntax-for-defining-enums-in-javascript
 var ItemsEnum = Object.freeze({ "Item1": 0, "Item2": 1, "Item3": 2, "Item4": 3, "Item5": 4 });
 var enemyCards;
+var diceGroup;
 var selectedEnemyCard;
 var cardSelected = false;
 
@@ -91,6 +92,7 @@ GameStates.Game.prototype = {
         getDevelopments();
         getPlayers();
         getEnemies();
+        initializeDice();
         // ToDo: Make this a common function and call the common in all places
         getJSONSync('/Game/GetNextGameState', startNextGameState, error); // URL, Success Function, Error Function
         //this.state.start('EnemyMove', false, false);
@@ -262,9 +264,22 @@ function initializeEnemyCards(d) {
             enemyCards.add(enemy);
         }
 
-        enemyCards.x = 500;
+        enemyCards.x = 700;
         enemyCards.y = 50;
     }
+}
+
+function initializeDice(d) {
+    diceGroup = game.add.group();
+    for (i = 0; i < 6; i++) {
+        var number = i + 1;
+        var image = 'dice' + number;
+        var dice = new Dice(game, 0, 0, image, number);
+        diceGroup.add(dice);
+    }
+
+    diceGroup.x = 400;
+    diceGroup.y = 50;
 }
 
 function findHexTile() {

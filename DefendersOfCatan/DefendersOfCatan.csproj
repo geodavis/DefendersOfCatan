@@ -216,6 +216,7 @@
     <Compile Include="Transfer\BoardDataTransfer.cs" />
     <Compile Include="Transfer\ClickedTileTransfer.cs" />
     <Compile Include="Transfer\DevelopmentTransfer.cs" />
+    <Compile Include="Transfer\EnemyFightTransfer.cs" />
     <Compile Include="Transfer\EnemyMoveTransfer.cs" />
     <Compile Include="Transfer\EnemyTileTransfer.cs" />
     <Compile Include="Transfer\ClickedEnemyTransfer.cs" />
@@ -239,6 +240,12 @@
     <Content Include="Content\Assets\close.png" />
     <Content Include="Content\Assets\desert.png" />
     <Content Include="Content\Assets\desertHex.gif" />
+    <Content Include="Content\Assets\dice1.png" />
+    <Content Include="Content\Assets\dice2.png" />
+    <Content Include="Content\Assets\dice3.png" />
+    <Content Include="Content\Assets\dice4.png" />
+    <Content Include="Content\Assets\dice5.png" />
+    <Content Include="Content\Assets\dice6.png" />
     <Content Include="Content\Assets\Enemy.png" />
     <Content Include="Content\Assets\EnemyCard.png" />
     <Content Include="Content\Assets\EnemyCardB0.png" />
@@ -356,6 +363,7 @@
     <Content Include="Scripts\Phaser\boot.js" />
     <Content Include="Scripts\Phaser\barbarian.js" />
     <Content Include="Scripts\Phaser\development.js" />
+    <Content Include="Scripts\Phaser\dice.js" />
     <Content Include="Scripts\Phaser\initialplacement.js" />
     <Content Include="Scripts\Phaser\enemymove.js" />
     <Content Include="Scripts\Phaser\item.js" />

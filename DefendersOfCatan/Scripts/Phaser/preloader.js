@@ -55,6 +55,13 @@ GameStates.Preloader.prototype = {
 
         this.load.image('settlementBlue', '../../Content/Assets/settlementBlue.png');
         this.load.image('settlementPlacement', '../../Content/Assets/settlementPlacement.png');
+
+        this.load.image('dice1', '../../Content/Assets/dice1.png');
+        this.load.image('dice2', '../../Content/Assets/dice2.png');
+        this.load.image('dice3', '../../Content/Assets/dice3.png');
+        this.load.image('dice4', '../../Content/Assets/dice4.png');
+        this.load.image('dice5', '../../Content/Assets/dice5.png');
+        this.load.image('dice6', '../../Content/Assets/dice6.png');
     },
 
     create: function () {

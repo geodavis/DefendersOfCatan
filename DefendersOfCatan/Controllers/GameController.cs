@@ -12,6 +12,7 @@ using static DefendersOfCatan.Common.Enums;
 using static DefendersOfCatan.Common.Constants;
 using DefendersOfCatan.BusinessLogic;
 using DefendersOfCatan.BusinessLogic.Repository;
+using System.Globalization;
 
 namespace DefendersOfCatan.Controllers
 {
@@ -69,21 +70,31 @@ namespace DefendersOfCatan.Controllers
                 switch (gameState)
                 {
                     case GameState.EnemyCard:
-                        _enemyRepo.SetSelectedEnemy(data.EnemyId);
+                        var setSelectedEnemy = _enemyRepo.SetSelectedEnemy(data.EnemyId);
+                        if (!setSelectedEnemy)
+                        {
+                            result.HasError = true;
+                            result.Error = "Already selected a card!";
+                        }
+                        string timestamp = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss.fff",
+                                            CultureInfo.InvariantCulture);
+                        System.Diagnostics.Debug.WriteLine("Set selected enemy id: " + data.EnemyId + " - " + timestamp);
                         break;
                     case GameState.PlayerMove:
                         // ToDo: Implement error handling (pass error to client)
                         break;
                     case GameState.PlayerResourceOrFight:
-                        var enemyTile =_enemyLogic.RemoveEnemy(data.EnemyId);
-                        if (enemyTile != null)
+                        var enemyFightTransfer =_enemyLogic.RemoveEnemy(data.EnemyId);
+                        result.Item.DiceRolls = enemyFightTransfer.DiceRolls;
+                        if (enemyFightTransfer.CanReach)
                         {
-                            result.Item.EnemyTileId = enemyTile.Id;
+                            result.Item.EnemyTileId = enemyFightTransfer.EnemyTile.Id;
+                            result.Item.EnemyHit = enemyFightTransfer.EnemyHit;
                         }
                         else
                         {
                             result.HasError = true;
-                            result.Error = "You cannot reach that enemy.";
+                            result.Error = enemyFightTransfer.Message;
                         }
 
                         break;
@@ -147,6 +158,10 @@ namespace DefendersOfCatan.Controllers
                         break;
                     case GameState.EnemyCard:
                         result.Item.EnemyId = _enemyLogic.AddEnemyToTile(data).Id;
+                        string timestamp = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss.fff",
+                    CultureInfo.InvariantCulture);
+                        System.Diagnostics.Debug.WriteLine("Place selected enemy tile id: " + data.ClickedTileId + " - " + timestamp);
+
                         break;
                     case GameState.PlayerPurchase:
                         // Get the item the player just purchased; If no item in inventory, return error message

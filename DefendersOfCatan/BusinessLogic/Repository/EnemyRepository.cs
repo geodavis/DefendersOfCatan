@@ -18,7 +18,7 @@ namespace DefendersOfCatan.BusinessLogic.Repository
         void UpdateBarbarian(Enemy enemy, int barbarianIndex, int strength);
         void SetEnemyPlaced(Enemy enemy);
         void RemoveEnemy(Enemy enemy);
-        void SetSelectedEnemy(int id);
+        bool SetSelectedEnemy(int id);
     }
     public class EnemyRepository : BaseRepository, IEnemyRepository
     {
@@ -40,16 +40,26 @@ namespace DefendersOfCatan.BusinessLogic.Repository
             return GetGame().Enemies.Single(e => e.Id == id);
         }
 
-        public void SetSelectedEnemy(int id)
+        public bool SetSelectedEnemy(int id)
         {
-            var enemy = GetGame().Enemies.Single(e => e.Id == id);
-            enemy.IsSelected = true;
-            _db.SaveChanges();
+            // Validate a selected enemy does not already exist
+            if (GetSelectedEnemy() == null) // ToDo: Return error to client
+            {
+                var enemy = GetGame().Enemies.Single(e => e.Id == id);
+                enemy.IsSelected = true;
+                _db.SaveChanges();
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+
         }
 
         public Enemy GetSelectedEnemy()
         {
-            return GetGame().Enemies.Single(e => e.IsSelected);
+            return GetGame().Enemies.FirstOrDefault(e => e.IsSelected);
         }
 
         public void SetEnemyPlaced(Enemy enemy)

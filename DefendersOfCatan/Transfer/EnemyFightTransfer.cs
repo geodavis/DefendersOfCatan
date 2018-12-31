@@ -1,16 +1,17 @@
-﻿using System;
+﻿using DefendersOfCatan.DAL.DataModels;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
 namespace DefendersOfCatan.Transfer
 {
-    public class ClickedEnemyTransfer
+    public class EnemyFightTransfer
     {
-        public int EnemyId { get; set; }
-        public string GameState { get; set; }
-        public int EnemyTileId { get; set; }
+        public Tile EnemyTile { get; set; }
         public List<int> DiceRolls { get; set; } = new List<int>();
         public bool EnemyHit { get; set; } = false;
+        public bool CanReach { get; set; } = false;
+        public string Message { get; set; }
     }
 }

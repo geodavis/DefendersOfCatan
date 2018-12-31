@@ -218,6 +218,7 @@ function executePostTileClickEvents(d) {
                 break;
             case 'PlayerResourceOrFight':
                 GameStates.PlayerResourceOrFight.prototype.addResourceToPlayer(d.Item.ResourceType);
+                getJSONSync('/Game/MoveToNextPlayer', moveToNextPlayer, error); // URL, Success Function, Error Function
 
                 break;
             default:

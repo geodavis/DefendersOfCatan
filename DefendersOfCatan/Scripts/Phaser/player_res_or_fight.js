@@ -25,7 +25,6 @@ GameStates.PlayerResourceOrFight.prototype = {
 
 GameStates.PlayerResourceOrFight.prototype.addResourceToPlayer = function (resourceType) {
     currentPlayer.addResourceToPlayer(resourceType);
-    getJSONSync('/Game/MoveToNextPlayer', moveToNextPlayer, error); // URL, Success Function, Error Function
 
 }
 
@@ -38,9 +37,7 @@ GameStates.PlayerResourceOrFight.prototype.removeEnemy = function (enemyTileId) 
         }
     });
 
-    // Advance to the next player and phase
-    getJSONSync('/Game/MoveToNextPlayer', moveToNextPlayer, error); // URL, Success Function, Error Function
-    getJSONSync('/Game/GetNextGameState', startNextGameState, error); // URL, Success Function, Error Function
+
 }
 
 
