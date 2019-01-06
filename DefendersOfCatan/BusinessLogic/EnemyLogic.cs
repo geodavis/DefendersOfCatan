@@ -56,7 +56,7 @@ namespace DefendersOfCatan.BusinessLogic
                     var barbarianIndex = tile.Enemy.BarbarianIndex + 1;
                     var barbarianStrength = tile.Enemy.Strength;
                     // Reset barbarian index if it hits 3, and overrun the appropriate tile
-                    if (barbarianIndex == 1) // put this back to 3
+                    if (barbarianIndex == 3)
                     {
                         var overrunTile = _tileLogic.GetOverrunTile(tile);
                         if (!_tileLogic.TileHasSettlement(overrunTile.Id))

@@ -2,7 +2,7 @@
 HexTile = function (game, x, y, tileImage, isVertical, i, j, type, id) {
     Phaser.Sprite.call(this, game, x, y, tileImage);
     this.anchor.setTo(0.5, 0.5);
-    this.tileTag = game.make.text(0, 0, type);
+    this.tileTag = game.make.text(0, 0, id);
     //this.tileTag = game.make.text(0,0,'i'+(i)+',j'+(j));
     //this.tileTag = game.make.text(0,0,'i'+(i-6)+',j'+(j-6));
 
@@ -12,7 +12,7 @@ HexTile = function (game, x, y, tileImage, isVertical, i, j, type, id) {
         this.tileTag.rotation = -Math.PI / 2;
     }
     this.addChild(this.tileTag);
-    this.tileTag.visible = false;
+    this.tileTag.visible = true;
     this.revealed = false;
     this.name = "tile" + i + "_" + j;
     this.id = id;
@@ -43,8 +43,15 @@ HexTile.prototype.constructor = HexTile;
 HexTile.prototype.rollOut = function () {
     //this.scale.x = 1;
     //this.scale.y = 1;
-    //this.scale.setTo(.15, .15);
+    //this.scale.setTo(1.5, 1.5);
 
+    var tile = this;
+    $.each(tile.children, function () { // loop each child of tile
+        if (this.name == 'border') {
+            tile.removeChild(this);
+        }
+    });
+    console.log("roll out" + this.id);
     /*var tilePos = findHexTile();
     var tile = hexGrid.getByName("tile" + tilePos.x + "_" + tilePos.y);
     if (tile != null) {
@@ -55,7 +62,18 @@ HexTile.prototype.rollOut = function () {
 HexTile.prototype.rollOver = function () {
     //this.scale.x = 0.9;
     //this.scale.y = 0.9;
-    //this.scale.setTo(.14, .14);
+    //this.scale.setTo(1.6, 1.6);
+    //hexGrid.remove(this); // Remove / add to set z-index to top
+    //hexGrid.add(this);
+    var border = game.make.sprite(0, 0, 'hexagonborder');
+    border.name = "border";
+    border.anchor.setTo(0.5, 0.5);
+    border.scale.setTo(0.95, 0.95);
+    //border.inputEnabled = true;
+    //border.events.onInputUp.add(HexTile.prototype.onTap, this);
+    console.log("rollover" + this.id);
+    this.addChild(border);
+
 
     //var tilePos = findHexTile();
     //var tile = hexGrid.getByName("tile" + tilePos.x + "_" + tilePos.y);
@@ -159,7 +177,7 @@ function getResourceTypeBasedOnTileImage(tileImage) {
 }
 
 HexTile.prototype.onTap = function () {
-    //alert(this.id);
+    console.log("tap" + this.id);
     var tile = findHexTile();
     var clickedTile = hexGrid.getByName("tile" + tile.x + "_" + tile.y);
     var clickedTileTransfer = { "clickedTileId": clickedTile.id };

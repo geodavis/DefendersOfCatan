@@ -60,6 +60,7 @@ namespace DefendersOfCatan.BusinessLogic
 
                     if (tile.Type == TileType.Resource)
                     {
+                        //tile.ResourceType = ResourceType.Wool;
                         tile.ResourceType = randomResourceTypes[i];
                         i++;
                     }
