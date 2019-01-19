@@ -15,6 +15,8 @@ namespace DefendersOfCatan.BusinessLogic
         Tile GetOverrunTile(Tile tile);
         List<Tile> GetNeighborTiles(Tile tile);
         bool TileHasSettlement(int tileId);
+        Tile GetAdjacentTileBasedOnAngle(int tileId, int angle);
+        void GetRoadPaths();
     }
     public class TileLogic : ITileLogic
     {
@@ -32,14 +34,14 @@ namespace DefendersOfCatan.BusinessLogic
         {
             var neighboringTiles = new List<Tile>();
             //            element[x, y]
-            //            neighbor1 = x + 1, y;
-            //            neighbor2 = x - 1, y;
-            //            neighbor3 = x, y + 1;
-            //            neighbor4 = x, y - 1;
-            //            neighbor5 = x + 1, y + 1; - NOT A HEX NEIGHBOR FOR EVEN ROW
-            //            neighbor6 = x + 1, y - 1; - NOT A HEX NEIGHBOR FOR EVEN ROW
-            //            neighbor7 = x - 1, y + 1; - NOT A HEX NEIGHBOR FOR ODD ROW
-            //            neighbor8 = x - 1, y - 1; - NOT A HEX NEIGHBOR FOR ODD ROW
+            //            neighbor1 = x + 1, y; 90 degrees
+            //            neighbor2 = x - 1, y; -90
+            //            neighbor3 = x, y + 1; -30
+            //            neighbor4 = x, y - 1; -150
+            //            neighbor5 = x + 1, y + 1; - NOT A HEX NEIGHBOR FOR EVEN ROW 30
+            //            neighbor6 = x + 1, y - 1; - NOT A HEX NEIGHBOR FOR EVEN ROW 150
+            //            neighbor7 = x - 1, y + 1; - NOT A HEX NEIGHBOR FOR ODD ROW 210 ?
+            //            neighbor8 = x - 1, y - 1; - NOT A HEX NEIGHBOR FOR ODD ROW -210 ?
 
             // Each hex has 6 neighbors - the below 4 are always a neighbor, regardless if even or odd row
             AddNeighbor(tile.LocationX + 1, tile.LocationY, neighboringTiles);
@@ -70,6 +72,11 @@ namespace DefendersOfCatan.BusinessLogic
             {
                 neighboringTiles.Add(tiles.Single(t => t.LocationX == x && t.LocationY == y));
             }
+        }
+
+        public Tile GetAdjacentTileBasedOnAngle(int tileId, int angle)
+        {
+            throw new NotImplementedException();
         }
 
         public Tile GetOverrunTile(Tile tile)
@@ -123,5 +130,17 @@ namespace DefendersOfCatan.BusinessLogic
             return new Tile(); // Error condition if it reaches here!!!
         }
 
+        public void GetRoadPaths()
+        {
+            // Get first road that is an endpoint
+            // End point means it only has one road tied to the tile
+            // If no end points exist, that means it is a loop and you can pick any tile
+            var roads = _tileRepo.GetRoads();
+
+            //var endPoint = roads.GroupBy(t => t.Tile.Id)
+            //    .Where(grp => grp.Count() == 1)
+            //    .Select(grp => grp.Key);
+
+        }
     }
 }

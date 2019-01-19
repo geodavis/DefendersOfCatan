@@ -3,15 +3,23 @@ HexTile = function (game, x, y, tileImage, isVertical, i, j, type, id) {
     Phaser.Sprite.call(this, game, x, y, tileImage);
     this.anchor.setTo(0.5, 0.5);
     this.tileTag = game.make.text(0, 0, id);
+    this.tileTag2 = game.make.text(0, 0, j + ' ' + i, {
+        font: "8px Arial",
+        fill: "#ff0044",
+       // align: "center"
+    });
     //this.tileTag = game.make.text(0,0,'i'+(i)+',j'+(j));
     //this.tileTag = game.make.text(0,0,'i'+(i-6)+',j'+(j-6));
-
+    this.tileTag2.anchor.setTo(0, -0.5);
+    this.tileTag2.addColor('#ffffff', 0);
+    this.tileTag2.visible = true;
     this.tileTag.anchor.setTo(0.5, 0.5);
     this.tileTag.addColor('#ffffff', 0);
     if (isVertical) {
         this.tileTag.rotation = -Math.PI / 2;
     }
     this.addChild(this.tileTag);
+    this.addChild(this.tileTag2);
     this.tileTag.visible = true;
     this.revealed = false;
     this.name = "tile" + i + "_" + j;
@@ -51,7 +59,7 @@ HexTile.prototype.rollOut = function () {
             tile.removeChild(this);
         }
     });
-    console.log("roll out" + this.id);
+    //console.log("roll out" + this.id);
     /*var tilePos = findHexTile();
     var tile = hexGrid.getByName("tile" + tilePos.x + "_" + tilePos.y);
     if (tile != null) {
@@ -71,7 +79,7 @@ HexTile.prototype.rollOver = function () {
     border.scale.setTo(0.95, 0.95);
     //border.inputEnabled = true;
     //border.events.onInputUp.add(HexTile.prototype.onTap, this);
-    console.log("rollover" + this.id);
+    //console.log("rollover" + this.id);
     this.addChild(border);
 
 

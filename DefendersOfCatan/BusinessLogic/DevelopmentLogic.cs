@@ -21,12 +21,13 @@ namespace DefendersOfCatan.BusinessLogic
         private readonly IDevelopmentRepository _developmentRepo;
         private readonly ITileRepository _tileRepo;
         private readonly IPlayerRepository _playerRepo;
-
-        public DevelopmentLogic(IDevelopmentRepository developmentRepo, ITileRepository tileRepo, IPlayerRepository playerRepo)
+        private readonly ITileLogic _tileLogic;
+        public DevelopmentLogic(IDevelopmentRepository developmentRepo, ITileRepository tileRepo, IPlayerRepository playerRepo, ITileLogic tileLogic)
         {
             _developmentRepo = developmentRepo;
             _tileRepo = tileRepo;
             _playerRepo = playerRepo;
+            _tileLogic = tileLogic;
 
         }
 
@@ -54,7 +55,29 @@ namespace DefendersOfCatan.BusinessLogic
             var developmentType = currentPlayerDevelopmentsWithQty.DevelopmentType;
             if (currentPlayerDevelopmentsWithQty != null)
             {
-                _tileRepo.AddDevelopmentToTile(tileId, developmentType);
+                switch (developmentType)
+                {
+                    case DevelopmentType.Road:
+                        // ToDo:
+                        // Get adjacent tile, based on angle of selected placeable
+                        _tileLogic.GetAdjacentTileBasedOnAngle(tileId, 0);
+
+                        // Tile repo - add road to both selected and adjoining tile
+
+                        break;
+                    case DevelopmentType.Settlement:
+                        _tileRepo.AddDevelopmentToTile(tileId, developmentType);
+                        break;
+                    case DevelopmentType.City:
+                        break;
+                    case DevelopmentType.Walls:
+                        break;
+                    case DevelopmentType.Card:
+                        break;
+                    default:
+                        break;
+                }
+
             }
 
             // Remove development from player

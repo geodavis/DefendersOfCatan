@@ -15,6 +15,7 @@ namespace DefendersOfCatan.DAL.DataModels
         public virtual List<Enemy> Enemies { get; set; }
         public virtual Player CurrentPlayer { get; set; }
         public virtual GameState GameState { get; set; }
+        public virtual List<Road> Roads { get; set; }
 
     }
 }

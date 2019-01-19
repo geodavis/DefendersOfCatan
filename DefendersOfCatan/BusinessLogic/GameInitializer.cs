@@ -20,11 +20,13 @@ namespace DefendersOfCatan.BusinessLogic
     {
         private readonly IDevelopmentRepository _developmentRepo;
         private readonly IGameRepository _gameRepo;
+        private readonly ITileLogic _tileLogic;
 
-        public GameInitializer(IGameRepository gameRepo, IDevelopmentRepository developmentRepo)
+        public GameInitializer(IGameRepository gameRepo, IDevelopmentRepository developmentRepo, ITileLogic tileLogic)
         {
             _gameRepo = gameRepo;
             _developmentRepo = developmentRepo;
+            _tileLogic = tileLogic;
         }
 
         public void InitializeGame()
@@ -37,6 +39,8 @@ namespace DefendersOfCatan.BusinessLogic
             game.Enemies = InitializeEnemies();
             _gameRepo.AddGame(game);
 
+            game.Roads = InitializeRoads(game.Tiles);
+
             // Set current player after players have been added to the db
             game.CurrentPlayer = game.Players[0];
             _gameRepo.Save();
@@ -45,7 +49,7 @@ namespace DefendersOfCatan.BusinessLogic
 
         }
 
-        public List<Tile> InitializeTiles()
+        private List<Tile> InitializeTiles()
         {
             var tiles = new List<Tile>();
             var randomResourceTypes = GetRandomResourceTileTypes();
@@ -75,7 +79,92 @@ namespace DefendersOfCatan.BusinessLogic
             return tiles;
         }
 
-        public List<Player> InitializePlayers(Tile capitalTile)
+        private List<Road> InitializeRoads(List<Tile> tiles)
+        {
+            var roads = new List<Road>();
+
+            foreach (var tile in tiles)
+            {
+                if (tile.Type == TileType.Resource || tile.Type == TileType.Capital)
+                {
+                    // Get neighbors to find adjoining tile
+                    var neighbors = _tileLogic.GetNeighborTiles(tile);
+
+                    // Loop each neighbor. If neighbor is resource tile type, add tile 2.                 
+                    foreach (var neighbor in neighbors)
+                    {
+                        if (neighbor.Type == TileType.Resource || neighbor.Type == TileType.Capital)
+                        {
+                            var road = new Road();
+                            road.Tile1 = tile;
+                            road.Tile2 = neighbor;
+                            road.Angle = GetAngleBasedOnPosition(road.Tile1.LocationX, road.Tile1.LocationY, neighbor.LocationX, neighbor.LocationY); // todo: use position of neighbor tile to determine angle
+
+                            // Check if road segment does not already exist. If not, add it to road list.
+                            var roadExists = roads.Where((r => r.Tile1 == road.Tile1 || r.Tile1 == road.Tile2))
+                                .Where((r => r.Tile2 == road.Tile1 || r.Tile2 == road.Tile2)).Any();
+
+                            if (!roadExists)
+                            {
+                                roads.Add(road);
+                            }
+                        }
+                    }
+                }
+            }
+
+            return roads;
+        }
+
+        private int GetAngleBasedOnPosition(int tileX, int tileY, int neighborTileX, int neighborTileY)
+        {
+            var angle = 0;
+            //            neighbor1 = x + 1, y; 90 degrees
+            //            neighbor2 = x - 1, y; -90
+            //            neighbor3 = x, y + 1; even y = 150, odd y = -150
+            //            neighbor4 = x, y - 1; even y = 30, odd y = -30
+            //            neighbor5 = x + 1, y + 1; - NOT A HEX NEIGHBOR FOR EVEN ROW 150
+            //            neighbor6 = x + 1, y - 1; - NOT A HEX NEIGHBOR FOR EVEN ROW 30
+            //            neighbor7 = x - 1, y + 1; - NOT A HEX NEIGHBOR FOR ODD ROW -150
+            //            neighbor8 = x - 1, y - 1; - NOT A HEX NEIGHBOR FOR ODD ROW -30
+            if ((neighborTileX == tileX + 1) && (tileY == neighborTileY))
+            {
+                angle = 90;
+            }
+            else if ((neighborTileX == tileX - 1) && (tileY == neighborTileY))
+            {
+                angle = -90;
+            }
+            else if ((neighborTileX == tileX) && (neighborTileY == tileY + 1))
+            {
+                angle = (tileY % 2 != 0) ? -150 : 150;                
+            }
+            else if ((neighborTileX == tileX) && (neighborTileY == tileY - 1))
+            {
+                angle = (tileY % 2 != 0) ? -30 : 30;
+            }
+            else if ((neighborTileX == tileX + 1) && (neighborTileY == tileY + 1))
+            {
+                angle = 150;
+            }
+            else if ((neighborTileX == tileX + 1) && (neighborTileY == tileY - 1))
+            {
+                angle = 30;
+            }
+            else if ((neighborTileX == tileX - 1) && (neighborTileY == tileY + 1))
+            {
+                angle = -150;
+            }
+            else if ((neighborTileX == tileX - 1) && (neighborTileY == tileY - 1))
+            {
+                angle = -30;
+            }
+
+            return angle;
+
+        }
+
+        private List<Player> InitializePlayers(Tile capitalTile)
         {
             var players = new List<Player>
             {
@@ -93,7 +182,7 @@ namespace DefendersOfCatan.BusinessLogic
             return players;
         }
 
-        public List<Enemy>InitializeEnemies()
+        private List<Enemy>InitializeEnemies()
         {
             var enemies = new List<Enemy>();
             var playerColorValues = Enum.GetValues(typeof(PlayerColor));
@@ -109,7 +198,7 @@ namespace DefendersOfCatan.BusinessLogic
             return enemies;
         }
 
-        public void InitializeDevelopments()
+        private void InitializeDevelopments()
         {
             var developments = new List<Development>();
 

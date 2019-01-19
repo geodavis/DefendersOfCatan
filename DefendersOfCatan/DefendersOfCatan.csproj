@@ -196,6 +196,7 @@
     <Compile Include="Controllers\GameController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
+    <Compile Include="DAL\DataModels\Road.cs" />
     <Compile Include="DAL\DataModels\TileDevelopment.cs" />
     <Compile Include="DAL\DataModels\PlayerDevelopment.cs" />
     <Compile Include="DAL\GameContext.cs" />
@@ -214,6 +215,7 @@
     <Compile Include="DAL\DataModels\PlayerResource.cs" />
     <Compile Include="DAL\DataModels\Tile.cs" />
     <Compile Include="Transfer\BoardDataTransfer.cs" />
+    <Compile Include="Transfer\ClickedPlaceableTransfer.cs" />
     <Compile Include="Transfer\ClickedTileTransfer.cs" />
     <Compile Include="Transfer\DevelopmentTransfer.cs" />
     <Compile Include="Transfer\EnemyFightTransfer.cs" />
@@ -321,6 +323,8 @@
     <Content Include="Content\bootstrap-reboot.min.css" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\RoadPlacement.png" />
+    <Content Include="Content\SettlementPlacement.png" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />

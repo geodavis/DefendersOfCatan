@@ -206,6 +206,53 @@ namespace DefendersOfCatan.Controllers
             }
         }
 
+        [HttpPost]
+        public JsonResult ExecutePlaceableClickedActions(ClickedPlaceableTransfer data)
+        {
+            // ToDo: ................... build this method correctly
+            var result = new ItemModel<ClickedTileTransfer>
+            {
+                Item = new ClickedTileTransfer()
+            };
+            try
+            {
+                _tileRepo.AddRoad(data.ClickedPlaceableParentTileId, data.Angle);
+                _tileLogic.GetRoadPaths();
+
+                var gameState = _gameStateLogic.GetCurrentGameState();
+                var selectedTile = _tileRepo.GetTileById(data.ClickedPlaceableParentTileId);
+                var currentPlayer = _playerRepo.GetCurrentPlayer();
+                result.Item.GameState = gameState.ToString();
+                result.Item.ClickedTileId = selectedTile.Id;
+                result.Item.PlayerId = currentPlayer.Id;
+                switch (gameState)
+                {
+                    case GameState.InitialPlacement:
+                        //result.Item.DevelopmentType = (int)_developmentLogic.PlaceInitialSettlement(data.ClickedPlaceableParentTileId);
+                        break;
+                    case GameState.EnemyCard:
+
+                        break;
+                    case GameState.PlayerPurchase:
+                        // Get the item the player just purchased; If no item in inventory, return error message
+                        var developmentType = _developmentLogic.PlacePurchasedDevelopment(data.ClickedPlaceableParentTileId);
+                        result.Item.DevelopmentType = (int)developmentType;
+                        break;
+                    default:
+                        Console.WriteLine("Game state not implemented for placeable clicked action.");
+                        break;
+                }
+
+                return ReturnJsonResult(result);
+            }
+            catch (Exception e)
+            {
+                result.HasError = true;
+                result.Error = e.Message;
+                return ReturnJsonResult(result);
+            }
+        }
+
         [HttpGet]
         public JsonResult GetNextGameState()
         {
@@ -285,7 +332,10 @@ namespace DefendersOfCatan.Controllers
             {
                 result.Item.CanPurchase = _playerLogic.PurchaseDevelopment(developmentType);
                 result.Item.DevelopmentType = developmentType;
-                result.Item.Tiles = _tileRepo.GetPlaceableTiles(developmentType);
+                var transfer = _tileRepo.GetPlaceableDevelopments(developmentType);
+                result.Item.Tiles = transfer.Tiles;
+                result.Item.Roads = transfer.Roads;
+
                 if (!result.Item.CanPurchase)
                 {
                     result.HasError = true;

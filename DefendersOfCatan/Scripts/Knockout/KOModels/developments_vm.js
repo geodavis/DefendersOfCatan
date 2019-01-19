@@ -93,24 +93,57 @@
             // Remove appropriate resources from player UI
             // ToDo:
 
+            switch (developmentType) {
+                case 0:
+                    $.each(d.Item.Roads, function () {
+                        var tile1 = HexTile.prototype.getTileById(this.Tile1.Id);
+                        var tile2 = HexTile.prototype.getTileById(this.Tile2.Id);
+                        var placeable = new Placeable(game, (tile1.x + tile2.x)/2 + 50, (tile1.y + tile2.y)/2 + 50, developmentType, this.Angle, 1); // ToDo: try adding all road placeables upfront, then making them visible only when necessary OR make game layer groups
+                        placeables.add(placeable); // attempt to see if this brings to the top
+                        //game.world.bringToTop(placeables);
+                        //tile.addChild(placeable);
+                        //hexGrid.removeChild(tile);
+                        //hexGrid.addChild(tile);
+
+                    });
+                    break;
+                case 1:
+                    // Highlight placeable tiles
+                    // When the user clicks the tile, place the item
+                    // ToDo: prompt player to place purchased items
+                    // when player clicks on a hex, place the item tile click events
+
+                    // Check if tile has settlement. Need this value from the server. Highlight all resource tiles without settlements
+
+                    $.each(tilesCanPlace, function () {
+                        var placeable = new Placeable(game, 0, 0, developmentType, 0, 0.5);
+                        var tile = HexTile.prototype.getTileById(this.Id);
+                        tile.addChild(placeable);
+                    });
+                    break;
+                case 2:
+
+                    break;
+                case 3:
+
+                    break;
+                case 4:
+
+                    break;
+                case 5:
+                    currentPlayer.addDevelopmentToPlayer(d.Item);
+                    break;
+                default:
+                    alert("Do not recogize development type!");
+            }
+
             if (developmentType == 5) { // This is an item card- add item to player inventory
                 
-                currentPlayer.addDevelopmentToPlayer(d.Item);
+                
             }
             else // Prompt user to place immediately
             {
-                // Highlight placeable tiles
-                // When the user clicks the tile, place the item
-                // ToDo: prompt player to place purchased items
-                // when player clicks on a hex, place the item tile click events
 
-                // Check if tile has settlement. Need this value from the server. Highlight all resource tiles without settlements
-
-               $.each(tilesCanPlace, function () {
-                   var placeable = new Placeable(game, 0, 0, 0);
-                   var tile = HexTile.prototype.getTileById(this.Id);
-                   tile.addChild(placeable);
-                });
             }
 
             //getJSONSync('/Game/GetNextGameState', startNextGameState, error); // URL, Success Function, Error Function

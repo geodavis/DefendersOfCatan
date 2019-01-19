@@ -1,26 +1,33 @@
 ﻿//  Here is a custom game object
-Placeable = function (game, x, y, developmentType) {
-    //this.developmentType = developmentType;
-    //var developmentImage = this.getDevelopmentImageBasedOnType(developmentType);
-    Phaser.Sprite.call(this, game, x, y, 'settlementPlacement');
-    //this.id = enemy.Id;
-    //this.hasBarbarian = enemy.HasBarbarian;
-    //this.barbarianIndex = enemy.BarbarianIndex;
-    //this.currentHexName = enemy.CurrentHexName;
+Placeable = function (game, x, y, developmentType, angle, anchor) {
+    var developmentImage = this.getPlaceableImageBasedOnType(developmentType);
+    Phaser.Sprite.call(this, game, x, y, developmentImage);
     //this.playerColor = enemy.PlayerColor; // assign each card a player color
-    //this.anchor.setTo(0.5, 0.5);
+    this.anchor.setTo(anchor, anchor);
     this.name = "placeable";
+    this.angle += angle;
     //this.hasBeenPlaced = false;
-    //this.inputEnabled = true;
+    this.inputEnabled = true;
     //this.input.useHandCursor = true;
     //this.events.onInputOut.add(this.rollOut, this);
     //this.events.onInputOver.add(this.rollOver, this);
-    //this.events.onInputUp.add(this.onEnemyCardMouseUp, this);
-    this.scale.setTo(.5, .5);
+    this.events.onInputUp.add(this.onTap, this);
+    this.scale.setTo(.50, .50);
+    //this.bringToTop();
 };
 
 Placeable.prototype = Object.create(Phaser.Sprite.prototype);
 Placeable.prototype.constructor = Placeable;
+
+Placeable.prototype.onTap = function () {
+    alert("TileId: " + this.parent.id + " " + "Angle: " + this.angle);
+    //alert("Placeable z: " + placeables.z);
+    //alert("HexGrid z: " + hexGrid.z);
+    var clickedPlaceableTransfer = { "clickedPlaceableParentTileId": this.parent.id, "angle": this.angle };
+
+    postJSON('/Game/ExecutePlaceableClickedActions', "{data:" + JSON.stringify(clickedPlaceableTransfer) + "}", this.executePostPlaceableClickEvents, error);
+
+}
 
 Placeable.prototype.rollOut = function () {
     //this.scale.x = 1;
@@ -33,101 +40,90 @@ Placeable.prototype.rollOver = function () {
     //this.scale.setTo(.14, .14);
 }
 
-//Development.prototype.getDevelopmentImageBasedOnType = function (developmentType) {
-//    switch (developmentType) {
-//        case 0:
-//            return 'settlementBlue';
-//            break;
-//        case 1:
-//            return 'settlementBlue';
-//            break;
-//        case 2:
-//            return 'settlementBlue';
-//            break;
-//        case 3:
-//            return 'settlementBlue';
-//            break;
-//        default: // ToDo
-//            break;
-//    }
-//}
+Placeable.prototype.getPlaceableImageBasedOnType = function (developmentType) {
+    switch (developmentType) {
+        case 0:
+            return 'roadPlacement';
+            break;
+        case 1:
+            return 'settlementPlacement';
+            break;
+        case 2:
+            return 'settlementPlacement';
+            break;
+        case 3:
+            return 'settlementPlacement';
+            break;
+        case 4:
+            return 'settlementPlacement';
+            break;
+        default: // ToDo
+            break;
+    }
+}
 
-//Enemy.prototype.onEnemyCardMouseUp = function (enemyCard) {
-//    var selectedEnemyTransfer = { "enemyId": this.id };
-//    postJSON('/Game/ExecuteEnemyClickedActions', "{data:" + JSON.stringify(selectedEnemyTransfer) + "}", executePostEnemyClickEvents, error);
+Placeable.prototype.executePostPlaceableClickEvents = function (d) {
 
-//function executePostEnemyClickEvents(d) {
-//    if (!d.HasError) {
-//        var gameState = d.Item.GameState;
-//        var enemyCard = Enemy.prototype.getEnemyById(d.Item.EnemyId);
+    if (d.HasError) {
+        alert(d.Error);
+    }
+    else {
+        var gameState = d.Item.GameState;
 
-//        switch (gameState) { // switch on game state
-//            case 'EnemyCard': // Enemy card phase means we select the card to place and set selected flag to true
-//                highlightEnemyPlacementTiles(enemyCard);
-//                break;
-//            case 'PlayerMove':
-//                // ToDo: error handling
-//                break;
-//            case 'PlayerResourceOrFight':
-//                GameStates.PlayerResourceOrFight.prototype.removeEnemy(d.Item.EnemyTileId)
-//                break;
-//            default:
-//                alert("Game state unknown!");
-//        }
-//    }
-//    else {
-//        alert(d.Error);
-//    }
+        switch (gameState) {
+            case 'InitialPlacement':
+                GameStates.InitialPlacement.prototype.placeInitialSettlement(d.Item.ClickedTileId);
 
-//}
+                if (d.Item.PlayerId == 4) {
+                    getJSONSync('/Game/GetNextGameState', startNextGameState, error); // URL, Success Function, Error Function
+                }
 
-//function highlightEnemyPlacementTiles(enemyCard) {
-//    //var cardSelected = true; // todo: clean up card selected logic (may just remove it)
-//    //if (!enemyCard.hasBeenPlaced && !cardSelected) { // ToDo: add error handling to trying to select another card before placing 
-//        //selectedEnemyCard = enemyCard;
-//        //cardSelected = true;
+                // Get the next player
+                getJSONSync('/Game/MoveToNextPlayer', moveToNextPlayer, error); // URL, Success Function, Error Function
 
-//        $.each(hexGrid.children, function () {
-//            if (this.type == enemyCard.playerColor) {
-//                highlight(this);
-//            }
-//        });
-//    //}
-//    //else {
-//      //  alert('Card has already been placed!');
-//    //}
-//}
 
-//Enemy.prototype.setAngle = function (tileType) { // FYI - tile type = player color
-//    switch (tileType) {
-//        case playerColors.red:
-//            this.angle -= 30;
-//            break;
-//        case playerColors.blue:
-//            this.angle += 30;
-//            break;
-//        case playerColors.yellow:
-//            this.angle += 150;
-//            break;
-//        case playerColors.green:
-//            this.angle += 210;
-//            break;
-//        default: // ToDo
-//            break;
-//    }
-//}
+                break;
+            case 'EnemyCard':
+                // ToDo: if you click on the hex where another card has been placed, it does not prevent placement. Need to check if card already exists on hex.
+                var enemy = Enemy.prototype.getEnemyById(d.Item.EnemyId);
+                var tile = HexTile.prototype.getTileById(d.Item.ClickedTileId);
+                GameStates.EnemyCard.prototype.placeCard(enemy, tile);
 
-//Enemy.prototype.setHasBeenPlaced = function (hasBeenPlaced) {
-//    this.hasBeenPlaced = hasBeenPlaced;
-//}
+                break;
+            case 'PlayerPurchase':
+                var tile = HexTile.prototype.getTileById(d.Item.ClickedTileId);
+                var developmentType = d.Item.DevelopmentType;
+                var development = new Development(game, 0, 0, developmentType);
+                tile.addChild(development);
 
-//Enemy.prototype.getEnemyById = function (id) {
-//    var enemy;
-//    $.each(enemyCards.children, function () {
-//        if (this.id == id) {
-//            enemy = this;
-//        }
-//    });
+                // Remove placement image from tiles
+                $.each(hexGrid.children, function () { // loop each tile
+                    var gridTile = this;
+                    $.each(gridTile.children, function () { // loop each child of tile
+                        if (this.name == 'placeable') {
+                            gridTile.removeChild(this);
+                        }
+                    });
+                });
+                break;
+            case 'PlayerMove':
+                var tile = HexTile.prototype.getTileById(d.Item.ClickedTileId);
+                tile.addChild(currentPlayer);
 
-//    return enemy;
-//}
+                break;
+            case 'PlayerResourceOrFight':
+                GameStates.PlayerResourceOrFight.prototype.addResourceToPlayer(d.Item.ResourceType);
+                getJSONSync('/Game/MoveToNextPlayer', moveToNextPlayer, error); // URL, Success Function, Error Function
+
+                break;
+            default:
+                // ToDo:
+        }
+
+        if (gameState != 'InitialPlacement') {
+            getJSONSync('/Game/GetNextGameState', startNextGameState, error); // URL, Success Function, Error Function
+        }
+
+
+    }
+}

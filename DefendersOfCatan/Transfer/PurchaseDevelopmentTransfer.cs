@@ -12,5 +12,6 @@ namespace DefendersOfCatan.Transfer
         public DevelopmentType DevelopmentType { get; set; }
         public List<Tile> Tiles { get; set; }
         public bool CanPurchase { get; set; }
+        public List<Road> Roads { get; set; }
     }
 }
