@@ -22,8 +22,14 @@ Placeable.prototype.constructor = Placeable;
 Placeable.prototype.onTap = function () {
     //alert("TileId1: " + this.tile1Id + " TileId2: " + this.tile2Id + " Angle: " + this.angle);
 
-    var clickedPlaceableTransfer = { "tile1Id": this.tile1Id, "tile2Id": this.tile2Id, "parentTile": this.parent.id };
-    postJSON('/Game/ExecutePlaceableClickedActions', "{data:" + JSON.stringify(clickedPlaceableTransfer) + "}", this.executePostPlaceableClickEvents, error);
+    if (this.developmentType == 0) {
+        var roadPlaceableTransfer = { "tile1Id": this.tile1Id, "tile2Id": this.tile2Id };
+        postJSON('/Game/PlaceRoad', "{data:" + JSON.stringify(roadPlaceableTransfer) + "}", this.executePostPlaceableClickEvents, error);
+    }
+    else {
+        var clickedPlaceableTransfer = { "parentTileId": this.parent.id, "developmentType": this.developmentType };
+        postJSON('/Game/ExecutePlaceableClickedActions', "{data:" + JSON.stringify(clickedPlaceableTransfer) + "}", this.executePostPlaceableClickEvents, error);
+    }
 }
 
 Placeable.prototype.rollOut = function () {
@@ -66,33 +72,7 @@ Placeable.prototype.executePostPlaceableClickEvents = function (d) {
     }
     else {
         var gameState = d.Item.GameState;
-        var angle = d.Item.Angle;
-        var tile1 = HexTile.prototype.getTileById(d.Item.RoadTile1Id);
-        var tile2 = HexTile.prototype.getTileById(d.Item.RoadTile2Id);
         var developmentType = d.Item.DevelopmentType;
-        var anchor = 0.5;
-
-        var width = game.cache.getImage("roadBlue").width;
-        var height = game.cache.getImage("roadBlue").height;
-
-        // Road calculation below with scale 0.5
-        if (angle == 90) {
-            var placeableX = ((tile1.x + tile2.x) / 2) + height / 4;
-            var placeableY = tile1.y + tile1.height / 2;
-        }
-        else if (angle == -150) {
-            var placeableX = tile1.x + (tile1.width / 2);
-            var placeableY = tile2.y;
-        }
-        else
-        {
-            var placeableX = tile2.x + tile2.width / 4;
-            var placeableY = tile2.y;
-        }
-
-        var development = new Development(game, placeableX, placeableY, developmentType, angle, anchor); // ToDo: try adding all road placeables upfront, then making them visible only when necessary OR make game layer groups
-        placeables.add(development); // attempt to see if this brings to the top
-
 
         switch (gameState) {
             case 'InitialPlacement':
@@ -115,10 +95,62 @@ Placeable.prototype.executePostPlaceableClickEvents = function (d) {
 
                 break;
             case 'PlayerPurchase':
-                var tile = HexTile.prototype.getTileById(d.Item.ClickedTileId);
-                var developmentType = d.Item.DevelopmentType;
-                var development = new Development(game, 0, 0, developmentType);
-                tile.addChild(development);
+                switch (developmentType) {
+                    case 0:
+                        var angle = d.Item.Angle;
+                        var tile1 = HexTile.prototype.getTileById(d.Item.Tile1Id);
+                        var tile2 = HexTile.prototype.getTileById(d.Item.Tile2Id);
+                        var anchor = 0.5;
+                        var width = game.cache.getImage("roadBlue").width;
+                        var height = game.cache.getImage("roadBlue").height;
+
+                        // Road calculation below with scale 0.5
+                        if (angle == 90) {
+                            var placeableX = ((tile1.x + tile2.x) / 2) + height / 4;
+                            var placeableY = tile1.y + tile1.height / 2;
+                        }
+                        else if (angle == -150) {
+                            var placeableX = tile1.x + (tile1.width / 2);
+                            var placeableY = tile2.y;
+                        }
+                        else {
+                            var placeableX = tile2.x + tile2.width / 4;
+                            var placeableY = tile2.y;
+                        }
+
+                        var development = new Development(game, placeableX, placeableY, developmentType, angle, anchor);
+                        placedDevelopments.add(development);
+
+                        // remove road placeables
+                        for (var i = 0, len = placeables.children.length; i < len; i++) {
+                            placeables.children[0].destroy();
+
+                        }
+
+                        break;
+                    case 1:
+                        var tile = HexTile.prototype.getTileById(d.Item.ClickedTileId);                 
+                        var development = new Development(game, 0, 0, developmentType, 0, 0.5);
+                        tile.addChild(development);
+
+
+                        break;
+                    case 2:
+
+                        break;
+                    case 3:
+
+                        break;
+                    case 4:
+
+                        break;
+                    case 5:
+                        currentPlayer.addDevelopmentToPlayer(d.Item);
+                        break;
+                    default:
+                        alert("Do not recogize development type!");
+                }
+
 
                 // Remove placement image from tiles
                 $.each(hexGrid.children, function () { // loop each tile
@@ -129,6 +161,7 @@ Placeable.prototype.executePostPlaceableClickEvents = function (d) {
                         }
                     });
                 });
+
                 break;
             case 'PlayerMove':
                 var tile = HexTile.prototype.getTileById(d.Item.ClickedTileId);

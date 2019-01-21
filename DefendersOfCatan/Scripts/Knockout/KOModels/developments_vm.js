@@ -116,8 +116,8 @@
                             var placeableY = tile2.y;
                         }
 
-                        var placeable = new Placeable(game, placeableX, placeableY, developmentType, angle, anchor, tile1.id, tile2.id, 0.1); // ToDo: try adding all road placeables upfront, then making them visible only when necessary OR make game layer groups
-                        placeables.add(placeable); // attempt to see if this brings to the top
+                        var placeable = new Placeable(game, placeableX, placeableY, developmentType, angle, anchor, tile1.id, tile2.id, 0.1);
+                        placeables.add(placeable);
                     });
                     break;
                 case 1:

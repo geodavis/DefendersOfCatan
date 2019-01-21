@@ -5,6 +5,7 @@
 var textPhase;
 var hexGrid;
 var placeables;
+var placedDevelopments;
 var players;
 var items;
 var tiles = [];
@@ -87,20 +88,16 @@ GameStates.Game.prototype = {
         var style = { font: "bold 32px Arial", fill: "#fff", boundsAlignH: "center", boundsAlignV: "middle" };
         textPhase = game.add.text(16, 16, 'Phase:', { fontSize: '32px', fill: '#FF9E2C' });
 
-        //vm = new AppViewModel();
-        
-        //vm.updateFirstName("TEST");
         getBoardData();
         getDevelopments();
         getPlayers();
         getEnemies();
         initializeDice();
         placeables = game.add.group();
+        placedDevelopments = game.add.group();
         // ToDo: Make this a common function and call the common in all places
         getJSONSync('/Game/GetNextGameState', startNextGameState, error); // URL, Success Function, Error Function
-        //this.state.start('EnemyMove', false, false);
 
-        //vm.updatePlayerResources(player.resources);
     },
 
     update: function () {
@@ -160,15 +157,9 @@ function initializeBoard(d) {
     }
     else {
         while (d.Item.length) tiles.push(d.Item.splice(0, 8)); // convert to 2-d as serialization converted to 1-d
-
         hexGrid = game.add.group();
-        //hexGrid.z = 0;
         hexGrid.inputEnableChildren = true;
 
-
-        //game.world.bringToTop(placeables);
-        //placeables.z = 1;
-        //placeables.inputEnableChildren = true;
         //hexGrid.onChildInputOver.add(markHoveredTile, this);
         var hexCount = 0;
 

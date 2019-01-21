@@ -13,11 +13,6 @@ namespace DefendersOfCatan.Transfer
         public string GameState { get; set; }
         public int PlayerId { get; set; }
         public int ResourceType { get; set; }
-        public int DevelopmentType { get; set; }
-        public int Angle { get; set; }
-        public int RoadTile1Id { get; set; }
-        public int RoadTile2Id { get; set; }
-        
-        
+        public int DevelopmentType { get; set; }             
     }
 }

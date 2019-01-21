@@ -13,8 +13,8 @@ namespace DefendersOfCatan.BusinessLogic
     {
         List<DevelopmentTransfer> GetDevelopments();
         DevelopmentType PlaceInitialSettlement(int tileId);
-        DevelopmentType PlacePurchasedDevelopment(int tileId);
-
+        int PlacePurchasedRoad(int tile1Id, int tile2Id);
+        void PlacePurchasedDevelopment(int parentTileId);
     }
     public class DevelopmentLogic : IDevelopmentLogic
     {
@@ -49,41 +49,26 @@ namespace DefendersOfCatan.BusinessLogic
             return developmentsTransfer;
         }
 
-        public DevelopmentType PlacePurchasedDevelopment(int tileId)
+        public int PlacePurchasedRoad(int tile1Id, int tile2Id)
+        {
+            var angle = _tileRepo.PlaceRoad(tile1Id, tile2Id);           
+            _playerRepo.RemoveDevelopmentFromCurrentPlayer(DevelopmentType.Road); // Remove development from player
+            return angle;
+        }
+
+
+        public void PlacePurchasedDevelopment(int parentTileId)
         {
             var currentPlayerDevelopmentsWithQty = _developmentRepo.GetCurrentPlayerBase().PlayerDevelopments.Single(i => i.Qty > 0 && i.DevelopmentType != DevelopmentType.Card);
             var developmentType = currentPlayerDevelopmentsWithQty.DevelopmentType;
             if (currentPlayerDevelopmentsWithQty != null)
             {
-                switch (developmentType)
-                {
-                    case DevelopmentType.Road:
-                        // ToDo:
-                        // Get adjacent tile, based on angle of selected placeable
-                        _tileLogic.GetAdjacentTileBasedOnAngle(tileId, 0);
-
-                        // Tile repo - add road to both selected and adjoining tile
-
-                        break;
-                    case DevelopmentType.Settlement:
-                        _tileRepo.AddDevelopmentToTile(tileId, developmentType);
-                        break;
-                    case DevelopmentType.City:
-                        break;
-                    case DevelopmentType.Walls:
-                        break;
-                    case DevelopmentType.Card:
-                        break;
-                    default:
-                        break;
-                }
+                _tileRepo.AddDevelopmentToTile(parentTileId, developmentType);
 
             }
 
             // Remove development from player
             _playerRepo.RemoveDevelopmentFromCurrentPlayer(developmentType);
-
-            return developmentType;
         }
 
         public DevelopmentType PlaceInitialSettlement(int tileId)

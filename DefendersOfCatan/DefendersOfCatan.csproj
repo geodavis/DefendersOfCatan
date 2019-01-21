@@ -222,6 +222,7 @@
     <Compile Include="Transfer\EnemyMoveTransfer.cs" />
     <Compile Include="Transfer\EnemyTileTransfer.cs" />
     <Compile Include="Transfer\ClickedEnemyTransfer.cs" />
+    <Compile Include="Transfer\PlaceRoadTransfer.cs" />
     <Compile Include="Transfer\PlayerHealthTransfer.cs" />
     <Compile Include="Transfer\PlayerOverrunTransfer.cs" />
     <Compile Include="Transfer\PlayerResourceTransfer.cs" />

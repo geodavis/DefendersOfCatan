@@ -165,8 +165,8 @@ namespace DefendersOfCatan.Controllers
                         break;
                     case GameState.PlayerPurchase:
                         // Get the item the player just purchased; If no item in inventory, return error message
-                        var developmentType = _developmentLogic.PlacePurchasedDevelopment(data.ClickedTileId);
-                        result.Item.DevelopmentType = (int)developmentType;
+                        //var developmentType = _developmentLogic.PlacePurchasedDevelopment(data.ClickedTileId);
+                        //result.Item.DevelopmentType = (int)developmentType;
 
                         break;
                     case GameState.PlayerMove:
@@ -207,6 +207,32 @@ namespace DefendersOfCatan.Controllers
         }
 
         [HttpPost]
+        public JsonResult PlaceRoad(PlaceRoadTransfer data)
+        {
+            var result = new ItemModel<PlaceRoadTransfer>
+            {
+                Item = new PlaceRoadTransfer()
+            };
+            try
+            {
+                var angle = _developmentLogic.PlacePurchasedRoad(data.Tile1Id, data.Tile2Id);
+                result.Item.Tile1Id = data.Tile1Id;
+                result.Item.Tile2Id = data.Tile2Id;
+                result.Item.Angle = angle;
+                result.Item.GameState = _gameStateLogic.GetCurrentGameState().ToString();
+                result.Item.DevelopmentType = (int) DevelopmentType.Road;
+
+                return ReturnJsonResult(result);
+            }
+            catch (Exception e)
+            {
+                result.HasError = true;
+                result.Error = e.Message;
+                return ReturnJsonResult(result);
+            }
+        }
+
+        [HttpPost]
         public JsonResult ExecutePlaceableClickedActions(ClickedPlaceableTransfer data)
         {
             // ToDo: ................... build this method correctly
@@ -216,19 +242,15 @@ namespace DefendersOfCatan.Controllers
             };
             try
             {
-                var angle = _tileRepo.PlaceRoad(data.Tile1Id, data.Tile2Id);
-                _tileLogic.GetRoadPaths();
-                result.Item.RoadTile1Id = data.Tile1Id;
-                result.Item.RoadTile2Id = data.Tile2Id;
-                result.Item.Angle = angle;
-                result.Item.DevelopmentType = 0; // ToDo: get development type
-
                 var gameState = _gameStateLogic.GetCurrentGameState();
-                var selectedTile = _tileRepo.GetTileById(data.Tile1Id);
+                var selectedTile = _tileRepo.GetTileById(data.ParentTileId);
                 var currentPlayer = _playerRepo.GetCurrentPlayer();
+
                 result.Item.GameState = gameState.ToString();
                 result.Item.ClickedTileId = selectedTile.Id;
                 result.Item.PlayerId = currentPlayer.Id;
+                result.Item.DevelopmentType = (int) data.developmentType;
+
                 switch (gameState)
                 {
                     case GameState.InitialPlacement:
@@ -239,8 +261,7 @@ namespace DefendersOfCatan.Controllers
                         break;
                     case GameState.PlayerPurchase:
                         // Get the item the player just purchased; If no item in inventory, return error message
-                        var developmentType = _developmentLogic.PlacePurchasedDevelopment(data.Tile1Id);
-                        result.Item.DevelopmentType = (int)developmentType;
+                         _developmentLogic.PlacePurchasedDevelopment(data.ParentTileId);
                         break;
                     default:
                         Console.WriteLine("Game state not implemented for placeable clicked action.");

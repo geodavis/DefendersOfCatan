@@ -8,7 +8,7 @@ Development = function (game, x, y, developmentType, angle, anchor) {
     //this.barbarianIndex = enemy.BarbarianIndex;
     //this.currentHexName = enemy.CurrentHexName;
     //this.playerColor = enemy.PlayerColor; // assign each card a player color
-    this.anchor.setTo(1, 1);
+    this.anchor.setTo(anchor, anchor);
     this.name = "development";
     this.angle += angle;
     //this.hasBeenPlaced = false;
