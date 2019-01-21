@@ -1,5 +1,5 @@
 ﻿//  Here is a custom game object
-Development = function (game, x, y, developmentType) {
+Development = function (game, x, y, developmentType, angle, anchor) {
     this.developmentType = developmentType;
     var developmentImage = this.getDevelopmentImageBasedOnType(developmentType);
     Phaser.Sprite.call(this, game, x, y, developmentImage);
@@ -8,8 +8,9 @@ Development = function (game, x, y, developmentType) {
     //this.barbarianIndex = enemy.BarbarianIndex;
     //this.currentHexName = enemy.CurrentHexName;
     //this.playerColor = enemy.PlayerColor; // assign each card a player color
-    this.anchor.setTo(0.5, 0.5);
+    this.anchor.setTo(1, 1);
     this.name = "development";
+    this.angle += angle;
     //this.hasBeenPlaced = false;
     //this.inputEnabled = true;
     //this.input.useHandCursor = true;
@@ -36,7 +37,7 @@ Development.prototype.rollOver = function () {
 Development.prototype.getDevelopmentImageBasedOnType = function (developmentType) {
     switch (developmentType) {
         case 0:
-            return 'settlementBlue';
+            return 'roadBlue';
             break;
         case 1:
             return 'settlementBlue';

@@ -1,32 +1,29 @@
 ﻿//  Here is a custom game object
-Placeable = function (game, x, y, developmentType, angle, anchor) {
+Placeable = function (game, x, y, developmentType, angle, anchor, id1, id2, scale) {
     var developmentImage = this.getPlaceableImageBasedOnType(developmentType);
+    this.developmentType = developmentType;
     Phaser.Sprite.call(this, game, x, y, developmentImage);
-    //this.playerColor = enemy.PlayerColor; // assign each card a player color
     this.anchor.setTo(anchor, anchor);
     this.name = "placeable";
     this.angle += angle;
-    //this.hasBeenPlaced = false;
     this.inputEnabled = true;
     //this.input.useHandCursor = true;
     //this.events.onInputOut.add(this.rollOut, this);
     //this.events.onInputOver.add(this.rollOver, this);
     this.events.onInputUp.add(this.onTap, this);
-    this.scale.setTo(.50, .50);
-    //this.bringToTop();
+    this.scale.setTo(scale, scale);
+    this.tile1Id = id1;
+    this.tile2Id = id2;
 };
 
 Placeable.prototype = Object.create(Phaser.Sprite.prototype);
 Placeable.prototype.constructor = Placeable;
 
 Placeable.prototype.onTap = function () {
-    alert("TileId: " + this.parent.id + " " + "Angle: " + this.angle);
-    //alert("Placeable z: " + placeables.z);
-    //alert("HexGrid z: " + hexGrid.z);
-    var clickedPlaceableTransfer = { "clickedPlaceableParentTileId": this.parent.id, "angle": this.angle };
+    //alert("TileId1: " + this.tile1Id + " TileId2: " + this.tile2Id + " Angle: " + this.angle);
 
+    var clickedPlaceableTransfer = { "tile1Id": this.tile1Id, "tile2Id": this.tile2Id, "parentTile": this.parent.id };
     postJSON('/Game/ExecutePlaceableClickedActions', "{data:" + JSON.stringify(clickedPlaceableTransfer) + "}", this.executePostPlaceableClickEvents, error);
-
 }
 
 Placeable.prototype.rollOut = function () {
@@ -69,6 +66,33 @@ Placeable.prototype.executePostPlaceableClickEvents = function (d) {
     }
     else {
         var gameState = d.Item.GameState;
+        var angle = d.Item.Angle;
+        var tile1 = HexTile.prototype.getTileById(d.Item.RoadTile1Id);
+        var tile2 = HexTile.prototype.getTileById(d.Item.RoadTile2Id);
+        var developmentType = d.Item.DevelopmentType;
+        var anchor = 0.5;
+
+        var width = game.cache.getImage("roadBlue").width;
+        var height = game.cache.getImage("roadBlue").height;
+
+        // Road calculation below with scale 0.5
+        if (angle == 90) {
+            var placeableX = ((tile1.x + tile2.x) / 2) + height / 4;
+            var placeableY = tile1.y + tile1.height / 2;
+        }
+        else if (angle == -150) {
+            var placeableX = tile1.x + (tile1.width / 2);
+            var placeableY = tile2.y;
+        }
+        else
+        {
+            var placeableX = tile2.x + tile2.width / 4;
+            var placeableY = tile2.y;
+        }
+
+        var development = new Development(game, placeableX, placeableY, developmentType, angle, anchor); // ToDo: try adding all road placeables upfront, then making them visible only when necessary OR make game layer groups
+        placeables.add(development); // attempt to see if this brings to the top
+
 
         switch (gameState) {
             case 'InitialPlacement':

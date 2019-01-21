@@ -7,8 +7,8 @@ namespace DefendersOfCatan.Transfer
 {
     public class ClickedPlaceableTransfer
     {
-        public int ClickedPlaceableParentTileId { get; set; }
-        public int Angle { get; set; }
+        public int Tile1Id { get; set; }
+        public int Tile2Id { get; set; }
 
     }
 }

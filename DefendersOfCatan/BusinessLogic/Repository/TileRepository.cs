@@ -21,7 +21,7 @@ namespace DefendersOfCatan.BusinessLogic.Repository
         void SetOverrunTile(Tile tile);
         List<TileDevelopment> GetDevelopments(int tileId);
         PurchaseDevelopmentTransfer GetPlaceableDevelopments(DevelopmentType developmentType);
-        void AddRoad(int tileId, int angle);
+        int PlaceRoad(int tile1Id, int tile2Id);
         List<Road> GetRoads(); 
     }
     public class TileRepository : BaseRepository, ITileRepository
@@ -122,13 +122,14 @@ namespace DefendersOfCatan.BusinessLogic.Repository
             return purchaseDevelopmentTransfer;
         }
 
-        public void AddRoad(int tileId, int angle)
+        public int PlaceRoad(int tile1Id, int tile2Id)
         {
-            var tile1 = GetTileById(tileId);
-            var tile2 = GetTileById(tileId); // ToDo: Get second tile based on angle
-            var road = new Road { Tile1 = tile1, Tile2 = tile2 };
-            _db.GetSet<Road>().Add(road);
+            var tile1 = GetTileById(tile1Id);
+            var tile2 = GetTileById(tile2Id); // ToDo: Get second tile based on angle
+            var road = _db.GetSet<Road>().Where(r => r.Tile1.Id == tile1Id && r.Tile2.Id == tile2Id).Single();
+            road.Placed = true;
             _db.SaveChanges();
+            return road.Angle;
         }
 
         public List<Road> GetRoads()

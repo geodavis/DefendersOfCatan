@@ -82,10 +82,10 @@
     };
 
     self.purchaseDevelopment = function (development) {
-        getJSONSync('/Game/PurchaseDevelopment?developmentType=' + development.developmentType, self.placeOrUpdatePlayerDevelopments, error); // URL, Success Function, Error Function
+        getJSONSync('/Game/PurchaseDevelopment?developmentType=' + development.developmentType, self.highlightPlaceables, error); // URL, Success Function, Error Function
     };
 
-    self.placeOrUpdatePlayerDevelopments = function (d) {
+    self.highlightPlaceables = function (d) {
         if (!d.HasError) {
             var developmentType = d.Item.DevelopmentType;
             var tilesCanPlace = d.Item.Tiles;
@@ -98,13 +98,26 @@
                     $.each(d.Item.Roads, function () {
                         var tile1 = HexTile.prototype.getTileById(this.Tile1.Id);
                         var tile2 = HexTile.prototype.getTileById(this.Tile2.Id);
-                        var placeable = new Placeable(game, (tile1.x + tile2.x)/2 + 50, (tile1.y + tile2.y)/2 + 50, developmentType, this.Angle, 1); // ToDo: try adding all road placeables upfront, then making them visible only when necessary OR make game layer groups
-                        placeables.add(placeable); // attempt to see if this brings to the top
-                        //game.world.bringToTop(placeables);
-                        //tile.addChild(placeable);
-                        //hexGrid.removeChild(tile);
-                        //hexGrid.addChild(tile);
+                        var width = game.cache.getImage("roadPlacement").width;
+                        var height = game.cache.getImage("roadPlacement").height;
+                        var anchor = 0;
+                        var angle = 0;
 
+                        if (this.Angle == 90) {
+                            var placeableX = tile1.x + tile1.width;
+                            var placeableY = tile1.y + tile1.height / 2;
+                        }
+                        else if (this.Angle == -150) {
+                            var placeableX = tile1.x + tile1.width / 4;
+                            var placeableY = tile2.y;
+                        }
+                        else {
+                            var placeableX = tile1.x + tile1.width * .75;
+                            var placeableY = tile2.y;
+                        }
+
+                        var placeable = new Placeable(game, placeableX, placeableY, developmentType, angle, anchor, tile1.id, tile2.id, 0.1); // ToDo: try adding all road placeables upfront, then making them visible only when necessary OR make game layer groups
+                        placeables.add(placeable); // attempt to see if this brings to the top
                     });
                     break;
                 case 1:
@@ -116,8 +129,8 @@
                     // Check if tile has settlement. Need this value from the server. Highlight all resource tiles without settlements
 
                     $.each(tilesCanPlace, function () {
-                        var placeable = new Placeable(game, 0, 0, developmentType, 0, 0.5);
                         var tile = HexTile.prototype.getTileById(this.Id);
+                        var placeable = new Placeable(game, 0, 0, developmentType, 0, 0.5, 0, 0, 1);
                         tile.addChild(placeable);
                     });
                     break;

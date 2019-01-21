@@ -274,6 +274,7 @@
     <Content Include="Content\Assets\PlayerYellow.png" />
     <Content Include="Content\Assets\preloader-bar.png" />
     <Content Include="Content\Assets\RoadPlacement.png" />
+    <Content Include="Content\Assets\road_placeable.png" />
     <Content Include="Content\Assets\rock.png" />
     <Content Include="Content\Assets\rockHex.png" />
     <Content Include="Content\Assets\SettlementBlue.png" />

@@ -216,11 +216,15 @@ namespace DefendersOfCatan.Controllers
             };
             try
             {
-                _tileRepo.AddRoad(data.ClickedPlaceableParentTileId, data.Angle);
+                var angle = _tileRepo.PlaceRoad(data.Tile1Id, data.Tile2Id);
                 _tileLogic.GetRoadPaths();
+                result.Item.RoadTile1Id = data.Tile1Id;
+                result.Item.RoadTile2Id = data.Tile2Id;
+                result.Item.Angle = angle;
+                result.Item.DevelopmentType = 0; // ToDo: get development type
 
                 var gameState = _gameStateLogic.GetCurrentGameState();
-                var selectedTile = _tileRepo.GetTileById(data.ClickedPlaceableParentTileId);
+                var selectedTile = _tileRepo.GetTileById(data.Tile1Id);
                 var currentPlayer = _playerRepo.GetCurrentPlayer();
                 result.Item.GameState = gameState.ToString();
                 result.Item.ClickedTileId = selectedTile.Id;
@@ -235,7 +239,7 @@ namespace DefendersOfCatan.Controllers
                         break;
                     case GameState.PlayerPurchase:
                         // Get the item the player just purchased; If no item in inventory, return error message
-                        var developmentType = _developmentLogic.PlacePurchasedDevelopment(data.ClickedPlaceableParentTileId);
+                        var developmentType = _developmentLogic.PlacePurchasedDevelopment(data.Tile1Id);
                         result.Item.DevelopmentType = (int)developmentType;
                         break;
                     default:

@@ -56,8 +56,9 @@ GameStates.Preloader.prototype = {
         //this.load.image('barbarian', '../../Content/Assets/barbarian.png');
 
         this.load.image('settlementBlue', '../../Content/Assets/settlementBlue.png');
-        this.load.image('settlementPlacement', '../../Content/Assets/settlementPlacement.png');
-        this.load.image('roadPlacement', '../../Content/Assets/roadPlacement.png')
+        this.load.image('settlementPlacement', '../../Content/Assets/SettlementPlacement.png');
+        this.load.image('roadPlacement', '../../Content/Assets/road_Placeable.png')
+        this.load.image('roadBlue', '../../Content/Assets/RoadPlacement.png')
 
         this.load.image('dice1', '../../Content/Assets/dice1.png');
         this.load.image('dice2', '../../Content/Assets/dice2.png');
