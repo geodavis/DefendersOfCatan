@@ -43,6 +43,18 @@ Placeable.prototype.rollOver = function () {
     //this.scale.setTo(.14, .14);
 }
 
+Placeable.prototype.removePlaceablesFromTiles = function () {
+    // Remove placement image from tiles
+    $.each(hexGrid.children, function () { // loop each tile
+        var gridTile = this;
+        $.each(gridTile.children, function () { // loop each child of tile
+            if (this.name == 'placeable') {
+                gridTile.removeChild(this);
+            }
+        });
+    });
+}
+
 Placeable.prototype.getPlaceableImageBasedOnType = function (developmentType) {
     switch (developmentType) {
         case 0:
@@ -76,9 +88,12 @@ Placeable.prototype.executePostPlaceableClickEvents = function (d) {
 
         switch (gameState) {
             case 'InitialPlacement':
-                GameStates.InitialPlacement.prototype.placeInitialSettlement(d.Item.ClickedTileId);
+                var tile = HexTile.prototype.getTileById(d.Item.ClickedTileId);
+                var development = new Development(game, 0, 0, developmentType, 0, 0.5);
+                tile.addChild(development);
 
                 if (d.Item.PlayerId == 4) {
+                    Placeable.prototype.removePlaceablesFromTiles();
                     getJSONSync('/Game/GetNextGameState', startNextGameState, error); // URL, Success Function, Error Function
                 }
 
@@ -153,14 +168,7 @@ Placeable.prototype.executePostPlaceableClickEvents = function (d) {
 
 
                 // Remove placement image from tiles
-                $.each(hexGrid.children, function () { // loop each tile
-                    var gridTile = this;
-                    $.each(gridTile.children, function () { // loop each child of tile
-                        if (this.name == 'placeable') {
-                            gridTile.removeChild(this);
-                        }
-                    });
-                });
+                Placeable.prototype.removePlaceablesFromTiles();
 
                 break;
             case 'PlayerMove':

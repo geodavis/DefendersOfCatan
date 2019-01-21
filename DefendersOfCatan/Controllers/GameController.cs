@@ -20,9 +20,6 @@ namespace DefendersOfCatan.Controllers
     {
         private readonly IGameContext _db;
         private readonly IGameInitializer _gameInitializer;
-
-
-
         private readonly Game _game = new Game();
         private readonly IPlayerLogic _playerLogic;
         private readonly ITileLogic _tileLogic;
@@ -56,6 +53,24 @@ namespace DefendersOfCatan.Controllers
 
 
             return View();
+        }
+
+        [HttpGet]
+        public JsonResult GetInitialSettlementPlacement()
+        {
+            var result = new ItemModel<List<Tile>> { Item = new List<Tile>() };
+
+            try
+            {
+                result.Item = _tileRepo.GetPlaceableDevelopments(DevelopmentType.Settlement).Tiles;
+                return ReturnJsonResult(result);
+            }
+            catch (Exception e)
+            {
+                result.HasError = true;
+                result.Error = e.Message;
+                return ReturnJsonResult(result);
+            }
         }
 
         [HttpPost]
@@ -254,7 +269,7 @@ namespace DefendersOfCatan.Controllers
                 switch (gameState)
                 {
                     case GameState.InitialPlacement:
-                        //result.Item.DevelopmentType = (int)_developmentLogic.PlaceInitialSettlement(data.ClickedPlaceableParentTileId);
+                        _developmentLogic.PlaceInitialSettlement(data.ParentTileId);
                         break;
                     case GameState.EnemyCard:
 
