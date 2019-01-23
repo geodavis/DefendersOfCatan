@@ -203,61 +203,34 @@ function executePostTileClickEvents(d) {
 
         switch (gameState) {
             case 'InitialPlacement':
-                GameStates.InitialPlacement.prototype.placeInitialSettlement(d.Item.ClickedTileId);
-
-                if (d.Item.PlayerId == 4) {
-                    getJSONSync('/Game/GetNextGameState', startNextGameState, error); // URL, Success Function, Error Function
-                }
-
-                // Get the next player
-                getJSONSync('/Game/MoveToNextPlayer', moveToNextPlayer, error); // URL, Success Function, Error Function
-
-                
+         
                 break;
             case 'EnemyCard':
                 // ToDo: if you click on the hex where another card has been placed, it does not prevent placement. Need to check if card already exists on hex.
                 var enemy = Enemy.prototype.getEnemyById(d.Item.EnemyId);
                 var tile = HexTile.prototype.getTileById(d.Item.ClickedTileId);
                 GameStates.EnemyCard.prototype.placeCard(enemy, tile);
+                getJSONSync('/Game/GetNextGameState', startNextGameState, error); // URL, Success Function, Error Function
 
                 break;
             case 'PlayerPurchase':
-                var tile = HexTile.prototype.getTileById(d.Item.ClickedTileId);
-                var developmentType = d.Item.DevelopmentType;
-                var development = new Development(game, 0, 0, developmentType);
-                tile.addChild(development);
-
-                // Remove placement image from tiles
-                $.each(hexGrid.children, function () { // loop each tile
-                    var gridTile = this;
-                    $.each(gridTile.children, function () { // loop each child of tile
-                        if (this.name == 'placeable') {
-                            gridTile.removeChild(this);
-                        }
-                    });
-                });
                 break;
             case 'PlayerMove':
                 var tile = HexTile.prototype.getTileById(d.Item.ClickedTileId);
                 tile.addChild(currentPlayer);
+                getJSONSync('/Game/GetNextGameState', startNextGameState, error); // URL, Success Function, Error Function
 
                 break;
             case 'PlayerResourceOrFight':
                 GameStates.PlayerResourceOrFight.prototype.addResourceToPlayer(d.Item.ResourceType);
                 getJSONSync('/Game/MoveToNextPlayer', moveToNextPlayer, error); // URL, Success Function, Error Function
+                getJSONSync('/Game/GetNextGameState', startNextGameState, error); // URL, Success Function, Error Function
 
                 break;
             default:
                 // ToDo:
         }
-
-        if (gameState != 'InitialPlacement') {
-            getJSONSync('/Game/GetNextGameState', startNextGameState, error); // URL, Success Function, Error Function
-        }
-
-
     }
-
 }
 
 HexTile.prototype.getTileById = function (id) {

@@ -72,6 +72,9 @@ Placeable.prototype.getPlaceableImageBasedOnType = function (developmentType) {
         case 4:
             return 'settlementPlacement';
             break;
+        case 5: // Tile Move
+            return 'playerMove';
+            break;
         default: // ToDo
             break;
     }

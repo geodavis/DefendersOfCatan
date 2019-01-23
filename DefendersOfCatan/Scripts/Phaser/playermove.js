@@ -54,7 +54,13 @@ GameStates.PlayerMove.prototype.placePlayer = function (d) {
 function setMovableNeighbors(d) {
     $.each(d.Item, function () {
         var tile = HexTile.prototype.getTileById(this);
-        var hexImageArray = ["hexagonrednoise", "hexagongraynoise", "hexagonbrownnoise", "hexagonyellownoise", "hexagongreennoise"];
+        var border = game.make.sprite(0, 0, 'hexagonborder');
+        border.name = "border";
+        border.anchor.setTo(0.5, 0.5);
+        border.scale.setTo(0.95, 0.95);
+        tile.addChild(border);
+
+        //var hexImageArray = ["hexagonrednoise", "hexagongraynoise", "hexagonbrownnoise", "hexagonyellownoise", "hexagongreennoise"];
         //tile.loadTexture(hexImageArray[tile.type]); // todo: replace tile images with movable tiles - swap tile.type to tile.resourceType
     });
 }
