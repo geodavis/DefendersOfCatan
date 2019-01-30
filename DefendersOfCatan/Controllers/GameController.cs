@@ -236,7 +236,7 @@ namespace DefendersOfCatan.Controllers
                 result.Item.Angle = angle;
                 result.Item.GameState = _gameStateLogic.GetCurrentGameState().ToString();
                 result.Item.DevelopmentType = (int) DevelopmentType.Road;
-
+                _developmentLogic.GetRoadPaths();
                 return ReturnJsonResult(result);
             }
             catch (Exception e)
@@ -365,7 +365,6 @@ namespace DefendersOfCatan.Controllers
         [HttpGet]
         public JsonResult PurchaseDevelopment(DevelopmentType developmentType)
         {
-            // ToDo: Need to pass back all placeable tiles
             var result = new ItemModel<PurchaseDevelopmentTransfer> { Item = new PurchaseDevelopmentTransfer() };
 
             try
