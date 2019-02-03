@@ -75,41 +75,17 @@ namespace DefendersOfCatan.BusinessLogic
 
         public List<List<int>> GetRoadPaths()
         {
-            var paths = new List<List<int>>();
+            var paths = new List<List<int>>(); // Global paths list
             var tiles = _tileRepo.GetTiles().Where(t => t.Type == TileType.Resource || t.Type == TileType.Capital);
-            Debug.WriteLine("New Road Placed ............");
-
             foreach (var tile in tiles) // Loop each tile, traversing any roads on the tile.
             {
-                var tileAlreadyTraversed = false; // First check if tile has already been traversed.
-                foreach (var tempPath in paths)
+                if (!HasTileBeenTraversed(tile.Id, paths)) // If tile has already been traversed along a path, do not traverse again
                 {
-                    if (tempPath.Contains(tile.Id))
-                    {
-                        tileAlreadyTraversed = true;
-                    }                                      
-                }
-
-                if (!tileAlreadyTraversed) // If already traversed, do not traverse tile again.
-                {
-                    var traversedTile1Ids = new List<int>();
-                    Debug.WriteLine("New Path Road 1...");
-                    var tilePaths = new List<List<int>>();
-                    var path = new List<int>();
-                    TraverseRoads(tile, traversedTile1Ids, path, tilePaths);
+                    var tilePaths = new List<List<int>>(); // Tile paths list
+                    TraverseRoads(tile, new List<int>(), new List<int>(), tilePaths);
                     foreach (var tilePath in tilePaths)
                     {
-                        var contains = false;
-
-                        foreach (var p in paths)
-                        {
-                            if (p.All(tilePath.Contains))
-                            {
-                                contains = true;
-                            }
-                        }
-
-                        if (!contains) // If a path already exists (even different order of tiles), do not add it again.
+                        if (!DoesPathAlreadyExist(tilePath, paths))
                         {
                             paths.Add(tilePath);
                         }
@@ -121,7 +97,6 @@ namespace DefendersOfCatan.BusinessLogic
         }
         public List<List<int>> TraverseRoads(Tile tile, List<int> traversedtileIds, List<int> path, List<List<int>> paths)
         {
-            Debug.WriteLine("Moved to tile: " + tile.Id);
             path.Add(tile.Id);
 
             var roads = _tileRepo.GetRoads().Where(r => r.Placed);
@@ -147,10 +122,34 @@ namespace DefendersOfCatan.BusinessLogic
                 }
             }
             path.RemoveAt(path.Count - 1);
-
+            
             return paths;
         }
 
+        private bool HasTileBeenTraversed(int tileId, List<List<int>> paths)
+        {
+            foreach (var tempPath in paths)
+            {
+                if (tempPath.Contains(tileId))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+        private bool DoesPathAlreadyExist(List<int> newPath, List<List<int>> existingPaths)
+        {
+            foreach (var existingPath in existingPaths)
+            {
+                if (newPath.All(existingPath.Contains))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
         public DevelopmentType PlaceInitialSettlement(int tileId)
         {
             var developmentType = DevelopmentType.Settlement;
