@@ -139,11 +139,24 @@ Placeable.prototype.executePostPlaceableClickEvents = function (d) {
                         var development = new Development(game, placeableX, placeableY, developmentType, angle, anchor);
                         placedDevelopments.add(development);
 
-                        // remove road placeables
-                        for (var i = 0, len = placeables.children.length; i < len; i++) {
-                            placeables.children[0].destroy();
+                        var paths = d.Item.Paths;
+                        $.each(paths, function () { // loop paths
+                            $.each(this, function () { // loop tiles on path
+                                var tile = HexTile.prototype.getTileById(this);
+                                var border = game.make.sprite(0, 0, 'hexagonborder');
+                                border.name = "border";
+                                border.anchor.setTo(0.5, 0.5);
+                                border.scale.setTo(0.95, 0.95);
+                                tile.addChild(border);
+                            });
+                        });
 
-                        }
+
+                        // remove road placeables
+                        //for (var i = 0, len = placeables.children.length; i < len; i++) {
+                        //    placeables.children[0].destroy();
+
+                        //}
 
                         break;
                     case 1:
@@ -189,7 +202,7 @@ Placeable.prototype.executePostPlaceableClickEvents = function (d) {
         }
 
         if (gameState != 'InitialPlacement') {
-            getJSONSync('/Game/GetNextGameState', startNextGameState, error); // URL, Success Function, Error Function
+            //getJSONSync('/Game/GetNextGameState', startNextGameState, error); // URL, Success Function, Error Function
         }
 
 

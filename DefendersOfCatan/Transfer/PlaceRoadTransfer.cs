@@ -12,5 +12,6 @@ namespace DefendersOfCatan.Transfer
         public int Angle { get; set; }
         public string GameState { get; set; }
         public int DevelopmentType { get; set; }
+        public List<List<int>> Paths { get; set; }
     }
 }

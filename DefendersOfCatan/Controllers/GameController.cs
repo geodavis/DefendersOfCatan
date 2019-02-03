@@ -236,7 +236,7 @@ namespace DefendersOfCatan.Controllers
                 result.Item.Angle = angle;
                 result.Item.GameState = _gameStateLogic.GetCurrentGameState().ToString();
                 result.Item.DevelopmentType = (int) DevelopmentType.Road;
-                _developmentLogic.GetRoadPaths();
+                result.Item.Paths = _developmentLogic.GetRoadPaths();
                 return ReturnJsonResult(result);
             }
             catch (Exception e)
