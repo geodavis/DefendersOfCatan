@@ -16,7 +16,9 @@ namespace DefendersOfCatan.BusinessLogic
         DevelopmentType PlaceInitialSettlement(int tileId);
         int PlacePurchasedRoad(int tile1Id, int tile2Id);
         void PlacePurchasedDevelopment(int parentTileId);
-        List<List<int>> GetRoadPaths();
+        //List<List<int>> GetRoadPaths();
+        List<int> GetPlayerPathTilesWithSettlements();
+
     }
     public class DevelopmentLogic : IDevelopmentLogic
     {
@@ -73,7 +75,7 @@ namespace DefendersOfCatan.BusinessLogic
             _playerRepo.RemoveDevelopmentFromCurrentPlayer(developmentType);
         }
 
-        public List<List<int>> GetRoadPaths()
+        private List<List<int>> GetRoadPaths()
         {
             var paths = new List<List<int>>(); // Global paths list
             var tiles = _tileRepo.GetTiles().Where(t => t.Type == TileType.Resource || t.Type == TileType.Capital);
@@ -95,7 +97,7 @@ namespace DefendersOfCatan.BusinessLogic
 
             return paths;
         }
-        public List<List<int>> TraverseRoads(Tile tile, List<int> traversedtileIds, List<int> path, List<List<int>> paths)
+        private List<List<int>> TraverseRoads(Tile tile, List<int> traversedtileIds, List<int> path, List<List<int>> paths)
         {
             path.Add(tile.Id);
 
@@ -126,6 +128,28 @@ namespace DefendersOfCatan.BusinessLogic
             return paths;
         }
 
+        public List<int> GetPlayerPathTilesWithSettlements()
+        {
+            var settlementTileIds = new List<int>();
+            var paths = GetRoadPaths(); // Get all road paths
+            var currentPlayerTileId = _tileRepo.GetCurrentPlayerTile().Id;
+
+            // Get player paths that contain a settlement
+            foreach (var path in paths)
+            {
+                if (path.Contains(currentPlayerTileId)) // Check that player is currently located on one of the tiles in the path
+                {
+                    foreach (var tileId in path)
+                    {
+                        if (_tileLogic.TileHasSettlement(tileId))
+                        {
+                            settlementTileIds.Add(tileId);
+                        }
+                    }
+                }
+            }
+            return settlementTileIds.Distinct().ToList();
+        }
         private bool HasTileBeenTraversed(int tileId, List<List<int>> paths)
         {
             foreach (var tempPath in paths)

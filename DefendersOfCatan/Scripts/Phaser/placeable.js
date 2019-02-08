@@ -153,10 +153,9 @@ Placeable.prototype.executePostPlaceableClickEvents = function (d) {
 
 
                         // remove road placeables
-                        //for (var i = 0, len = placeables.children.length; i < len; i++) {
-                        //    placeables.children[0].destroy();
-
-                        //}
+                        for (var i = 0, len = placeables.children.length; i < len; i++) {
+                            placeables.children[0].destroy();
+                        }
 
                         break;
                     case 1:
@@ -202,7 +201,7 @@ Placeable.prototype.executePostPlaceableClickEvents = function (d) {
         }
 
         if (gameState != 'InitialPlacement') {
-            //getJSONSync('/Game/GetNextGameState', startNextGameState, error); // URL, Success Function, Error Function
+            getJSONSync('/Game/GetNextGameState', startNextGameState, error); // URL, Success Function, Error Function
         }
 
 

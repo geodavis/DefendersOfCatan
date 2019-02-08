@@ -11,7 +11,7 @@ namespace DefendersOfCatan.BusinessLogic
 {
     public interface IEnemyLogic
     {
-        Enemy AddEnemyToTile(ClickedTileTransfer tileTransfer);
+        ClickedTileTransfer AddEnemyToTile(ClickedTileTransfer tileTransfer);
         EnemyFightTransfer RemoveEnemy(int enemyId);
         EnemyMoveTransfer ExecuteEnemyMovePhase();
     }
@@ -85,18 +85,22 @@ namespace DefendersOfCatan.BusinessLogic
             return enemyMoveTransfer; // ToDo: Return any developments removed by barbarian attack so that UI can be updated
         }
 
-        public Enemy AddEnemyToTile(ClickedTileTransfer tileTransfer)
+        public ClickedTileTransfer AddEnemyToTile(ClickedTileTransfer tileTransfer)
         {
+            var transfer = new ClickedTileTransfer();
             var tile = _tileRepo.GetTileById(tileTransfer.ClickedTileId);
             var enemy = _enemyRepo.GetSelectedEnemy();
+            transfer.EnemyId = enemy.Id;
             if (CanEnemyBeAddedToTile(enemy, tile))
             {
                 _tileRepo.AddEnemyToTile(enemy.Id, tile.Id);
                 _enemyRepo.SetEnemyPlaced(enemy);
-                var player = _playerRepo.GetPlayerBasedOnColor(tile.PlayerColor);
+                var player = _playerRepo.GetPlayerBasedOnColor((PlayerColor)tile.Type);
+                transfer.PlayerId = player.Id;
                 if (_playerLogic.CheckIfPlayerIsOverrun(player))
                 {
                     _playerRepo.SetPlayerOverrun(player, true);
+                    transfer.IsOverrun = true;
                 }
             }
             else
@@ -104,7 +108,7 @@ namespace DefendersOfCatan.BusinessLogic
                 // ToDo: return error if validation fails
             }
 
-            return enemy;
+            return transfer;
 
         }
         private bool CanEnemyBeAddedToTile(Enemy enemy, Tile tile)

@@ -4,7 +4,8 @@
 
 GameStates.PlayerResourceOrFight.prototype = {
     create: function () {
-        //alert('player resource stage');
+        getJSONSync('/Game/GetResourceOrFightTiles', this.highlightResourceOrFightTiles, error); // URL, Success Function, Error Function
+
 
         textPhase.text = 'Phase: Resource';
     },
@@ -22,6 +23,21 @@ GameStates.PlayerResourceOrFight.prototype = {
     }
 };
 
+GameStates.PlayerResourceOrFight.prototype.highlightResourceOrFightTiles = function (d) {
+    if (!d.HasError) {
+        $.each(d.Item, function () {
+            var tile = HexTile.prototype.getTileById(this);
+            var border = game.make.sprite(0, 0, 'hexagonborder');
+            border.name = "border";
+            border.anchor.setTo(0.5, 0.5);
+            border.scale.setTo(0.95, 0.95);
+            tile.addChild(border);
+        });
+    }
+    else {
+        alert(d.Error);
+    }
+}
 
 GameStates.PlayerResourceOrFight.prototype.addResourceToPlayer = function (resourceType) {
     currentPlayer.addResourceToPlayer(resourceType);

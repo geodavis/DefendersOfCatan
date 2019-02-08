@@ -240,6 +240,11 @@
     <Content Include="Content\Assets\brick.png" />
     <Content Include="Content\Assets\brick1.png" />
     <Content Include="Content\Assets\capitalHex.png" />
+    <Content Include="Content\Assets\CardBrick.png" />
+    <Content Include="Content\Assets\CardGrain.png" />
+    <Content Include="Content\Assets\CardOre.png" />
+    <Content Include="Content\Assets\CardWood.png" />
+    <Content Include="Content\Assets\CardWool.png" />
     <Content Include="Content\Assets\clay.png" />
     <Content Include="Content\Assets\clayHex.gif" />
     <Content Include="Content\Assets\clayHex.png" />
@@ -259,6 +264,7 @@
     <Content Include="Content\Assets\EnemyCardB0.png" />
     <Content Include="Content\Assets\EnemyCardB1.png" />
     <Content Include="Content\Assets\EnemyCardB2.png" />
+    <Content Include="Content\Assets\ExclamationMark.png" />
     <Content Include="Content\Assets\grain.png" />
     <Content Include="Content\Assets\grains.png" />
     <Content Include="Content\Assets\grass.png" />

@@ -210,6 +210,8 @@ function executePostTileClickEvents(d) {
                 var enemy = Enemy.prototype.getEnemyById(d.Item.EnemyId);
                 var tile = HexTile.prototype.getTileById(d.Item.ClickedTileId);
                 GameStates.EnemyCard.prototype.placeCard(enemy, tile);
+                var player = players.getPlayerById(d.Item.PlayerId);
+                player.setPlayerOverrun(d.Item.IsOverrun);
                 getJSONSync('/Game/GetNextGameState', startNextGameState, error); // URL, Success Function, Error Function
 
                 break;
@@ -218,6 +220,15 @@ function executePostTileClickEvents(d) {
             case 'PlayerMove':
                 var tile = HexTile.prototype.getTileById(d.Item.ClickedTileId);
                 tile.addChild(currentPlayer);
+                $.each(hexGrid.children, function () {
+                    var tile = this;
+                    $.each(tile.children, function () { // loop each child of tile
+                        if (this.name == 'border') {
+                            tile.removeChild(this);
+                        }
+                    });
+                });
+
                 getJSONSync('/Game/GetNextGameState', startNextGameState, error); // URL, Success Function, Error Function
 
                 break;

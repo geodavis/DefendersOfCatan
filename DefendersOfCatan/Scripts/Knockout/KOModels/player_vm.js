@@ -6,7 +6,7 @@
     this.id = playerData.Id;
     this.playerColor = playerData.Color
     this.health = ko.observable(playerData.Health);
-    this.isOverrun = playerData.IsOverrun;
+    this.isOverrun = ko.observable(true);
     this.isCurrentPlayer = ko.observable(playerData.IsCurrentPlayer);
     this.currentHexName = "tile3_3";
     this.inputEnabled = true;
@@ -44,6 +44,17 @@
         });
     };
 
+    this.setPlayerOverrun = function (isOverrun) {
+        if (isOverrun) { // ToDo: remove overrun when clicking a card
+            this.isOverrun(true);
+            updateLogText(this.name + ' has been overrun!');
+        }
+        else {
+            this.isOverrun(false);
+            updateLogText(this.name + ' is no longer overrun.');
+        }
+    }
+
 };
 
 Player.prototype = Object.create(Phaser.Sprite.prototype);
@@ -58,18 +69,6 @@ Player.prototype.rollOver = function () {
     //this.scale.x = 0.9;
     //this.scale.y = 0.9;
     //this.scale.setTo(.14, .14);
-}
-
-
-Player.prototype.setPlayerOverrun = function (isOverrun) {
-    if (isOverrun) {
-        this.isOverrun = true;
-        updateLogText(this.name + ' has been overrun!');
-    }
-    else {
-        this.isOverrun = false;
-        updateLogText(this.name + ' is no longer overrun.');
-    }
 }
 
 Player.prototype.setPurchasableDevelopments = function () { // ToDo: Move this to the items vm

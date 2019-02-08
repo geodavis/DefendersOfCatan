@@ -13,6 +13,17 @@ Players.prototype.addPlayer = function (playerData) {
     hexTileStart.addChild(player);
 }
 
+Players.prototype.getPlayerById = function (id) {
+    var player;
+    $.each(this.playersList(), function () {
+        if (this.id == id) {
+            player = this;
+        }
+    });
+
+    return player;
+};
+
 Players.prototype.getPlayerBasedOnColor = function (playerColor) {
     var player;
     $.each(this.playersList(), function () {

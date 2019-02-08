@@ -141,10 +141,10 @@
 
                     break;
                 case 4:
-
+                    currentPlayer.addDevelopmentToPlayer(d.Item);
                     break;
                 case 5:
-                    currentPlayer.addDevelopmentToPlayer(d.Item);
+
                     break;
                 default:
                     alert("Do not recogize development type!");

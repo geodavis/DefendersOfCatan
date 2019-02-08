@@ -172,10 +172,10 @@ namespace DefendersOfCatan.Controllers
                         result.Item.DevelopmentType = (int)_developmentLogic.PlaceInitialSettlement(data.ClickedTileId);
                         break;
                     case GameState.EnemyCard:
-                        result.Item.EnemyId = _enemyLogic.AddEnemyToTile(data).Id;
-                        string timestamp = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss.fff",
-                    CultureInfo.InvariantCulture);
-                        System.Diagnostics.Debug.WriteLine("Place selected enemy tile id: " + data.ClickedTileId + " - " + timestamp);
+                        var transfer = _enemyLogic.AddEnemyToTile(data);
+                        result.Item.EnemyId = transfer.EnemyId;
+                        result.Item.IsOverrun = transfer.IsOverrun;
+                        result.Item.PlayerId = transfer.PlayerId;
 
                         break;
                     case GameState.PlayerPurchase:
@@ -195,7 +195,7 @@ namespace DefendersOfCatan.Controllers
                     case GameState.PlayerResourceOrFight:
                         var resourceType = selectedTile.ResourceType;
                         result.Item.ResourceType = (int)resourceType;
-                        if (_tileLogic.TileHasSettlement(data.ClickedTileId))
+                        if (_tileLogic.TileHasSettlement(data.ClickedTileId)) // ToDo: Check if player is on tile or tile is on a road path
                         {
                             _playerLogic.AddResourceToPlayer(resourceType);
                         }
@@ -236,7 +236,8 @@ namespace DefendersOfCatan.Controllers
                 result.Item.Angle = angle;
                 result.Item.GameState = _gameStateLogic.GetCurrentGameState().ToString();
                 result.Item.DevelopmentType = (int) DevelopmentType.Road;
-                result.Item.Paths = _developmentLogic.GetRoadPaths();
+                //result.Item.Paths = _developmentLogic.GetRoadPaths();
+                //var test = _developmentLogic.GetPathTilesWithSettlements(result.Item.Paths);
                 return ReturnJsonResult(result);
             }
             catch (Exception e)
@@ -475,31 +476,6 @@ namespace DefendersOfCatan.Controllers
 
         }
 
-        [HttpPost]
-        public JsonResult MovePlayerToTile(PlayerTileTransfer data)
-        {
-            var result = new ItemModel<PlayerTileTransfer>();
-
-            try
-            {
-                var tile = _db.GetSet<Tile>().Single(t => t.Id == data.TileId);
-                var player = _db.GetSet<Player>().Single(e => e.Id == data.PlayerId);
-                tile.Players.Add(player);
-                _db.SaveChanges();
-
-                result.Item = data;
-                return ReturnJsonResult(result);
-            }
-            catch (Exception e)
-            {
-                result.HasError = true;
-                result.Error = e.Message;
-                result.Item = data;
-                return ReturnJsonResult(result);
-            }
-
-        }
-
         [HttpGet]
         public JsonResult ExecuteEnemyMovePhase()
         {
@@ -563,6 +539,23 @@ namespace DefendersOfCatan.Controllers
                 return ReturnJsonResult(result);
             }
 
+        }
+
+        [HttpGet]
+        public JsonResult GetResourceOrFightTiles()
+        {
+            var result = new ItemModel<List<int>>();
+            try
+            {
+                result.Item = _developmentLogic.GetPlayerPathTilesWithSettlements();
+                return ReturnJsonResult(result);
+            }
+            catch (Exception e)
+            {
+                result.HasError = true;
+                result.Error = e.Message;
+                return ReturnJsonResult(result);
+            }
         }
 
         public JsonResult ReturnJsonResult(object result)

@@ -78,21 +78,27 @@
                 <div class="tab-content" id="myTabContent">
                     <div class="tab-pane fade show active" id="players" role="tabpanel" aria-labelledby="players-tab">
                         <div id="players" data-bind="with: players">
-                            <table class="table">
+                            <table class="table table-sm" >
                                 <thead class="thead-light">
                                     <tr>
                                         <th>Player</th>
-                                        <th>Health</th>
+                                        <th></th>
                                         <th colspan="10">Resources</th>
                                     </tr>
                                 </thead>
                                 <tbody data-bind="foreach: playersList">
                                     <tr data-bind="css: { 'table-primary': isCurrentPlayer() }">
-                                        <td data-bind="text: name"></td>
-                                        <td data-bind="text: health"></td>
+                                        <td rowspan="2" data-bind="text: name"></td>
+                                        <td rowspan="2"><img height="16" width="16" data-bind="visible: isOverrun" src="../../Content/Assets/ExclamationMark.png" /></td>
                                         <!-- ko foreach: resources -->
-                                        <td><img height="25" width="25" data-bind="attr:{src: imagePath}" /></td>
-                                        <td data-bind="text: resourceCount"></td>
+                                        <td><img height="36" width="29" data-bind="attr:{src: imagePath}" /></td>
+                                        @*<td data-bind="text: resourceCount"></td>*@
+                                        <!-- /ko -->
+                                    </tr>
+                                    <tr>
+                                        <!-- ko foreach: resources -->
+                                        @*<td><img height="36" width="29" data-bind="attr:{src: imagePath}" /></td>*@
+                                        <td align="center" data-bind="text: resourceCount"></td>
                                         <!-- /ko -->
                                     </tr>
                                     <tr data-bind="css: { 'table-primary': isCurrentPlayer() }">
