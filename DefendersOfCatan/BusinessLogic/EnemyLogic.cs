@@ -14,6 +14,8 @@ namespace DefendersOfCatan.BusinessLogic
         ClickedTileTransfer AddEnemyToTile(ClickedTileTransfer tileTransfer);
         EnemyFightTransfer RemoveEnemy(int enemyId);
         EnemyMoveTransfer ExecuteEnemyMovePhase();
+        bool IsEnemyTileNeighbor(int enemyId);
+        List<int> RollDice();
     }
     public class EnemyLogic : IEnemyLogic
     {
@@ -116,44 +118,45 @@ namespace DefendersOfCatan.BusinessLogic
             var playerIsOverrun = _playerRepo.GetPlayerOverrunBasedOnPlayerColor(enemy.PlayerColor);
             return tile.IsEnemyTile() && ((int)tile.Type == (int)enemy.PlayerColor) || playerIsOverrun ? true : false;
         }
-
-        public EnemyFightTransfer RemoveEnemy(int enemyId)
+        public bool IsEnemyTileNeighbor(int enemyId)
         {
-            var enemyFightTransfer = new EnemyFightTransfer();
-            var enemy = _enemyRepo.GetEnemy(enemyId);
             var currentPlayerTile = _tileRepo.GetCurrentPlayerTile();
             var enemyTile = _tileRepo.GetTiles().Single(t => t.Enemy != null && t.Enemy.Id == enemyId);
-            enemyFightTransfer.EnemyTile = enemyTile;
             var neighborTiles = _tileLogic.GetNeighborTiles(currentPlayerTile);
 
             if (neighborTiles.Contains(enemyTile))
             {
-                // Roll dice to see if enemy can be removed
-                var rnd = new Random();
-                int dice = rnd.Next(1, 7);   // creates a number between 1 and 6
-                enemyFightTransfer.DiceRolls.Add(dice);
-                enemyFightTransfer.CanReach = true;
-                if (dice < 4)
-                {
-                    _enemyRepo.RemoveEnemy(enemy);
-                    enemyFightTransfer.EnemyHit = true;
+                return true;
+            }
 
-                    // Check if player is no longer overrun
-                    var player = _playerRepo.GetPlayerBasedOnColor((PlayerColor)enemyTile.Type); // get the player color of the enemy tile
-                    if (_playerLogic.CheckIfPlayerIsOverrun(player))
-                    {
-                        _playerRepo.SetPlayerOverrun(player, false);
-                    }
-                }
-                else
-                {
-                    enemyFightTransfer.Message = "Missed on the roll.";
-                }
-            }
-            else
+            return false;
+        }
+
+        public List<int> RollDice()
+        {
+            var diceRolls = new List<int>();
+            // Roll dice to see if enemy can be removed
+            var rnd = new Random();
+            int dice = rnd.Next(1, 7);   // creates a number between 1 and 6
+            diceRolls.Add(dice);
+
+            return diceRolls;
+        }
+
+        public EnemyFightTransfer RemoveEnemy(int enemyId)
+        {
+            var enemyFightTransfer = new EnemyFightTransfer();
+            var enemyTile = _tileRepo.GetTiles().Single(t => t.Enemy != null && t.Enemy.Id == enemyId);
+            enemyFightTransfer.EnemyTile = enemyTile;
+            _enemyRepo.RemoveEnemy(enemyId);
+            // Check if player is no longer overrun
+            var player = _playerRepo.GetPlayerBasedOnColor((PlayerColor)enemyTile.Type); // get the player color of the enemy tile
+            enemyFightTransfer.OverrunPlayerId = player.Id;
+            if (_playerLogic.CheckIfPlayerIsOverrun(player))
             {
-                enemyFightTransfer.Message = "Enemy not on neighboring tile.";
+                _playerRepo.SetPlayerOverrun(player, false);
             }
+
             return enemyFightTransfer;
         }
     }

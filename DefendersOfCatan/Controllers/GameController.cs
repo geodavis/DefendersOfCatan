@@ -91,25 +91,32 @@ namespace DefendersOfCatan.Controllers
                             result.HasError = true;
                             result.Error = "Already selected a card!";
                         }
-                        string timestamp = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss.fff",
-                                            CultureInfo.InvariantCulture);
-                        System.Diagnostics.Debug.WriteLine("Set selected enemy id: " + data.EnemyId + " - " + timestamp);
                         break;
                     case GameState.PlayerMove:
                         // ToDo: Implement error handling (pass error to client)
                         break;
                     case GameState.PlayerResourceOrFight:
-                        var enemyFightTransfer =_enemyLogic.RemoveEnemy(data.EnemyId);
-                        result.Item.DiceRolls = enemyFightTransfer.DiceRolls;
-                        if (enemyFightTransfer.CanReach)
+                        if (_enemyLogic.IsEnemyTileNeighbor(data.EnemyId))
                         {
-                            result.Item.EnemyTileId = enemyFightTransfer.EnemyTile.Id;
-                            result.Item.EnemyHit = enemyFightTransfer.EnemyHit;
+                            var diceRolls = _enemyLogic.RollDice();
+
+                            if (diceRolls.First() > 0) //ToDo: Change this value based on rules
+                            {
+                                var enemyFightTransfer = _enemyLogic.RemoveEnemy(data.EnemyId);
+                                result.Item.OverrunPlayerId = enemyFightTransfer.OverrunPlayerId;
+                                result.Item.EnemyTileId = enemyFightTransfer.EnemyTile.Id;
+
+                            }
+                            else
+                            {
+                                result.HasError = true;
+                                result.Error = "Missed on the roll.";
+                            }
                         }
                         else
                         {
                             result.HasError = true;
-                            result.Error = enemyFightTransfer.Message;
+                            result.Error = "Enemy not on neighboring tile.";
                         }
 
                         break;
@@ -175,7 +182,7 @@ namespace DefendersOfCatan.Controllers
                         var transfer = _enemyLogic.AddEnemyToTile(data);
                         result.Item.EnemyId = transfer.EnemyId;
                         result.Item.IsOverrun = transfer.IsOverrun;
-                        result.Item.PlayerId = transfer.PlayerId;
+                        result.Item.PlayerId = transfer.PlayerId; // overrun player id
 
                         break;
                     case GameState.PlayerPurchase:

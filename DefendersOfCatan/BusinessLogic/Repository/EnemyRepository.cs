@@ -17,7 +17,7 @@ namespace DefendersOfCatan.BusinessLogic.Repository
         Game GetGame();
         void UpdateBarbarian(Enemy enemy, int barbarianIndex, int strength);
         void SetEnemyPlaced(Enemy enemy);
-        void RemoveEnemy(Enemy enemy);
+        void RemoveEnemy(int id);
         bool SetSelectedEnemy(int id);
     }
     public class EnemyRepository : BaseRepository, IEnemyRepository
@@ -84,8 +84,9 @@ namespace DefendersOfCatan.BusinessLogic.Repository
             _db.SaveChanges();
         }
 
-        public void RemoveEnemy(Enemy enemy)
+        public void RemoveEnemy(int id)
         {
+            var enemy = GetEnemy(id);
             enemy.IsRemoved = true;
             _db.SaveChanges();
         }

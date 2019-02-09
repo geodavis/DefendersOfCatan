@@ -61,9 +61,10 @@ function executePostEnemyClickEvents(d) {
                     }
                 });
 
-                if (d.Item.EnemyHit) {
-                    GameStates.PlayerResourceOrFight.prototype.removeEnemy(d.Item.EnemyTileId)
-                }
+                GameStates.PlayerResourceOrFight.prototype.removeEnemy(d.Item.EnemyTileId);
+                var player = players.getPlayerById(d.Item.OverrunPlayerId);
+                player.setPlayerOverrun(false);
+
                 // Advance to the next player and phase
                 getJSONSync('/Game/MoveToNextPlayer', moveToNextPlayer, error); // URL, Success Function, Error Function
                 getJSONSync('/Game/GetNextGameState', startNextGameState, error); // URL, Success Function, Error Function

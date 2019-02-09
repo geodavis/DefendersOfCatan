@@ -13,5 +13,7 @@ namespace DefendersOfCatan.Transfer
         public bool EnemyHit { get; set; } = false;
         public bool CanReach { get; set; } = false;
         public string Message { get; set; }
+        public int OverrunPlayerId { get; set; }
+        public bool IsOverrun { get; set; }
     }
 }

@@ -6,7 +6,7 @@
     this.id = playerData.Id;
     this.playerColor = playerData.Color
     this.health = ko.observable(playerData.Health);
-    this.isOverrun = ko.observable(true);
+    this.isOverrun = ko.observable(false);
     this.isCurrentPlayer = ko.observable(playerData.IsCurrentPlayer);
     this.currentHexName = "tile3_3";
     this.inputEnabled = true;

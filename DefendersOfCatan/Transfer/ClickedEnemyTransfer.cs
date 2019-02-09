@@ -12,5 +12,6 @@ namespace DefendersOfCatan.Transfer
         public int EnemyTileId { get; set; }
         public List<int> DiceRolls { get; set; } = new List<int>();
         public bool EnemyHit { get; set; } = false;
+        public int OverrunPlayerId { get; set; }
     }
 }
