@@ -42,7 +42,7 @@
     <script src="~/scripts/phaser/placeable.js"></script>
     <script src="~/scripts/phaser/placeableroad.js"></script>
     <script src="~/scripts/phaser/dice.js"></script>
-
+    <script src="~/Scripts/Models/PlayerCard.js"></script>
 </head>
 
 <body>
@@ -91,20 +91,15 @@
                                         <td rowspan="2" data-bind="text: name"></td>
                                         <td rowspan="2"><img height="16" width="16" data-bind="visible: isOverrun" src="../../Content/Assets/ExclamationMark.png" /></td>
                                         <!-- ko foreach: resources -->
-                                        <td><img height="36" width="29" data-bind="attr:{src: imagePath}" /></td>
+                                        <td><img height="36" width="29" data-bind="attr:{src: imagePath}">x<span data-bind="text: resourceCount"></span></td>
                                         @*<td data-bind="text: resourceCount"></td>*@
                                         <!-- /ko -->
                                     </tr>
-                                    <tr>
-                                        <!-- ko foreach: resources -->
-                                        @*<td><img height="36" width="29" data-bind="attr:{src: imagePath}" /></td>*@
-                                        <td align="center" data-bind="text: resourceCount"></td>
-                                        <!-- /ko -->
-                                    </tr>
                                     <tr data-bind="css: { 'table-primary': isCurrentPlayer() }">
-                                        <!-- ko foreach: developments -->
-                                        <td data-bind="text: developmentType"></td>
-                                        <td data-bind="text: developmentCount"></td>
+                                        <!-- ko foreach: cards -->
+                                        <td><img height="36" width="29" data-bind="attr:{src: imagePath}">x<span data-bind="text: cardCount"></span></td>
+                                        @*<td data-bind="text: cardType"></td>
+                                        <td data-bind="text: cardCount"></td>*@
                                         <!-- /ko -->
                                     </tr>
                                 </tbody>

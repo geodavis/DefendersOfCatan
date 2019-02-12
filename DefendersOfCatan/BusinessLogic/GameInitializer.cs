@@ -46,6 +46,7 @@ namespace DefendersOfCatan.BusinessLogic
             _gameRepo.Save();
 
             InitializeDevelopments();
+            InitializeCards();
 
         }
 
@@ -233,6 +234,25 @@ namespace DefendersOfCatan.BusinessLogic
             developments.Add(development);
 
             _developmentRepo.AddDevelopments(developments);          
+        }
+
+        private void InitializeCards()
+        {
+            var cards = new List<Card>();
+
+            var card = new Card { CardType = CardType.a, Description = "a description"};
+            cards.Add(card);
+
+            card = new Card { CardType = CardType.b, Description = "b description" };
+            cards.Add(card);
+
+            card = new Card { CardType = CardType.c, Description = "c description" };
+            cards.Add(card);
+
+            card = new Card { CardType = CardType.d, Description = "d description" };
+            cards.Add(card);
+            
+            _developmentRepo.AddCards(cards);
         }
 
         private List<PlayerResource> InitializePlayerResources()

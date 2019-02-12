@@ -13,6 +13,7 @@ namespace DefendersOfCatan.BusinessLogic
     public interface IDevelopmentLogic
     {
         List<DevelopmentTransfer> GetDevelopments();
+        List<CardTransfer> GetCards();
         DevelopmentType PlaceInitialSettlement(int tileId);
         int PlacePurchasedRoad(int tile1Id, int tile2Id);
         void PlacePurchasedDevelopment(int parentTileId);
@@ -51,6 +52,24 @@ namespace DefendersOfCatan.BusinessLogic
                 developmentsTransfer.Add(developmentTransfer);
             }
             return developmentsTransfer;
+        }
+
+        public List<CardTransfer> GetCards()
+        {
+            var cardsTransfer = new List<CardTransfer>();
+            var cards = _developmentRepo.GetCards();
+
+            foreach (var card in cards)
+            {
+                var cardTransfer = new CardTransfer
+                {
+                    CardType = card.CardType,
+                    Description = card.Description,
+                    CardTypeReadable = card.CardType.ToString()
+                };
+                cardsTransfer.Add(cardTransfer);
+            }
+            return cardsTransfer;
         }
 
         public int PlacePurchasedRoad(int tile1Id, int tile2Id)

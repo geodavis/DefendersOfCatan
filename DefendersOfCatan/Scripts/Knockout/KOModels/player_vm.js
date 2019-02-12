@@ -6,7 +6,7 @@
     this.id = playerData.Id;
     this.playerColor = playerData.Color
     this.health = ko.observable(playerData.Health);
-    this.isOverrun = ko.observable(false);
+    this.isOverrun = ko.observable(true);
     this.isCurrentPlayer = ko.observable(playerData.IsCurrentPlayer);
     this.currentHexName = "tile3_3";
     this.inputEnabled = true;
@@ -19,11 +19,18 @@
                       new PlayerResource(ResourcesEnum.ore, 0),
                       new PlayerResource(ResourcesEnum.wood, 0),
                       new PlayerResource(ResourcesEnum.wool, 0)]);
+    this.cards = ko.observableArray([
+                    new PlayerCard(cards[0].CardTypeReadable, 0),
+                    new PlayerCard(cards[1].CardTypeReadable, 0),
+                    new PlayerCard(cards[2].CardTypeReadable, 0),
+                    new PlayerCard(cards[3].CardTypeReadable, 0)
+    ]);
     this.developments = ko.observableArray([
                     new PlayerDevelopment(developments.developments()[0].developmentType, 0),
                     new PlayerDevelopment(developments.developments()[1].developmentType, 0),
                     new PlayerDevelopment(developments.developments()[2].developmentType, 0),
-                    new PlayerDevelopment(developments.developments()[3].developmentType, 0)
+                    new PlayerDevelopment(developments.developments()[3].developmentType, 0),
+                    new PlayerDevelopment(developments.developments()[4].developmentType, 0)
                   ]);
 
     this.addResourceToPlayer = function (resourceType) {

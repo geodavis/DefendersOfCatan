@@ -150,8 +150,9 @@
                     alert("Do not recogize development type!");
             }
 
-            if (developmentType == 5) { // This is an item card- add item to player inventory
-                
+            if (developmentType > 4) { // This is an item card- add item to player inventory
+                currentPlayer.addDevelopmentToPlayer(d.Item.DevelopmentType);
+
                 
             }
             else // Prompt user to place immediately

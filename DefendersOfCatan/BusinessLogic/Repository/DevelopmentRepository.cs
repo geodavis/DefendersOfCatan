@@ -11,9 +11,11 @@ namespace DefendersOfCatan.BusinessLogic.Repository
     public interface IDevelopmentRepository
     {
         void AddDevelopments(List<Development> developments);
+        void AddCards(List<Card> cards);
         List<Development> GetDevelopments();
         Player GetCurrentPlayerBase();
         Development GetDevelopmentByType(DevelopmentType type);
+        List<Card> GetCards();
     }
     public class DevelopmentRepository : BaseRepository, IDevelopmentRepository
     {
@@ -32,9 +34,23 @@ namespace DefendersOfCatan.BusinessLogic.Repository
             _db.SaveChanges();
         }
 
+        public void AddCards(List<Card> cards)
+        {
+            foreach (var card in cards)
+            {
+                _db.GetSet<Card>().Add(card);
+            }
+            _db.SaveChanges();
+        }
+
         public List<Development> GetDevelopments()
         {
             return _db.GetSet<Development>().ToList();
+        }
+
+        public List<Card> GetCards()
+        {
+            return _db.GetSet<Card>().ToList();
         }
 
     }

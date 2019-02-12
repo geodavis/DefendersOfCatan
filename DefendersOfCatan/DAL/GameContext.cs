@@ -25,6 +25,7 @@ namespace DefendersOfCatan.DAL
         public DbSet<Tile> Tiles { get; set; }
 
         public DbSet<Development> Developments { get; set; }
+        public DbSet<Card> Cards { get; set; }
         public DbSet<Road> Roads { get; set; }
 
         public DbSet<PlayerResource> PlayerResources { get; set; }

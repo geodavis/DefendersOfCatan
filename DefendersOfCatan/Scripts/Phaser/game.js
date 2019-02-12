@@ -5,6 +5,8 @@
 var textPhase;
 var hexGrid;
 var placeables;
+var developments;
+var cards;
 var placedDevelopments;
 var players;
 var items;
@@ -90,6 +92,7 @@ GameStates.Game.prototype = {
 
         getBoardData();
         getDevelopments();
+        getCards();
         getPlayers();
         getEnemies();
         initializeDice();
@@ -139,6 +142,10 @@ function getBoardData() {
 
 function getDevelopments() {
     getJSONSync('/Game/GetDevelopments', initializeItems, error); // URL, Success Function, Error Function
+}
+
+function getCards() {
+    getJSONSync('/Game/GetCards', initializeCards, error); // URL, Success Function, Error Function
 }
 
 function getPlayers() {
@@ -226,10 +233,23 @@ function initializeBoard(d) {
 }
 
 function initializeItems(d) {
-    developments = new developments_vm(game, d.Item);
-    var element = document.getElementById('developments');
-    ko.applyBindings(developments, element);
+    if (d.HasError) {
+        alert(d.Error);
+    }
+    else {
+        developments = new developments_vm(game, d.Item);
+        var element = document.getElementById('developments');
+        ko.applyBindings(developments, element);
+    }
+}
 
+function initializeCards(d) {
+    if (d.HasError) {
+        alert(d.Error);
+    }
+    else {
+        cards = d.Item;
+    }
 }
 
 function initializePlayers(d) {

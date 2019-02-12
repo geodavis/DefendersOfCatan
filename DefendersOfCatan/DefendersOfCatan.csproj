@@ -196,6 +196,7 @@
     <Compile Include="Controllers\GameController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
+    <Compile Include="DAL\DataModels\Card.cs" />
     <Compile Include="DAL\DataModels\Road.cs" />
     <Compile Include="DAL\DataModels\TileDevelopment.cs" />
     <Compile Include="DAL\DataModels\PlayerDevelopment.cs" />
@@ -215,6 +216,7 @@
     <Compile Include="DAL\DataModels\PlayerResource.cs" />
     <Compile Include="DAL\DataModels\Tile.cs" />
     <Compile Include="Transfer\BoardDataTransfer.cs" />
+    <Compile Include="Transfer\CardTransfer.cs" />
     <Compile Include="Transfer\ClickedPlaceableTransfer.cs" />
     <Compile Include="Transfer\ClickedTileTransfer.cs" />
     <Compile Include="Transfer\DevelopmentTransfer.cs" />
@@ -241,6 +243,7 @@
     <Content Include="Content\Assets\brick1.png" />
     <Content Include="Content\Assets\capitalHex.png" />
     <Content Include="Content\Assets\CardBrick.png" />
+    <Content Include="Content\Assets\CardDevelopment.png" />
     <Content Include="Content\Assets\CardGrain.png" />
     <Content Include="Content\Assets\CardOre.png" />
     <Content Include="Content\Assets\CardWood.png" />
@@ -379,6 +382,7 @@
     <Content Include="Scripts\Knockout\KOModels\game_vm.js" />
     <Content Include="Scripts\Knockout\KOModels\developments_vm.js" />
     <Content Include="Scripts\Knockout\KOModels\player_vm.js" />
+    <Content Include="Scripts\Models\PlayerCard.js" />
     <Content Include="Scripts\Models\PlayerDevelopment.js" />
     <Content Include="Scripts\Models\PlayerResource.js" />
     <Content Include="Scripts\modernizr-2.6.2.js" />

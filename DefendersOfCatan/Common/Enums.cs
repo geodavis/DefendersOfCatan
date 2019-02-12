@@ -40,7 +40,7 @@ namespace DefendersOfCatan.Common
             Settlement,
             City,
             Walls,
-            Card
+            Card,
         }
 
         public enum CardType

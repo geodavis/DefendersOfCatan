@@ -137,7 +137,7 @@ namespace DefendersOfCatan.BusinessLogic
             var diceRolls = new List<int>();
             // Roll dice to see if enemy can be removed
             var rnd = new Random();
-            int dice = rnd.Next(1, 7);   // creates a number between 1 and 6
+            var dice = rnd.Next(1, 7);   // creates a number between 1 and 6
             diceRolls.Add(dice);
 
             return diceRolls;

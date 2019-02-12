@@ -371,19 +371,39 @@ namespace DefendersOfCatan.Controllers
         }
 
         [HttpGet]
+        public JsonResult GetCards()
+        {
+            var result = new ItemModel<List<CardTransfer>> { Item = new List<CardTransfer>() };
+            try
+            {
+                result.Item = _developmentLogic.GetCards();
+                return ReturnJsonResult(result);
+            }
+            catch (Exception e)
+            {
+                result.HasError = true;
+                result.Error = e.Message;
+                return ReturnJsonResult(result);
+            }
+        }
+
+        [HttpGet]
         public JsonResult PurchaseDevelopment(DevelopmentType developmentType)
         {
             var result = new ItemModel<PurchaseDevelopmentTransfer> { Item = new PurchaseDevelopmentTransfer() };
 
             try
             {
-                result.Item.CanPurchase = _playerLogic.PurchaseDevelopment(developmentType);
-                result.Item.DevelopmentType = developmentType;
-                var transfer = _tileRepo.GetPlaceableDevelopments(developmentType);
-                result.Item.Tiles = transfer.Tiles;
-                result.Item.Roads = transfer.Roads;
-
-                if (!result.Item.CanPurchase)
+                var canPurchase = _playerLogic.CurrentPlayerCanPurchaseDevelopment(developmentType);
+                if (canPurchase)
+                {
+                    result.Item.DevelopmentType = developmentType;
+                    result.Item.DevelopmentType = _playerLogic.PurchaseDevelopment(developmentType);
+                    var transfer = _tileRepo.GetPlaceableDevelopments(developmentType);
+                    result.Item.Tiles = transfer.Tiles;
+                    result.Item.Roads = transfer.Roads;
+                }
+                else
                 {
                     result.HasError = true;
                     result.Error = "Cannot purchase this item.";

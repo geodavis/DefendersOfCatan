@@ -16,7 +16,8 @@ namespace DefendersOfCatan.BusinessLogic
         Player GetCurrentPlayer();
         bool MovePlayerToTile(int selectedTileId);
         void AddResourceToPlayer(ResourceType resourceType);
-        bool PurchaseDevelopment(DevelopmentType developmentType);
+        bool CurrentPlayerCanPurchaseDevelopment(DevelopmentType developmentType);
+        DevelopmentType PurchaseDevelopment(DevelopmentType developmentType);
 
     }
     public class PlayerLogic: IPlayerLogic
@@ -84,32 +85,34 @@ namespace DefendersOfCatan.BusinessLogic
             return isOverrun;
         }
 
-        public bool PurchaseDevelopment(DevelopmentType developmentType)
+        public DevelopmentType PurchaseDevelopment(DevelopmentType developmentType)
         {
             var developmentCost = _developmentRepo.GetDevelopmentByType(developmentType).DevelopmentCost;
-            var playerResources = GetCurrentPlayer().PlayerResources;
 
-            if (PlayerCanPurchaseDevelopment(developmentCost, playerResources))
+            // Take resources
+            foreach (var cost in developmentCost)
             {
-                // Take resources
-                foreach (var cost in developmentCost)
-                {
-                    _playerRepo.RemoveResourceFromCurrentPlayer((ResourceType)cost.ResourceType, cost.Qty);
-                }
+                _playerRepo.RemoveResourceFromCurrentPlayer((ResourceType)cost.ResourceType, cost.Qty);
+            }
 
-                // Save development to player
-                _playerRepo.AddDevelopmentToCurrentPlayer(developmentType);
-                return true;
-            }
-            else
+            if (developmentType == DevelopmentType.Card)
             {
-                return false;
+                // Pick a random development card
+                var rnd = new Random();
+                developmentType = (DevelopmentType)rnd.Next(5, 9);   // creates a number between 5 and 8
             }
+
+            // Save development to player
+            _playerRepo.AddDevelopmentToCurrentPlayer(developmentType);
+
+            return developmentType;
         }
 
-        private bool PlayerCanPurchaseDevelopment(List<ResourceCost> developmentCost, List<PlayerResource> playerResources)
+        public bool CurrentPlayerCanPurchaseDevelopment(DevelopmentType developmentType)
         {
             var playerCanPurchase = false;
+            var developmentCost = _developmentRepo.GetDevelopmentByType(developmentType).DevelopmentCost;
+            var playerResources = GetCurrentPlayer().PlayerResources;
 
             foreach (var cost in developmentCost)
             {
