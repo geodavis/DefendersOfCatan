@@ -17,7 +17,7 @@ namespace DefendersOfCatan.BusinessLogic
         bool MovePlayerToTile(int selectedTileId);
         void AddResourceToPlayer(ResourceType resourceType);
         bool CurrentPlayerCanPurchaseDevelopment(DevelopmentType developmentType);
-        DevelopmentType PurchaseDevelopment(DevelopmentType developmentType);
+        void PurchaseDevelopment(DevelopmentType developmentType);
 
     }
     public class PlayerLogic: IPlayerLogic
@@ -85,7 +85,7 @@ namespace DefendersOfCatan.BusinessLogic
             return isOverrun;
         }
 
-        public DevelopmentType PurchaseDevelopment(DevelopmentType developmentType)
+        public void PurchaseDevelopment(DevelopmentType developmentType)
         {
             var developmentCost = _developmentRepo.GetDevelopmentByType(developmentType).DevelopmentCost;
 
@@ -95,17 +95,8 @@ namespace DefendersOfCatan.BusinessLogic
                 _playerRepo.RemoveResourceFromCurrentPlayer((ResourceType)cost.ResourceType, cost.Qty);
             }
 
-            if (developmentType == DevelopmentType.Card)
-            {
-                // Pick a random development card
-                var rnd = new Random();
-                developmentType = (DevelopmentType)rnd.Next(5, 9);   // creates a number between 5 and 8
-            }
-
             // Save development to player
             _playerRepo.AddDevelopmentToCurrentPlayer(developmentType);
-
-            return developmentType;
         }
 
         public bool CurrentPlayerCanPurchaseDevelopment(DevelopmentType developmentType)

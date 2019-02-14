@@ -14,5 +14,6 @@ namespace DefendersOfCatan.DAL.DataModels
         public int Health { get; set; }
         public virtual List<PlayerResource> PlayerResources { get; set; }
         public virtual List<PlayerDevelopment> PlayerDevelopments { get; set; }
+        public virtual List<PlayerCard> PlayerCards { get; set; }
     }
 }

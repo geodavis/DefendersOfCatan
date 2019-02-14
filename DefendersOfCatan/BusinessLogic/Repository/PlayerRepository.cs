@@ -20,6 +20,7 @@ namespace DefendersOfCatan.BusinessLogic.Repository
         void AddResourceToCurrentPlayer(ResourceType resourceType);
         void RemoveResourceFromCurrentPlayer(ResourceType resourceType, int qty);
         void AddDevelopmentToCurrentPlayer(DevelopmentType developmentType);
+        void AddCardToCurrentPlayer(CardType cardType);
 
 
     }
@@ -86,6 +87,14 @@ namespace DefendersOfCatan.BusinessLogic.Repository
             var playerDevelopment = player.PlayerDevelopments.Single(i => i.DevelopmentType == developmentType);
             playerDevelopment.Qty += 1;
             player.HasPurchasedItems = true;
+            _db.SaveChanges();
+        }
+
+        public void AddCardToCurrentPlayer(CardType cardType)
+        {
+            var player = GetCurrentPlayer();
+            var playerCard = player.PlayerCards.Single(i => i.CardType == cardType);
+            playerCard.Qty += 1;
             _db.SaveChanges();
         }
 

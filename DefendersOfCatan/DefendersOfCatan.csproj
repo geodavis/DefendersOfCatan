@@ -197,6 +197,7 @@
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="DAL\DataModels\Card.cs" />
+    <Compile Include="DAL\DataModels\PlayerCard.cs" />
     <Compile Include="DAL\DataModels\Road.cs" />
     <Compile Include="DAL\DataModels\TileDevelopment.cs" />
     <Compile Include="DAL\DataModels\PlayerDevelopment.cs" />

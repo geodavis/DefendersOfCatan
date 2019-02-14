@@ -20,10 +20,10 @@
                       new PlayerResource(ResourcesEnum.wood, 0),
                       new PlayerResource(ResourcesEnum.wool, 0)]);
     this.cards = ko.observableArray([
-                    new PlayerCard(cards[0].CardTypeReadable, 0),
-                    new PlayerCard(cards[1].CardTypeReadable, 0),
-                    new PlayerCard(cards[2].CardTypeReadable, 0),
-                    new PlayerCard(cards[3].CardTypeReadable, 0)
+                    new PlayerCard(cards[0].CardType, 0),
+                    new PlayerCard(cards[1].CardType, 0),
+                    new PlayerCard(cards[2].CardType, 0),
+                    new PlayerCard(cards[3].CardType, 0)
     ]);
     this.developments = ko.observableArray([
                     new PlayerDevelopment(developments.developments()[0].developmentType, 0),
@@ -42,11 +42,11 @@
         });
     };
 
-    this.addDevelopmentToPlayer = function (developmentType) {
-        $.each(this.developments(), function () {
-            if (this.developmentType == developmentType) {
-                tempCount = this.developmentCount() + 1;
-                this.developmentCount(tempCount);
+    this.addCardToPlayer = function (cardType) {
+        $.each(this.cards(), function () {
+            if (this.cardType == cardType) {
+                tempCount = this.cardCount() + 1;
+                this.cardCount(tempCount);
             }
         });
     };

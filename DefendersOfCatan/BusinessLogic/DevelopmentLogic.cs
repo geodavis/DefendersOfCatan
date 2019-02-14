@@ -19,6 +19,7 @@ namespace DefendersOfCatan.BusinessLogic
         void PlacePurchasedDevelopment(int parentTileId);
         //List<List<int>> GetRoadPaths();
         List<int> GetPlayerPathTilesWithSettlements();
+        CardType AddRandomCardToPlayer();
 
     }
     public class DevelopmentLogic : IDevelopmentLogic
@@ -204,6 +205,15 @@ namespace DefendersOfCatan.BusinessLogic
         {
             var developmentType = DevelopmentType.Settlement;
             _tileRepo.RemoveDevelopmentFromTile(tileId, developmentType);
+        }
+
+        public CardType AddRandomCardToPlayer()
+        {
+            var rnd = new Random();
+            var cardType = (CardType)rnd.Next(0, 4);   // creates a number between 0 and 3
+            _playerRepo.AddCardToCurrentPlayer(cardType);
+
+            return cardType;
         }
     }
 }

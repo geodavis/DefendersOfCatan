@@ -398,7 +398,11 @@ namespace DefendersOfCatan.Controllers
                 if (canPurchase)
                 {
                     result.Item.DevelopmentType = developmentType;
-                    result.Item.DevelopmentType = _playerLogic.PurchaseDevelopment(developmentType);
+                    _playerLogic.PurchaseDevelopment(developmentType);
+                    if (developmentType == DevelopmentType.Card)
+                    {
+                        result.Item.CardType = _developmentLogic.AddRandomCardToPlayer();
+                    }
                     var transfer = _tileRepo.GetPlaceableDevelopments(developmentType);
                     result.Item.Tiles = transfer.Tiles;
                     result.Item.Roads = transfer.Roads;

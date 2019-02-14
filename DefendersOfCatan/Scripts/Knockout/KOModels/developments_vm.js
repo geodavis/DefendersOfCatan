@@ -141,28 +141,18 @@
 
                     break;
                 case 4:
-                    currentPlayer.addDevelopmentToPlayer(d.Item);
+                    currentPlayer.addCardToPlayer(d.Item.CardType);
+                    getJSONSync('/Game/GetNextGameState', startNextGameState, error); // URL, Success Function, Error Function
+
                     break;
                 case 5:
 
                     break;
                 default:
                     alert("Do not recogize development type!");
-            }
-
-            if (developmentType > 4) { // This is an item card- add item to player inventory
-                currentPlayer.addDevelopmentToPlayer(d.Item.DevelopmentType);
-
-                
-            }
-            else // Prompt user to place immediately
-            {
-
-            }
-
-            //getJSONSync('/Game/GetNextGameState', startNextGameState, error); // URL, Success Function, Error Function
             
-
+            }
+            
         }
         else {
             alert(d.Error);

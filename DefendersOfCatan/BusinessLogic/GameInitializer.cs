@@ -169,10 +169,10 @@ namespace DefendersOfCatan.BusinessLogic
         {
             var players = new List<Player>
             {
-                new Player { Name = "GeoffR", Color = PlayerColor.Red, IsOverrun = false, Health = 5, PlayerResources = InitializePlayerResources(), PlayerDevelopments = InitializePlayerDevelopments() },
-                new Player { Name = "GeoffB", Color = PlayerColor.Blue, IsOverrun = false, Health = 5, PlayerResources = InitializePlayerResources(), PlayerDevelopments = InitializePlayerDevelopments() },
-                new Player { Name = "GeoffY", Color = PlayerColor.Yellow, IsOverrun = false, Health = 5, PlayerResources = InitializePlayerResources(), PlayerDevelopments = InitializePlayerDevelopments() },
-                new Player { Name = "GeoffG", Color = PlayerColor.Green, IsOverrun = false, Health = 5, PlayerResources = InitializePlayerResources(), PlayerDevelopments = InitializePlayerDevelopments() }
+                new Player { Name = "GeoffR", Color = PlayerColor.Red, IsOverrun = false, Health = 5, PlayerResources = InitializePlayerResources(), PlayerDevelopments = InitializePlayerDevelopments(), PlayerCards = InitializePlayerCards() },
+                new Player { Name = "GeoffB", Color = PlayerColor.Blue, IsOverrun = false, Health = 5, PlayerResources = InitializePlayerResources(), PlayerDevelopments = InitializePlayerDevelopments(), PlayerCards = InitializePlayerCards() },
+                new Player { Name = "GeoffY", Color = PlayerColor.Yellow, IsOverrun = false, Health = 5, PlayerResources = InitializePlayerResources(), PlayerDevelopments = InitializePlayerDevelopments(), PlayerCards = InitializePlayerCards() },
+                new Player { Name = "GeoffG", Color = PlayerColor.Green, IsOverrun = false, Health = 5, PlayerResources = InitializePlayerResources(), PlayerDevelopments = InitializePlayerDevelopments(), PlayerCards = InitializePlayerCards() }
             };
 
             foreach (var player in players)
@@ -279,6 +279,19 @@ namespace DefendersOfCatan.BusinessLogic
             }
 
             return playerDevelopments;
+        }
+
+        private List<PlayerCard> InitializePlayerCards()
+        {
+            var playerCards = new List<PlayerCard>();
+            var playerCardValues = Enum.GetValues(typeof(CardType));
+
+            for (int i = 0; i < playerCardValues.Length; i++)
+            {
+                playerCards.Add(new PlayerCard { CardType = (CardType)playerCardValues.GetValue(i), Qty = 0 });
+            }
+
+            return playerCards;
         }
 
         private List<ResourceType> GetRandomResourceTileTypes()

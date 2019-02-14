@@ -10,8 +10,8 @@ namespace DefendersOfCatan.Transfer
     public class PurchaseDevelopmentTransfer
     {
         public DevelopmentType DevelopmentType { get; set; }
+        public CardType CardType { get; set; }
         public List<Tile> Tiles { get; set; }
-        public bool CanPurchase { get; set; }
         public List<Road> Roads { get; set; }
     }
 }

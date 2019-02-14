@@ -29,7 +29,7 @@ namespace DefendersOfCatan.DAL
         public DbSet<Road> Roads { get; set; }
 
         public DbSet<PlayerResource> PlayerResources { get; set; }
-
+        public DbSet<PlayerCard> PlayerCards { get; set; }
 
         public DbSet<T> GetSet<T>() where T : class
         {

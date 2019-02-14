@@ -2,16 +2,16 @@
     this.cardType = cardType;
     this.cardCount = ko.observable(qty);
     switch (cardType) {
-        case 'a':
+        case 0:
             this.imagePath = '../../Content/Assets/CardDevelopment.png'
             break;
-        case 'b':
+        case 1:
             this.imagePath = '../../Content/Assets/CardDevelopment.png'
             break;
-        case 'c':
+        case 2:
             this.imagePath = '../../Content/Assets/CardDevelopment.png'
             break;
-        case 'd':
+        case 3:
             this.imagePath = '../../Content/Assets/CardDevelopment.png'
             break;
         default:
