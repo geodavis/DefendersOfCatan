@@ -229,6 +229,34 @@ namespace DefendersOfCatan.Controllers
         }
 
         [HttpPost]
+        public JsonResult MovePlayer(ClickedPlaceableTransfer data)
+        {
+            var result = new ItemModel<ClickedTileTransfer>
+            {
+                Item = new ClickedTileTransfer()
+            };
+            try
+            {
+                var gameState = _gameStateLogic.GetCurrentGameState(); // ToDo: validate correct game state
+                var currentPlayer = _playerRepo.GetCurrentPlayer();
+                result.Item.PlayerId = currentPlayer.Id;
+                result.Item.ClickedTileId = data.ParentTileId;
+                if (!_playerLogic.MovePlayerToTile(data.ParentTileId))
+                {
+                    result.HasError = true;
+                    result.Error = "You cannot move to that tile.";
+                }
+                return ReturnJsonResult(result);
+            }
+            catch (Exception e)
+            {
+                result.HasError = true;
+                result.Error = e.Message;
+                return ReturnJsonResult(result);
+            }
+        }
+
+        [HttpPost]
         public JsonResult PlaceRoad(PlaceRoadTransfer data)
         {
             var result = new ItemModel<PlaceRoadTransfer>

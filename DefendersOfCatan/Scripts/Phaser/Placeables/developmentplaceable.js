@@ -1,10 +1,10 @@
 ﻿//  Here is a custom game object
-Placeable = function (game, x, y, developmentType, angle, anchor, id1, id2, scale) {
+DevelopmentPlaceable = function (game, x, y, developmentType, angle, anchor, id1, id2, scale) {
     var developmentImage = this.getPlaceableImageBasedOnType(developmentType);
     this.developmentType = developmentType;
     Phaser.Sprite.call(this, game, x, y, developmentImage);
     this.anchor.setTo(anchor, anchor);
-    this.name = "placeable";
+    this.name = "developmentplaceable";
     this.angle += angle;
     this.inputEnabled = true;
     //this.input.useHandCursor = true;
@@ -16,10 +16,10 @@ Placeable = function (game, x, y, developmentType, angle, anchor, id1, id2, scal
     this.tile2Id = id2;
 };
 
-Placeable.prototype = Object.create(Phaser.Sprite.prototype);
-Placeable.prototype.constructor = Placeable;
+DevelopmentPlaceable.prototype = Object.create(Phaser.Sprite.prototype);
+DevelopmentPlaceable.prototype.constructor = DevelopmentPlaceable;
 
-Placeable.prototype.onTap = function () {
+DevelopmentPlaceable.prototype.onTap = function () {
     //alert("TileId1: " + this.tile1Id + " TileId2: " + this.tile2Id + " Angle: " + this.angle);
 
     if (this.developmentType == 0) {
@@ -32,30 +32,30 @@ Placeable.prototype.onTap = function () {
     }
 }
 
-Placeable.prototype.rollOut = function () {
+DevelopmentPlaceable.prototype.rollOut = function () {
     //this.scale.x = 1;
     //this.scale.y = 1;
     //this.scale.setTo(.15, .15);
 }
-Placeable.prototype.rollOver = function () {
+DevelopmentPlaceable.prototype.rollOver = function () {
     //this.scale.x = 0.9;
     //this.scale.y = 0.9;
     //this.scale.setTo(.14, .14);
 }
 
-Placeable.prototype.removePlaceablesFromTiles = function () {
+DevelopmentPlaceable.prototype.removePlaceablesFromTiles = function () {
     // Remove placement image from tiles
     $.each(hexGrid.children, function () { // loop each tile
         var gridTile = this;
         $.each(gridTile.children, function () { // loop each child of tile
-            if (this.name == 'placeable') {
+            if (this.name == 'developmentplaceable') {
                 gridTile.removeChild(this);
             }
         });
     });
 }
 
-Placeable.prototype.getPlaceableImageBasedOnType = function (developmentType) {
+DevelopmentPlaceable.prototype.getPlaceableImageBasedOnType = function (developmentType) {
     switch (developmentType) {
         case 0:
             return 'roadPlacement';
@@ -80,7 +80,7 @@ Placeable.prototype.getPlaceableImageBasedOnType = function (developmentType) {
     }
 }
 
-Placeable.prototype.executePostPlaceableClickEvents = function (d) {
+DevelopmentPlaceable.prototype.executePostPlaceableClickEvents = function (d) {
 
     if (d.HasError) {
         alert(d.Error);
@@ -96,7 +96,7 @@ Placeable.prototype.executePostPlaceableClickEvents = function (d) {
                 tile.addChild(development);
 
                 if (d.Item.PlayerId == 4) {
-                    Placeable.prototype.removePlaceablesFromTiles();
+                    DevelopmentPlaceable.prototype.removePlaceablesFromTiles();
                     getJSONSync('/Game/GetNextGameState', startNextGameState, error); // URL, Success Function, Error Function
                 }
 
@@ -183,7 +183,7 @@ Placeable.prototype.executePostPlaceableClickEvents = function (d) {
 
 
                 // Remove placement image from tiles
-                Placeable.prototype.removePlaceablesFromTiles();
+                DevelopmentPlaceable.prototype.removePlaceablesFromTiles();
 
                 break;
             case 'PlayerMove':

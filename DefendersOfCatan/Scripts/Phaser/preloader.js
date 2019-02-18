@@ -13,35 +13,46 @@ GameStates.Preloader.prototype = {
         // images, spritesheets, atlases, audio etc..
         this.load.image('hexagonborder', '../../Content/Assets/borderHex.png');
 
-        this.load.image('hexagonorange', '../../Content/Assets/capitalHex.png');
-        this.load.image('hexagonblack', '../../Content/Assets/rockHex.png');
+        this.load.image('hexagonorange', '../../Content/Assets/hexagonCapital.png'); // capital
+        this.load.image('hexagonblack', '../../Content/Assets/hexagonMountain.png'); // mountains
 
-        this.load.image('hexagongray', '../../Content/Assets/hexagongray.png');
-        this.load.image('hexagongraynoise', '../../Content/Assets/oreHex.png');
+        // Resource Tiles
+        this.load.image('hexagongraynoise', '../../Content/Assets/hexagonOre.png');
+        this.load.image('hexagonbrownnoise', '../../Content/Assets/hexagonWood.png');
+        this.load.image('hexagonyellownoise', '../../Content/Assets/hexagonGrain.png');
+        this.load.image('hexagongreennoise', '../../Content/Assets/hexagonWool.png');
+        this.load.image('hexagonrednoise', '../../Content/Assets/hexagonBrick.png');
 
-        this.load.image('hexagonbrown', '../../Content/Assets/hexagonbrown.png');
-        this.load.image('hexagonbrownnoise', '../../Content/Assets/woodHex.png');
-                
-        this.load.image('hexagonred', '../../Content/Assets/hexagonred.png');
-        this.load.image('hexagonrednoise', '../../Content/Assets/clayhex.png');
-        this.load.image('hexagonredwaves', '../../Content/Assets/hexagonredwaves.png');
-        this.load.image('hexagonrednoisewaves', '../../Content/Assets/desertHex.png');
+        // Enemy Tiles
+        this.load.image('hexagonrednoisewaves', '../../Content/Assets/hexagonEnemyRed.png');
+        this.load.image('hexagonyellownoisewaves', '../../Content/Assets/hexagonEnemyBlue.png');
+        this.load.image('hexagonbluenoisewaves', '../../Content/Assets/hexagonEnemyYellow.png');
+        this.load.image('hexagongreennoisewaves', '../../Content/Assets/hexagonEnemyGreen.png');
+
+        // Enemy Card Draw
+        this.load.image('enemycarddraw', '../../Content/Assets/card-draw.png')
+
+        // Player Move
+        this.load.image('playermove', '../../Content/Assets/playerMove.png')
+
+
+        //this.load.image('hexagongray', '../../Content/Assets/hexagongray.png');
+        
+        //this.load.image('hexagonbrown', '../../Content/Assets/hexagonbrown.png');
+                        
+        //this.load.image('hexagonred', '../../Content/Assets/hexagonred.png');
+        //this.load.image('hexagonredwaves', '../../Content/Assets/hexagonredwaves.png');
         //this.load.image('hexagonredmovable', '../../Content/Assets/hexagonredmovable.png');
 
-        this.load.image('hexagonyellow', '../../Content/Assets/hexagonyellow.png');
-        this.load.image('hexagonyellownoise', '../../Content/Assets/wheatHex.png');
-        this.load.image('hexagonyellowwaves', '../../Content/Assets/hexagonyellowwaves.png');
-        this.load.image('hexagonyellownoisewaves', '../../Content/Assets/desertHex.png');
+        //this.load.image('hexagonyellow', '../../Content/Assets/hexagonyellow.png');
+        //this.load.image('hexagonyellowwaves', '../../Content/Assets/hexagonyellowwaves.png');
 
-        this.load.image('hexagonblue', '../../Content/Assets/hexagonblue.png');
-        this.load.image('hexagonbluenoise', '../../Content/Assets/hexagonbluenoise.png');
-        this.load.image('hexagonbluewaves', '../../Content/Assets/hexagonbluewaves.png');
-        this.load.image('hexagonbluenoisewaves', '../../Content/Assets/desertBlueHex.png');
+        //this.load.image('hexagonblue', '../../Content/Assets/hexagonblue.png');
+        //this.load.image('hexagonbluenoise', '../../Content/Assets/hexagonbluenoise.png');
+        //this.load.image('hexagonbluewaves', '../../Content/Assets/hexagonbluewaves.png');
 
-        this.load.image('hexagongreen', '../../Content/Assets/hexagongreen.png');
-        this.load.image('hexagongreennoise', '../../Content/Assets/sheepHex.png');
-        this.load.image('hexagongreenwaves', '../../Content/Assets/hexagongreenwaves.png');
-        this.load.image('hexagongreennoisewaves', '../../Content/Assets/desertHex.png');
+        //this.load.image('hexagongreen', '../../Content/Assets/hexagongreen.png');
+        //this.load.image('hexagongreenwaves', '../../Content/Assets/hexagongreenwaves.png');
 
         this.load.image('hexagonoverrun', '../../Content/Assets/desertHex.gif');
 
@@ -67,7 +78,6 @@ GameStates.Preloader.prototype = {
         this.load.image('dice5', '../../Content/Assets/dice5.png');
         this.load.image('dice6', '../../Content/Assets/dice6.png');
 
-        this.load.image('cardbrick', '../../Content/Assets/CardBrick.png');
     },
 
     create: function () {

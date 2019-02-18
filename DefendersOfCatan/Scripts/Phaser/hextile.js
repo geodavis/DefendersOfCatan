@@ -27,7 +27,7 @@ HexTile = function (game, x, y, tileImage, isVertical, i, j, type, id) {
     this.type = type;
     //this.i = i;
     //this.j = j;
-    this.scale.setTo(1.5, 1.5);
+    //this.scale.setTo(1.5, 1.5);
 
     if (isVertical) {
         this.rotation = Math.PI / 2;
@@ -216,21 +216,6 @@ function executePostTileClickEvents(d) {
 
                 break;
             case 'PlayerPurchase':
-                break;
-            case 'PlayerMove':
-                var tile = HexTile.prototype.getTileById(d.Item.ClickedTileId);
-                tile.addChild(currentPlayer);
-                $.each(hexGrid.children, function () {
-                    var tile = this;
-                    $.each(tile.children, function () { // loop each child of tile
-                        if (this.name == 'border') {
-                            tile.removeChild(this);
-                        }
-                    });
-                });
-
-                getJSONSync('/Game/GetNextGameState', startNextGameState, error); // URL, Success Function, Error Function
-
                 break;
             case 'PlayerResourceOrFight':
                 GameStates.PlayerResourceOrFight.prototype.addResourceToPlayer(d.Item.ResourceType);

@@ -116,7 +116,7 @@
                             var placeableY = tile2.y;
                         }
 
-                        var placeable = new Placeable(game, placeableX, placeableY, developmentType, angle, anchor, tile1.id, tile2.id, 0.1);
+                        var placeable = new DevelopmentPlaceable(game, placeableX, placeableY, developmentType, angle, anchor, tile1.id, tile2.id, 0.1);
                         placeables.add(placeable);
                     });
                     break;
@@ -130,7 +130,7 @@
 
                     $.each(tilesCanPlace, function () {
                         var tile = HexTile.prototype.getTileById(this.Id);
-                        var placeable = new Placeable(game, 0, 0, developmentType, 0, 0.5, 0, 0, 1);
+                        var placeable = new DevelopmentPlaceable(game, 0, 0, developmentType, 0, 0.5, 0, 0, 1);
                         tile.addChild(placeable);
                     });
                     break;

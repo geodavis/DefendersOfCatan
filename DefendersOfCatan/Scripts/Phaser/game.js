@@ -96,6 +96,9 @@ GameStates.Game.prototype = {
         getPlayers();
         getEnemies();
         initializeDice();
+
+        var draw = game.add.sprite(600, 20, 'enemycarddraw');
+        draw.scale.setTo(0.1, 0.1);
         placeables = game.add.group();
         placedDevelopments = game.add.group();
         // ToDo: Make this a common function and call the common in all places

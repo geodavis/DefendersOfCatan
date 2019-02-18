@@ -243,6 +243,7 @@
     <Content Include="Content\Assets\brick.png" />
     <Content Include="Content\Assets\brick1.png" />
     <Content Include="Content\Assets\capitalHex.png" />
+    <Content Include="Content\Assets\card-draw.png" />
     <Content Include="Content\Assets\CardBrick.png" />
     <Content Include="Content\Assets\CardDevelopment.png" />
     <Content Include="Content\Assets\CardGrain.png" />
@@ -273,8 +274,20 @@
     <Content Include="Content\Assets\grains.png" />
     <Content Include="Content\Assets\grass.png" />
     <Content Include="Content\Assets\hexagon.png" />
+    <Content Include="Content\Assets\HexagonBrick.png" />
+    <Content Include="Content\Assets\HexagonCapital.png" />
+    <Content Include="Content\Assets\HexagonEnemy.png" />
+    <Content Include="Content\Assets\HexagonEnemyBlue.png" />
+    <Content Include="Content\Assets\HexagonEnemyGreen.png" />
+    <Content Include="Content\Assets\HexagonEnemyRed.png" />
+    <Content Include="Content\Assets\HexagonEnemyYellow.png" />
+    <Content Include="Content\Assets\HexagonGrain.png" />
+    <Content Include="Content\Assets\HexagonMountain.png" />
+    <Content Include="Content\Assets\HexagonOre.png" />
     <Content Include="Content\Assets\HexagonOverrun.png" />
     <Content Include="Content\Assets\HexagonRedMovable.png" />
+    <Content Include="Content\Assets\HexagonWood.png" />
+    <Content Include="Content\Assets\HexagonWool.png" />
     <Content Include="Content\Assets\marker.png" />
     <Content Include="Content\Assets\ore.png" />
     <Content Include="Content\Assets\oreHex.gif" />
@@ -282,6 +295,7 @@
     <Content Include="Content\Assets\phaser2.png" />
     <Content Include="Content\Assets\PlayerBlue.png" />
     <Content Include="Content\Assets\PlayerGreen.png" />
+    <Content Include="Content\Assets\playerMove.png" />
     <Content Include="Content\Assets\PlayerYellow.png" />
     <Content Include="Content\Assets\preloader-bar.png" />
     <Content Include="Content\Assets\RoadPlacement.png" />
@@ -395,8 +409,9 @@
     <Content Include="Scripts\Phaser\initialplacement.js" />
     <Content Include="Scripts\Phaser\enemymove.js" />
     <Content Include="Scripts\Phaser\item.js" />
-    <Content Include="Scripts\Phaser\placeable.js" />
+    <Content Include="Scripts\Phaser\Placeables\developmentplaceable.js" />
     <Content Include="Scripts\Phaser\placeableroad.js" />
+    <Content Include="Scripts\Phaser\Placeables\playermoveplaceable.js" />
     <Content Include="Scripts\Phaser\playerplacepurchase.js" />
     <Content Include="Scripts\Phaser\playerpurchase.js" />
     <Content Include="Scripts\Phaser\player_res_or_fight.js" />
