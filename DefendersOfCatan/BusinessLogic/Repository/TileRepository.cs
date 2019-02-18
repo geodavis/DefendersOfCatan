@@ -22,7 +22,8 @@ namespace DefendersOfCatan.BusinessLogic.Repository
         List<TileDevelopment> GetDevelopments(int tileId);
         PurchaseDevelopmentTransfer GetPlaceableDevelopments(DevelopmentType developmentType);
         int PlaceRoad(int tile1Id, int tile2Id);
-        List<Road> GetRoads(); 
+        List<Road> GetRoads();
+        List<int> GetEnemyTileIds();
     }
     public class TileRepository : BaseRepository, ITileRepository
     {
@@ -135,6 +136,11 @@ namespace DefendersOfCatan.BusinessLogic.Repository
         public List<Road> GetRoads()
         {
             return _db.GetSet<Road>().ToList();
+        }
+
+        public List<int> GetEnemyTileIds()
+        {
+            return _db.GetSet<Tile>().Where(t => t.Type == TileType.BlueEnemy || t.Type == TileType.GreenEnemy || t.Type == TileType.RedEnemy || t.Type == TileType.YellowEnemy).Select(t => t.Id).ToList();
         }
     }
 }

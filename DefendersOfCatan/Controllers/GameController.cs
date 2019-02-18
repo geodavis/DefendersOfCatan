@@ -424,6 +424,24 @@ namespace DefendersOfCatan.Controllers
         }
 
         [HttpGet]
+        public JsonResult GetCardPlaceables(CardType cardType)
+        {
+            var result = new ItemModel<List<int>> { Item = new List<int>() };
+
+            try
+            {
+                result.Item = _tileRepo.GetEnemyTileIds();
+                return ReturnJsonResult(result);
+            }
+            catch (Exception e)
+            {
+                result.HasError = true;
+                result.Error = e.Message;
+                return ReturnJsonResult(result);
+            }
+        }
+
+        [HttpGet]
         public JsonResult GetEnemies()
         {
             var result = new ItemModel<List<Enemy>> { Item = new List<Enemy>() };

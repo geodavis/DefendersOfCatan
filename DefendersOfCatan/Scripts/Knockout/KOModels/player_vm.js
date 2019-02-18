@@ -1,6 +1,7 @@
 ﻿Player = function (game, x, y, playerData) {
     var playerImage = this.getPlayerImageBasedOnPlayerColor(playerData.Color);
     Phaser.Sprite.call(this, game, x, y, playerImage);
+    var self = this;
     this.anchor.setTo(0.5, 0.5);
     this.name = playerData.Name;
     this.id = playerData.Id;
@@ -60,7 +61,27 @@
             this.isOverrun(false);
             updateLogText(this.name + ' is no longer overrun.');
         }
-    }
+    };
+
+    this.playCard = function () {
+        getJSONSync('/Game/GetCardPlaceables?cardType=' + this.cardType, self.highlightCardPlaceables, error); // URL, Success Function, Error Function
+    };
+
+    self.highlightCardPlaceables = function (d) {
+        if (!d.HasError) {
+            $.each(d.Item, function () {
+                var tile = HexTile.prototype.getTileById(this);
+                var border = game.make.sprite(0, 0, 'hexagonborder');
+                border.name = "border";
+                border.anchor.setTo(0.5, 0.5);
+                border.scale.setTo(0.95, 0.95);
+                tile.addChild(border);
+            });
+        }
+        else {
+            alert(d.Error);
+        }
+    };
 
 };
 

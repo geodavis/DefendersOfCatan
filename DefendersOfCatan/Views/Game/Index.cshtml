@@ -97,7 +97,7 @@
                                     </tr>
                                     <tr data-bind="css: { 'table-primary': isCurrentPlayer() }">
                                         <!-- ko foreach: cards -->
-                                        <td><img height="36" width="29" data-bind="attr:{src: imagePath}">x<span data-bind="text: cardCount"></span></td>
+                                        <td><img height="36" width="29" data-bind="attr:{src: imagePath}, click: $parent.playCard, enable: $parent.isCurrentPlayer()">x<span data-bind="text: cardCount"></span></td>
                                         @*<td data-bind="text: cardType"></td>
                                         <td data-bind="text: cardCount"></td>*@
                                         <!-- /ko -->
