@@ -200,17 +200,7 @@ namespace DefendersOfCatan.Controllers
                         }
                         break;
                     case GameState.PlayerResourceOrFight:
-                        var resourceType = selectedTile.ResourceType;
-                        result.Item.ResourceType = (int)resourceType;
-                        if (_tileLogic.TileHasSettlement(data.ClickedTileId)) // ToDo: Check if player is on tile or tile is on a road path
-                        {
-                            _playerLogic.AddResourceToPlayer(resourceType);
-                        }
-                        else
-                        {
-                            result.HasError = true;
-                            result.Error = "No settlement on tile.";
-                        }
+
                         break;
                     default:
                         Console.WriteLine("Error getting game state!");
@@ -255,6 +245,41 @@ namespace DefendersOfCatan.Controllers
                 return ReturnJsonResult(result);
             }
         }
+
+        [HttpPost]
+        public JsonResult AddResourceToPlayer(ClickedPlaceableTransfer data)
+        {
+            var result = new ItemModel<PlayerResourceTransfer>
+            {
+                Item = new PlayerResourceTransfer()
+            };
+            try
+            {
+                var gameState = _gameStateLogic.GetCurrentGameState(); // ToDo: validate correct game state
+                var tile = _tileRepo.GetTileById(data.ParentTileId);
+                var tiles = _developmentLogic.GetPlayerPathTilesWithSettlements(); // Get valid tiles to collect resource from
+                tiles.Add(_tileRepo.GetCurrentPlayerTile().Id); // Current player tile - ToDo: only if settlement exists on this tile
+
+                if (tiles.Contains(tile.Id))
+                {
+                    _playerRepo.AddResourceToCurrentPlayer(tile.ResourceType);
+                }
+                else
+                {
+                    result.HasError = true;
+                    result.Error = "Unable to collect resource from this tile.";
+                }
+                result.Item.ResourceType = tile.ResourceType;
+                return ReturnJsonResult(result);
+            }
+            catch (Exception e)
+            {
+                result.HasError = true;
+                result.Error = e.Message;
+                return ReturnJsonResult(result);
+            }
+        }
+
 
         [HttpPost]
         public JsonResult PlaceRoad(PlaceRoadTransfer data)
@@ -624,7 +649,8 @@ namespace DefendersOfCatan.Controllers
             var result = new ItemModel<List<int>>();
             try
             {
-                result.Item = _developmentLogic.GetPlayerPathTilesWithSettlements();
+                result.Item = _developmentLogic.GetPlayerPathTilesWithSettlements(); // All tiles with settlement along road paths
+                result.Item.Add(_tileRepo.GetCurrentPlayerTile().Id); // Current player tile - ToDo: only if settlement exists on this tile
                 return ReturnJsonResult(result);
             }
             catch (Exception e)

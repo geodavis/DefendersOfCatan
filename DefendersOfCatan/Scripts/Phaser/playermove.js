@@ -52,10 +52,15 @@ GameStates.PlayerMove.prototype.placePlayer = function (d) {
 }
 
 function setMovableNeighbors(d) {
-    $.each(d.Item, function () {
-        var tile = HexTile.prototype.getTileById(this);
-        var playerMovePlaceable = new PlayerMovePlaceable(game, 0, 0);
-        tile.addChild(playerMovePlaceable);
-    });
+    if (!d.HasError) {
+        $.each(d.Item, function () {
+            var tile = HexTile.prototype.getTileById(this);
+            var playerMovePlaceable = new PlayerMovePlaceable(game, 0, 0);
+            tile.addChild(playerMovePlaceable);
+        });
+    }
+    else {
+        alert(d.Error);
+    }
 }
 

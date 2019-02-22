@@ -23,6 +23,14 @@ GameStates.Preloader.prototype = {
         this.load.image('hexagongreennoise', '../../Content/Assets/hexagonWool.png');
         this.load.image('hexagonrednoise', '../../Content/Assets/hexagonBrick.png');
 
+        // Resource Cards
+        this.load.image('cardOre', '../../Content/Assets/cardOre.png');
+        this.load.image('cardWood', '../../Content/Assets/cardWood.png');
+        this.load.image('cardGrain', '../../Content/Assets/cardGrain.png');
+        this.load.image('cardWool', '../../Content/Assets/cardWool.png');
+        this.load.image('cardBrick', '../../Content/Assets/cardBrick.png');
+
+
         // Enemy Tiles
         this.load.image('hexagonrednoisewaves', '../../Content/Assets/hexagonEnemyRed.png');
         this.load.image('hexagonyellownoisewaves', '../../Content/Assets/hexagonEnemyBlue.png');
@@ -30,10 +38,13 @@ GameStates.Preloader.prototype = {
         this.load.image('hexagongreennoisewaves', '../../Content/Assets/hexagonEnemyGreen.png');
 
         // Enemy Card Draw
-        this.load.image('enemycarddraw', '../../Content/Assets/card-draw.png')
+        this.load.image('enemycarddraw', '../../Content/Assets/card-draw.png');
 
         // Player Move
-        this.load.image('playermove', '../../Content/Assets/playerMove.png')
+        this.load.image('playermove', '../../Content/Assets/playerMove.png');
+        
+        // Player Attack
+        this.load.image('playerattack', '../../Content/Assets/playerAttack.png');
 
 
         //this.load.image('hexagongray', '../../Content/Assets/hexagongray.png');

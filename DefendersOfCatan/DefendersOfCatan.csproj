@@ -293,6 +293,7 @@
     <Content Include="Content\Assets\oreHex.gif" />
     <Content Include="Content\Assets\oreHex.png" />
     <Content Include="Content\Assets\phaser2.png" />
+    <Content Include="Content\Assets\PlayerAttack.png" />
     <Content Include="Content\Assets\PlayerBlue.png" />
     <Content Include="Content\Assets\PlayerGreen.png" />
     <Content Include="Content\Assets\playerMove.png" />
@@ -412,6 +413,7 @@
     <Content Include="Scripts\Phaser\Placeables\developmentplaceable.js" />
     <Content Include="Scripts\Phaser\placeableroad.js" />
     <Content Include="Scripts\Phaser\Placeables\playermoveplaceable.js" />
+    <Content Include="Scripts\Phaser\Placeables\resourceplaceable.js" />
     <Content Include="Scripts\Phaser\playerplacepurchase.js" />
     <Content Include="Scripts\Phaser\playerpurchase.js" />
     <Content Include="Scripts\Phaser\player_res_or_fight.js" />

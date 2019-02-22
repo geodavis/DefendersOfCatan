@@ -435,7 +435,11 @@ function highlightTiles(d)
 
 function highlight(tile) {
     tile.alpha = 0.2;
-    game.add.tween(tile).to({ alpha: 1 }, 1000, Phaser.Easing.Linear.None, true, 0, 1000, true);
+    game.add.tween(tile).to({ alpha: 1 }, 1000, Phaser.Easing.Linear.None, true, 0, 1000, true); // property: value, duration, easing type, ?, ?, x times, ?
+}
+
+function animateCards(obj) {
+    game.add.tween(obj).to({ y: obj.y - (obj.height * .25) }, 1000, Phaser.Easing.Linear.None, true, obj.y + (obj.height * .25), 1000, true);
 }
 
 function getTileImage(tileType, resourceType) {

@@ -9,6 +9,7 @@ namespace DefendersOfCatan.Transfer
     public class PlayerResourceTransfer
     {
         public int PlayerId { get; set; }
-        public int ResourceType { get; set; }
+        public ResourceType ResourceType { get; set; }
+        public int ClickedTileId { get; set; }
     }
 }

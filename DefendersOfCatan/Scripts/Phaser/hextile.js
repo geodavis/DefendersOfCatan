@@ -218,9 +218,6 @@ function executePostTileClickEvents(d) {
             case 'PlayerPurchase':
                 break;
             case 'PlayerResourceOrFight':
-                GameStates.PlayerResourceOrFight.prototype.addResourceToPlayer(d.Item.ResourceType);
-                getJSONSync('/Game/MoveToNextPlayer', moveToNextPlayer, error); // URL, Success Function, Error Function
-                getJSONSync('/Game/GetNextGameState', startNextGameState, error); // URL, Success Function, Error Function
 
                 break;
             default:
