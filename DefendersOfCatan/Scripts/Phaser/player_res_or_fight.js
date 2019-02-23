@@ -6,8 +6,7 @@ GameStates.PlayerResourceOrFight.prototype = {
     create: function () {
         getJSONSync('/Game/GetResourceOrFightTiles', this.highlightResourceOrFightTiles, error); // URL, Success Function, Error Function
 
-
-        textPhase.text = 'Phase: Resource';
+        textPhase.text = 'Phase: Resource or Fight';
     },
 
     update: function () {
@@ -18,16 +17,20 @@ GameStates.PlayerResourceOrFight.prototype = {
 
     render: function () {
 
-        //this.debug.cameraInfo(this.camera, 500, 32);
-        //this.debug.spriteCoords(player, 32, 32);
     }
 };
 
 GameStates.PlayerResourceOrFight.prototype.highlightResourceOrFightTiles = function (d) {
     if (!d.HasError) {
-        $.each(d.Item, function () {
+        $.each(d.Item.ResourceTiles, function () {
             var tile = HexTile.prototype.getTileById(this);
             var placeable = new ResourcePlaceable(game, 0, 0, tile.resource);
+            tile.addChild(placeable);
+        });
+
+        $.each(d.Item.FightTiles, function () {
+            var tile = HexTile.prototype.getTileById(this);
+            var placeable = new PlayerAttackPlaceable(game, 0, 0);
             tile.addChild(placeable);
         });
     }

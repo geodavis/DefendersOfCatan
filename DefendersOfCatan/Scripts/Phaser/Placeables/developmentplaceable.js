@@ -4,7 +4,7 @@ DevelopmentPlaceable = function (game, x, y, developmentType, angle, anchor, id1
     this.developmentType = developmentType;
     Phaser.Sprite.call(this, game, x, y, developmentImage);
     this.anchor.setTo(anchor, anchor);
-    this.name = "developmentplaceable";
+    this.name = "placeable";
     this.angle += angle;
     this.inputEnabled = true;
     //this.input.useHandCursor = true;
@@ -98,6 +98,7 @@ DevelopmentPlaceable.prototype.executePostPlaceableClickEvents = function (d) {
                 if (d.Item.PlayerId == 4) {
                     DevelopmentPlaceable.prototype.removePlaceablesFromTiles();
                     getJSONSync('/Game/GetNextGameState', startNextGameState, error); // URL, Success Function, Error Function
+                    removePlaceables();
                 }
 
                 // Get the next player
@@ -162,6 +163,7 @@ DevelopmentPlaceable.prototype.executePostPlaceableClickEvents = function (d) {
                         var tile = HexTile.prototype.getTileById(d.Item.ClickedTileId);                 
                         var development = new Development(game, 0, 0, developmentType, 0, 0.5);
                         tile.addChild(development);
+                        removePlaceables();
 
 
                         break;
@@ -183,7 +185,7 @@ DevelopmentPlaceable.prototype.executePostPlaceableClickEvents = function (d) {
 
 
                 // Remove placement image from tiles
-                DevelopmentPlaceable.prototype.removePlaceablesFromTiles();
+                //DevelopmentPlaceable.prototype.removePlaceablesFromTiles();
 
                 break;
             case 'PlayerMove':

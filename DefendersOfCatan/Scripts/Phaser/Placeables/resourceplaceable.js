@@ -1,6 +1,6 @@
 ﻿ResourcePlaceable = function (game, x, y, resourceType) {
     Phaser.Sprite.call(this, game, x, y, this.getCardImageBasedOnResourceType(resourceType));
-    this.name = "resourceplaceable";
+    this.name = "placeable";
     this.resourceType = resourceType;
     this.inputEnabled = true;
     this.anchor.setTo(0.5, 0.5);
@@ -68,14 +68,7 @@ ResourcePlaceable.prototype.executePostPlaceableClickEvents = function (d) {
     }
     else {
         GameStates.PlayerResourceOrFight.prototype.addResourceToPlayer(d.Item.ResourceType);
-        $.each(hexGrid.children, function () {
-            var tile = this;
-            $.each(tile.children, function () { // loop each child of tile
-                if (this.name == 'resourceplaceable') {
-                    tile.removeChild(this);
-                }
-            });
-        });
+        removePlaceables();
 
         getJSONSync('/Game/MoveToNextPlayer', moveToNextPlayer, error); // URL, Success Function, Error Function
         getJSONSync('/Game/GetNextGameState', startNextGameState, error); // URL, Success Function, Error Function

@@ -1,6 +1,6 @@
 ﻿PlayerMovePlaceable = function (game, x, y) {
     Phaser.Sprite.call(this, game, x, y, 'playermove');
-    this.name = "playermoveplaceable";
+    this.name = "placeable";
     this.inputEnabled = true;
     this.anchor.setTo(0.5, 0.5);
     this.events.onInputUp.add(this.onTap, this);
@@ -46,14 +46,7 @@ PlayerMovePlaceable.prototype.executePostPlaceableClickEvents = function (d) {
     else {
         var tile = HexTile.prototype.getTileById(d.Item.ClickedTileId);
         tile.addChild(currentPlayer);
-        $.each(hexGrid.children, function () {
-            var tile = this;
-            $.each(tile.children, function () { // loop each child of tile
-                if (this.name == 'playermoveplaceable') {
-                    tile.removeChild(this);
-                }
-            });
-        });
+        removePlaceables();
 
         getJSONSync('/Game/GetNextGameState', startNextGameState, error); // URL, Success Function, Error Function
 

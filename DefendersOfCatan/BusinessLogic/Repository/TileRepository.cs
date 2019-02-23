@@ -24,6 +24,7 @@ namespace DefendersOfCatan.BusinessLogic.Repository
         int PlaceRoad(int tile1Id, int tile2Id);
         List<Road> GetRoads();
         List<int> GetEnemyTileIds();
+        Enemy GetEnemyByTileId(int tileId);
     }
     public class TileRepository : BaseRepository, ITileRepository
     {
@@ -96,6 +97,11 @@ namespace DefendersOfCatan.BusinessLogic.Repository
             var tile = GetTileById(tileId);
             tile.Enemy = _enemyRepo.GetEnemy(enemyId);
             _db.SaveChanges();
+        }
+
+        public Enemy GetEnemyByTileId(int tileId)
+        {
+            return _db.GetSet<Tile>().Where(t => t.Id == tileId).Single().Enemy;
         }
 
         public PurchaseDevelopmentTransfer GetPlaceableDevelopments(DevelopmentType developmentType)

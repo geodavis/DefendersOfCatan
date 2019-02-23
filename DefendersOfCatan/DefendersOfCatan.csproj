@@ -228,6 +228,7 @@
     <Compile Include="Transfer\PlaceRoadTransfer.cs" />
     <Compile Include="Transfer\PlayerHealthTransfer.cs" />
     <Compile Include="Transfer\PlayerOverrunTransfer.cs" />
+    <Compile Include="Transfer\PlayerResourceOrFightTransfer.cs" />
     <Compile Include="Transfer\PlayerResourceTransfer.cs" />
     <Compile Include="Transfer\PlayerTileTransfer.cs" />
     <Compile Include="Transfer\PurchaseDevelopmentTransfer.cs" />
@@ -413,6 +414,7 @@
     <Content Include="Scripts\Phaser\Placeables\developmentplaceable.js" />
     <Content Include="Scripts\Phaser\placeableroad.js" />
     <Content Include="Scripts\Phaser\Placeables\playermoveplaceable.js" />
+    <Content Include="Scripts\Phaser\Placeables\playerattackplaceable.js" />
     <Content Include="Scripts\Phaser\Placeables\resourceplaceable.js" />
     <Content Include="Scripts\Phaser\playerplacepurchase.js" />
     <Content Include="Scripts\Phaser\playerpurchase.js" />

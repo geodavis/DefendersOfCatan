@@ -15,6 +15,7 @@ namespace DefendersOfCatan.BusinessLogic
         EnemyFightTransfer RemoveEnemy(int enemyId);
         EnemyMoveTransfer ExecuteEnemyMovePhase();
         bool IsEnemyTileNeighbor(int enemyId);
+        List<int> GetNeighborEnemyTileIds();
         List<int> RollDice();
     }
     public class EnemyLogic : IEnemyLogic
@@ -131,7 +132,23 @@ namespace DefendersOfCatan.BusinessLogic
 
             return false;
         }
+        public List<int> GetNeighborEnemyTileIds()
+        {
+            var neighborEnemyTileIds = new List<int>();
+            var currentPlayerTile = _tileRepo.GetCurrentPlayerTile();
+            var enemyTiles = _tileRepo.GetTiles().Where(t => t.Enemy != null).Select(t => t.Id);
+            var neighborTiles = _tileLogic.GetNeighborTiles(currentPlayerTile);
 
+            foreach (var tile in neighborTiles)
+            {
+                if (enemyTiles.Contains(tile.Id))
+                {
+                    neighborEnemyTileIds.Add(tile.Id);
+                }
+            }
+
+            return neighborEnemyTileIds;
+        }
         public List<int> RollDice()
         {
             var diceRolls = new List<int>();

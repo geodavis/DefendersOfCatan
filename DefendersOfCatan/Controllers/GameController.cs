@@ -96,28 +96,6 @@ namespace DefendersOfCatan.Controllers
                         // ToDo: Implement error handling (pass error to client)
                         break;
                     case GameState.PlayerResourceOrFight:
-                        if (_enemyLogic.IsEnemyTileNeighbor(data.EnemyId))
-                        {
-                            var diceRolls = _enemyLogic.RollDice();
-
-                            if (diceRolls.First() > 0) //ToDo: Change this value based on rules
-                            {
-                                var enemyFightTransfer = _enemyLogic.RemoveEnemy(data.EnemyId);
-                                result.Item.OverrunPlayerId = enemyFightTransfer.OverrunPlayerId;
-                                result.Item.EnemyTileId = enemyFightTransfer.EnemyTile.Id;
-
-                            }
-                            else
-                            {
-                                result.HasError = true;
-                                result.Error = "Missed on the roll.";
-                            }
-                        }
-                        else
-                        {
-                            result.HasError = true;
-                            result.Error = "Enemy not on neighboring tile.";
-                        }
 
                         break;
                     default:
@@ -279,7 +257,44 @@ namespace DefendersOfCatan.Controllers
                 return ReturnJsonResult(result);
             }
         }
+        [HttpPost]
+        public JsonResult AttackEnemy(ClickedPlaceableTransfer data)
+        {
+            var result = new ItemModel<EnemyFightTransfer> { Item = new EnemyFightTransfer() };
+            try
+            {
+                var enemy = _tileRepo.GetEnemyByTileId(data.ParentTileId);
+                if (_enemyLogic.IsEnemyTileNeighbor(enemy.Id))
+                {
+                    var diceRolls = _enemyLogic.RollDice();
 
+                    if (diceRolls.First() > 0) // ToDo: Change this value based on rules
+                    {
+                        var enemyFightTransfer = _enemyLogic.RemoveEnemy(enemy.Id);
+                        result.Item.OverrunPlayerId = enemyFightTransfer.OverrunPlayerId;
+                        result.Item.EnemyTile = enemyFightTransfer.EnemyTile;
+
+                    }
+                    else
+                    {
+                        result.HasError = true;
+                        result.Error = "Missed on the roll.";
+                    }
+                }
+                else
+                {
+                    result.HasError = true;
+                    result.Error = "Enemy not on neighboring tile.";
+                }
+                return ReturnJsonResult(result);
+            }
+            catch (Exception e)
+            {
+                result.HasError = true;
+                result.Error = e.Message;
+                return ReturnJsonResult(result);
+            }
+        }
 
         [HttpPost]
         public JsonResult PlaceRoad(PlaceRoadTransfer data)
@@ -295,7 +310,7 @@ namespace DefendersOfCatan.Controllers
                 result.Item.Tile2Id = data.Tile2Id;
                 result.Item.Angle = angle;
                 result.Item.GameState = _gameStateLogic.GetCurrentGameState().ToString();
-                result.Item.DevelopmentType = (int) DevelopmentType.Road;
+                result.Item.DevelopmentType = (int)DevelopmentType.Road;
                 //result.Item.Paths = _developmentLogic.GetRoadPaths();
                 //var test = _developmentLogic.GetPathTilesWithSettlements(result.Item.Paths);
                 return ReturnJsonResult(result);
@@ -325,7 +340,7 @@ namespace DefendersOfCatan.Controllers
                 result.Item.GameState = gameState.ToString();
                 result.Item.ClickedTileId = selectedTile.Id;
                 result.Item.PlayerId = currentPlayer.Id;
-                result.Item.DevelopmentType = (int) data.developmentType;
+                result.Item.DevelopmentType = (int)data.developmentType;
 
                 switch (gameState)
                 {
@@ -337,7 +352,7 @@ namespace DefendersOfCatan.Controllers
                         break;
                     case GameState.PlayerPurchase:
                         // Get the item the player just purchased; If no item in inventory, return error message
-                         _developmentLogic.PlacePurchasedDevelopment(data.ParentTileId);
+                        _developmentLogic.PlacePurchasedDevelopment(data.ParentTileId);
                         break;
                     default:
                         Console.WriteLine("Game state not implemented for placeable clicked action.");
@@ -646,11 +661,12 @@ namespace DefendersOfCatan.Controllers
         [HttpGet]
         public JsonResult GetResourceOrFightTiles()
         {
-            var result = new ItemModel<List<int>>();
+            var result = new ItemModel<PlayerResourceOrFightTransfer> { Item = new PlayerResourceOrFightTransfer() };
             try
             {
-                result.Item = _developmentLogic.GetPlayerPathTilesWithSettlements(); // All tiles with settlement along road paths
-                result.Item.Add(_tileRepo.GetCurrentPlayerTile().Id); // Current player tile - ToDo: only if settlement exists on this tile
+                result.Item.ResourceTiles = _developmentLogic.GetPlayerPathTilesWithSettlements(); // All tiles with settlement along road paths
+                result.Item.ResourceTiles.Add(_tileRepo.GetCurrentPlayerTile().Id); // Current player tile - ToDo: only if settlement exists on this tile
+                result.Item.FightTiles = _enemyLogic.GetNeighborEnemyTileIds();
                 return ReturnJsonResult(result);
             }
             catch (Exception e)

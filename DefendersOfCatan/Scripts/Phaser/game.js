@@ -442,6 +442,17 @@ function animateCards(obj) {
     game.add.tween(obj).to({ y: obj.y - (obj.height * .25) }, 1000, Phaser.Easing.Linear.None, true, obj.y + (obj.height * .25), 1000, true);
 }
 
+function removePlaceables() {
+    $.each(hexGrid.children, function () {
+        var tile = this;
+        $.each(tile.children, function () { // loop each child of tile
+            if (this.name == 'placeable') {
+                tile.removeChild(this);
+            }
+        });
+    });
+}
+
 function getTileImage(tileType, resourceType) {
     // Store all hexagon images in a array
     var hexImageArray = ["hexagonrednoise", "hexagongraynoise", "hexagonbrownnoise", "hexagonyellownoise", "hexagongreennoise"];
