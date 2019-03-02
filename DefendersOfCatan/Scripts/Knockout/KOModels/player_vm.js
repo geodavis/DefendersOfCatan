@@ -71,11 +71,8 @@
         if (!d.HasError) {
             $.each(d.Item, function () {
                 var tile = HexTile.prototype.getTileById(this);
-                var border = game.make.sprite(0, 0, 'hexagonborder');
-                border.name = "border";
-                border.anchor.setTo(0.5, 0.5);
-                border.scale.setTo(0.95, 0.95);
-                tile.addChild(border);
+                var placeable = new EnemyBackPlaceable(game, 0, 0);
+                tile.addChild(placeable);
             });
         }
         else {

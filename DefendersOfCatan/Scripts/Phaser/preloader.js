@@ -46,6 +46,9 @@ GameStates.Preloader.prototype = {
         // Player Attack
         this.load.image('playerattack', '../../Content/Assets/playerAttack.png');
 
+        // Push Enemy Back
+        this.load.image('enemyback', '../../Content/Assets/enemyBack.png');
+
 
         //this.load.image('hexagongray', '../../Content/Assets/hexagongray.png');
         

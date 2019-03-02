@@ -297,6 +297,24 @@ namespace DefendersOfCatan.Controllers
         }
 
         [HttpPost]
+        public JsonResult PushBarbariansBack(ClickedPlaceableTransfer data)
+        {
+            var result = new ItemModel<EnemyMoveTransfer> { Item = new EnemyMoveTransfer() };
+            try
+            {
+                var tile = _tileRepo.GetTileById(data.ParentTileId);
+                result.Item.BarbarianTiles = _enemyLogic.PushBarbarianBack(tile.Type);
+                return ReturnJsonResult(result);
+            }
+            catch (Exception e)
+            {
+                result.HasError = true;
+                result.Error = e.Message;
+                return ReturnJsonResult(result);
+            }
+        }
+
+        [HttpPost]
         public JsonResult PlaceRoad(PlaceRoadTransfer data)
         {
             var result = new ItemModel<PlaceRoadTransfer>

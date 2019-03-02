@@ -453,6 +453,17 @@ function removePlaceables() {
     });
 }
 
+function removeCardPlaceables() {
+    $.each(hexGrid.children, function () {
+        var tile = this;
+        $.each(tile.children, function () { // loop each child of tile
+            if (this.name == 'cardplaceable') {
+                tile.removeChild(this);
+            }
+        });
+    });
+}
+
 function getTileImage(tileType, resourceType) {
     // Store all hexagon images in a array
     var hexImageArray = ["hexagonrednoise", "hexagongraynoise", "hexagonbrownnoise", "hexagonyellownoise", "hexagongreennoise"];

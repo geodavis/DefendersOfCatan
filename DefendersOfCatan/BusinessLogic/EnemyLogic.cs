@@ -17,6 +17,7 @@ namespace DefendersOfCatan.BusinessLogic
         bool IsEnemyTileNeighbor(int enemyId);
         List<int> GetNeighborEnemyTileIds();
         List<int> RollDice();
+        List<Tile> PushBarbarianBack(TileType tileType);
     }
     public class EnemyLogic : IEnemyLogic
     {
@@ -175,6 +176,24 @@ namespace DefendersOfCatan.BusinessLogic
             }
 
             return enemyFightTransfer;
+        }
+
+        public List<Tile> PushBarbarianBack(TileType tileType)
+        {
+            var tiles = _tileRepo.GetTiles().Where(t => t.Type == tileType).ToList();
+            var barbarianTiles = new List<Tile>();
+
+            foreach (var tile in tiles)
+            {
+                if (tile.Enemy != null && tile.Enemy.HasBarbarian)
+                {
+                    var barbarianIndex = tile.Enemy.BarbarianIndex == 0 ? 0 : tile.Enemy.BarbarianIndex - 1;
+                    _enemyRepo.UpdateBarbarian(tile.Enemy, barbarianIndex, tile.Enemy.Strength);
+                    barbarianTiles.Add(tile);
+                }
+            }
+
+            return barbarianTiles;
         }
     }
 }

@@ -266,6 +266,7 @@
     <Content Include="Content\Assets\dice5.png" />
     <Content Include="Content\Assets\dice6.png" />
     <Content Include="Content\Assets\Enemy.png" />
+    <Content Include="Content\Assets\EnemyBack.png" />
     <Content Include="Content\Assets\EnemyCard.png" />
     <Content Include="Content\Assets\EnemyCardB0.png" />
     <Content Include="Content\Assets\EnemyCardB1.png" />
@@ -413,6 +414,7 @@
     <Content Include="Scripts\Phaser\item.js" />
     <Content Include="Scripts\Phaser\Placeables\developmentplaceable.js" />
     <Content Include="Scripts\Phaser\placeableroad.js" />
+    <Content Include="Scripts\Phaser\Placeables\enemybackplaceable.js" />
     <Content Include="Scripts\Phaser\Placeables\playermoveplaceable.js" />
     <Content Include="Scripts\Phaser\Placeables\playerattackplaceable.js" />
     <Content Include="Scripts\Phaser\Placeables\resourceplaceable.js" />
