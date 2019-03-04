@@ -21,10 +21,10 @@
                       new PlayerResource(ResourcesEnum.wood, 0),
                       new PlayerResource(ResourcesEnum.wool, 0)]);
     this.cards = ko.observableArray([
-                    new PlayerCard(cards[0].CardType, 0),
-                    new PlayerCard(cards[1].CardType, 0),
-                    new PlayerCard(cards[2].CardType, 0),
-                    new PlayerCard(cards[3].CardType, 0)
+                    new PlayerCard(cards[0].CardType, cards[0].CardDescription, 0),
+                    new PlayerCard(cards[1].CardType, cards[1].CardDescription, 0),
+                    new PlayerCard(cards[2].CardType, cards[2].CardDescription, 0),
+                    new PlayerCard(cards[3].CardType, cards[3].CardDescription, 0)
     ]);
     this.developments = ko.observableArray([
                     new PlayerDevelopment(developments.developments()[0].developmentType, 0),
@@ -69,11 +69,43 @@
 
     self.highlightCardPlaceables = function (d) {
         if (!d.HasError) {
-            $.each(d.Item, function () {
-                var tile = HexTile.prototype.getTileById(this);
-                var placeable = new EnemyBackPlaceable(game, 0, 0);
-                tile.addChild(placeable);
-            });
+            switch (d.Item.CardType) {
+                case 0: // 
+                    $.each(d.Item.TileIds, function () {
+                        var tile = HexTile.prototype.getTileById(this);
+                        var placeable = new EnemyBackPlaceable(game, 0, 0);
+                        tile.addChild(placeable);
+                    });
+                    break;
+                case 1:
+                    $.each(d.Item.TileIds, function () {
+                        var tile = HexTile.prototype.getTileById(this);
+                        var placeable = new EnemyRemovePlaceable(game, 0, 0);
+                        tile.addChild(placeable);
+                    });
+                    break;
+                case 2:
+                    $.each(d.Item.TileIds, function () {
+                        var tile = HexTile.prototype.getTileById(this);
+                        var placeable = new PlayerMovePlaceable(game, 0, 0);
+                        tile.addChild(placeable);
+                    });
+                    break;
+                case 3:
+
+                    break;
+                case 4:
+
+                    break;
+                case 5:
+
+                    break;
+                default:
+                    alert("Do not recogize development type!");
+
+            }
+
+
         }
         else {
             alert(d.Error);

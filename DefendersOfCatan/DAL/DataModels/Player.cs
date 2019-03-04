@@ -15,5 +15,6 @@ namespace DefendersOfCatan.DAL.DataModels
         public virtual List<PlayerResource> PlayerResources { get; set; }
         public virtual List<PlayerDevelopment> PlayerDevelopments { get; set; }
         public virtual List<PlayerCard> PlayerCards { get; set; }
+        public bool CanMoveToAnyTile { get; set; }
     }
 }

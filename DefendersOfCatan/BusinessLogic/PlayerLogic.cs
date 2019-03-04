@@ -45,10 +45,15 @@ namespace DefendersOfCatan.BusinessLogic
             var currentPlayerTile = _tileRepo.GetCurrentPlayerTile();
             var selectedTile = _tileRepo.GetTileById(selectedTileId);
             var neighborTiles = _tileLogic.GetNeighborTiles(currentPlayerTile);
+            var canMoveToAnyTile = _playerRepo.GetCurrentPlayer().CanMoveToAnyTile;
 
-            if (neighborTiles.Any(t => t.Id == selectedTile.Id) || selectedTile.Id == currentPlayerTile.Id)
+            if (neighborTiles.Any(t => t.Id == selectedTile.Id) || selectedTile.Id == currentPlayerTile.Id || canMoveToAnyTile)
             {
                 _tileRepo.UpdateCurrentPlayerTile(selectedTile);
+                if (canMoveToAnyTile)
+                {
+                    _playerRepo.SetCanMoveToAnyTile(false);
+                }
                 return true;
             }
             else

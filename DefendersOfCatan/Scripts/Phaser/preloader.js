@@ -49,6 +49,9 @@ GameStates.Preloader.prototype = {
         // Push Enemy Back
         this.load.image('enemyback', '../../Content/Assets/enemyBack.png');
 
+        // Push Enemy Back
+        this.load.image('enemyremove', '../../Content/Assets/enemyRemove.png');
+
 
         //this.load.image('hexagongray', '../../Content/Assets/hexagongray.png');
         

@@ -4,13 +4,11 @@ using System.Linq;
 using System.Web;
 using static DefendersOfCatan.Common.Enums;
 
-namespace DefendersOfCatan.DAL.DataModels
+namespace DefendersOfCatan.Transfer
 {
-    public class Card
+    public class CardPlaceableTransfer
     {
-        public int Id { get; set; }
         public CardType CardType { get; set; }
-        public string CardDescription { get; set; }
-
+        public List<int> TileIds { get; set; }
     }
 }

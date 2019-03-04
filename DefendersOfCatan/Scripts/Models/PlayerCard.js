@@ -1,5 +1,6 @@
-﻿function PlayerCard(cardType, qty) {
+﻿function PlayerCard(cardType, cardDescription, qty) {
     this.cardType = cardType;
+    this.cardDescription = cardDescription;
     this.cardCount = ko.observable(qty);
     switch (cardType) {
         case 0:

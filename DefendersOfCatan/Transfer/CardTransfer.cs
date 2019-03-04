@@ -10,6 +10,6 @@ namespace DefendersOfCatan.Transfer
     {
         public CardType CardType { get; set; }
         public string CardTypeReadable { get; set; }
-        public string Description { get; set; }
+        public string CardDescription { get; set; }
     }
 }

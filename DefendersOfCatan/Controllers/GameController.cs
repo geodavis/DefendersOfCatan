@@ -315,6 +315,26 @@ namespace DefendersOfCatan.Controllers
         }
 
         [HttpPost]
+        public JsonResult RemoveEnemy(ClickedPlaceableTransfer data)
+        {
+            var result = new ItemModel<EnemyFightTransfer> { Item = new EnemyFightTransfer() };
+            try
+            {
+                var enemy = _tileRepo.GetEnemyByTileId(data.ParentTileId);
+                var enemyFightTransfer = _enemyLogic.RemoveEnemy(enemy.Id);
+                result.Item.OverrunPlayerId = enemyFightTransfer.OverrunPlayerId;
+                result.Item.EnemyTile = enemyFightTransfer.EnemyTile;
+                return ReturnJsonResult(result);
+            }
+            catch (Exception e)
+            {
+                result.HasError = true;
+                result.Error = e.Message;
+                return ReturnJsonResult(result);
+            }
+        }
+
+        [HttpPost]
         public JsonResult PlaceRoad(PlaceRoadTransfer data)
         {
             var result = new ItemModel<PlaceRoadTransfer>
@@ -512,11 +532,30 @@ namespace DefendersOfCatan.Controllers
         [HttpGet]
         public JsonResult GetCardPlaceables(CardType cardType)
         {
-            var result = new ItemModel<List<int>> { Item = new List<int>() };
+            var result = new ItemModel<CardPlaceableTransfer> { Item = new CardPlaceableTransfer() };
 
             try
             {
-                result.Item = _tileRepo.GetEnemyTileIds();
+                result.Item.CardType = cardType;
+                switch (cardType)
+                {
+                    case CardType.BarbarianBack:
+                        result.Item.TileIds = _tileRepo.GetEnemyTileIds(); // ToDo: filter by where enemy exists
+                        break;
+                    case CardType.EnemyRemove:
+                        result.Item.TileIds = _tileRepo.GetTilesWithEnemyIds();
+                        break;
+                    case CardType.PlayerMove:
+                        _playerRepo.SetCanMoveToAnyTile(true);
+                        result.Item.TileIds = _tileRepo.GetPlayerMoveableTileIds(); // ToDo: Ensure move phase only; Allow player to move anywhere (update the validation that must be neighbor).
+                        break;
+                    case CardType.FreeDevelopment:
+                        // ToDo:
+                        break;
+                    default:
+                        Console.WriteLine("Error getting next player!");
+                        break;
+                }
                 return ReturnJsonResult(result);
             }
             catch (Exception e)

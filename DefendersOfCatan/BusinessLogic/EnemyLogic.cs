@@ -137,7 +137,7 @@ namespace DefendersOfCatan.BusinessLogic
         {
             var neighborEnemyTileIds = new List<int>();
             var currentPlayerTile = _tileRepo.GetCurrentPlayerTile();
-            var enemyTiles = _tileRepo.GetTiles().Where(t => t.Enemy != null).Select(t => t.Id);
+            var enemyTiles = _tileRepo.GetTilesWithEnemyIds();
             var neighborTiles = _tileLogic.GetNeighborTiles(currentPlayerTile);
 
             foreach (var tile in neighborTiles)

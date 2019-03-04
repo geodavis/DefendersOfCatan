@@ -217,6 +217,7 @@
     <Compile Include="DAL\DataModels\PlayerResource.cs" />
     <Compile Include="DAL\DataModels\Tile.cs" />
     <Compile Include="Transfer\BoardDataTransfer.cs" />
+    <Compile Include="Transfer\CardPlaceableTransfer.cs" />
     <Compile Include="Transfer\CardTransfer.cs" />
     <Compile Include="Transfer\ClickedPlaceableTransfer.cs" />
     <Compile Include="Transfer\ClickedTileTransfer.cs" />
@@ -271,6 +272,7 @@
     <Content Include="Content\Assets\EnemyCardB0.png" />
     <Content Include="Content\Assets\EnemyCardB1.png" />
     <Content Include="Content\Assets\EnemyCardB2.png" />
+    <Content Include="Content\Assets\EnemyRemove.png" />
     <Content Include="Content\Assets\ExclamationMark.png" />
     <Content Include="Content\Assets\grain.png" />
     <Content Include="Content\Assets\grains.png" />
@@ -414,6 +416,7 @@
     <Content Include="Scripts\Phaser\item.js" />
     <Content Include="Scripts\Phaser\Placeables\developmentplaceable.js" />
     <Content Include="Scripts\Phaser\placeableroad.js" />
+    <Content Include="Scripts\Phaser\Placeables\enemyremoveplaceable.js" />
     <Content Include="Scripts\Phaser\Placeables\enemybackplaceable.js" />
     <Content Include="Scripts\Phaser\Placeables\playermoveplaceable.js" />
     <Content Include="Scripts\Phaser\Placeables\playerattackplaceable.js" />

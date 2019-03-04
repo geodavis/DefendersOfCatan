@@ -10,6 +10,7 @@ namespace DefendersOfCatan.Transfer
     {
         public int ParentTileId { get; set; }
         public DevelopmentType developmentType { get; set; }
+        public CardType cardType { get; set; }
 
     }
 }

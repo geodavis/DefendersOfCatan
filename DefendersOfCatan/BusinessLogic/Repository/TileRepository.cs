@@ -25,6 +25,8 @@ namespace DefendersOfCatan.BusinessLogic.Repository
         List<Road> GetRoads();
         List<int> GetEnemyTileIds();
         Enemy GetEnemyByTileId(int tileId);
+        List<int> GetTilesWithEnemyIds();
+        List<int> GetPlayerMoveableTileIds();
     }
     public class TileRepository : BaseRepository, ITileRepository
     {
@@ -147,6 +149,15 @@ namespace DefendersOfCatan.BusinessLogic.Repository
         public List<int> GetEnemyTileIds()
         {
             return _db.GetSet<Tile>().Where(t => t.Type == TileType.BlueEnemy || t.Type == TileType.GreenEnemy || t.Type == TileType.RedEnemy || t.Type == TileType.YellowEnemy).Select(t => t.Id).ToList();
+        }
+
+        public List<int> GetTilesWithEnemyIds()
+        {
+            return _db.GetSet<Tile>().Where(t => t.Enemy != null && t.Enemy.IsRemoved == false).Select(t => t.Id).ToList();
+        }
+        public List<int> GetPlayerMoveableTileIds()
+        {
+            return _db.GetSet<Tile>().Where(t => t.Type == TileType.Resource || t.Type == TileType.Capital).Select(t => t.Id).ToList();
         }
     }
 }

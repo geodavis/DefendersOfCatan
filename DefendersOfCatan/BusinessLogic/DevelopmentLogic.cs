@@ -65,7 +65,7 @@ namespace DefendersOfCatan.BusinessLogic
                 var cardTransfer = new CardTransfer
                 {
                     CardType = card.CardType,
-                    Description = card.Description,
+                    CardDescription = card.CardDescription,
                     CardTypeReadable = card.CardType.ToString()
                 };
                 cardsTransfer.Add(cardTransfer);

@@ -45,10 +45,10 @@ namespace DefendersOfCatan.Common
 
         public enum CardType
         {
-            a,
-            b,
-            c,
-            d
+            BarbarianBack, // Move one set of player enemy tile barbarians back one space
+            EnemyRemove, // Remove any one enemy of your choosing
+            PlayerMove, // Move to any tile of your choosing
+            FreeDevelopment // Purchase any development of your choosing
         }
         public enum GameState
         {

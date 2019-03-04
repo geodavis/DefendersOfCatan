@@ -240,16 +240,16 @@ namespace DefendersOfCatan.BusinessLogic
         {
             var cards = new List<Card>();
 
-            var card = new Card { CardType = CardType.a, Description = "a description"};
+            var card = new Card { CardType = CardType.BarbarianBack, CardDescription = "Move any barbarian set back one space."};
             cards.Add(card);
 
-            card = new Card { CardType = CardType.b, Description = "b description" };
+            card = new Card { CardType = CardType.EnemyRemove, CardDescription = "Remove any enemy of your choosing." };
             cards.Add(card);
 
-            card = new Card { CardType = CardType.c, Description = "c description" };
+            card = new Card { CardType = CardType.PlayerMove, CardDescription = "Move to any tile of your choosing." };
             cards.Add(card);
 
-            card = new Card { CardType = CardType.d, Description = "d description" };
+            card = new Card { CardType = CardType.FreeDevelopment, CardDescription = "Pick any development you want." };
             cards.Add(card);
             
             _developmentRepo.AddCards(cards);
