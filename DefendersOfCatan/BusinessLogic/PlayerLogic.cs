@@ -46,8 +46,10 @@ namespace DefendersOfCatan.BusinessLogic
             var selectedTile = _tileRepo.GetTileById(selectedTileId);
             var neighborTiles = _tileLogic.GetNeighborTiles(currentPlayerTile);
             var canMoveToAnyTile = _playerRepo.GetCurrentPlayer().CanMoveToAnyTile;
+            var allMoveableTiles = _tileRepo.GetPlayerMoveableTileIds();
 
-            if (neighborTiles.Any(t => t.Id == selectedTile.Id) || selectedTile.Id == currentPlayerTile.Id || canMoveToAnyTile)
+            if (neighborTiles.Any(t => t.Id == selectedTile.Id) || selectedTile.Id == currentPlayerTile.Id ||
+                canMoveToAnyTile && allMoveableTiles.Contains(selectedTileId))
             {
                 _tileRepo.UpdateCurrentPlayerTile(selectedTile);
                 if (canMoveToAnyTile)
