@@ -50,24 +50,24 @@ function executePostEnemyClickEvents(d) {
                 // ToDo: error handling
                 break;
             case 'PlayerResourceOrFight':
-                var roll = d.Item.DiceRolls[0]; // first dice foll
+                //var roll = d.Item.DiceRolls[0]; // first dice foll
 
-                $.each(diceGroup.children, function () {
-                    if (this.number == roll) {
-                        this.visible = true;
-                    }
-                    else {
-                        this.visible = false;
-                    }
-                });
+                //$.each(diceGroup.children, function () {
+                //    if (this.number == roll) {
+                //        this.visible = true;
+                //    }
+                //    else {
+                //        this.visible = false;
+                //    }
+                //});
 
-                GameStates.PlayerResourceOrFight.prototype.removeEnemy(d.Item.EnemyTileId);
-                var player = players.getPlayerById(d.Item.OverrunPlayerId);
-                player.setPlayerOverrun(false);
+                //GameStates.PlayerResourceOrFight.prototype.removeEnemy(d.Item.EnemyTileId);
+                //var player = players.getPlayerById(d.Item.OverrunPlayerId);
+                //player.setPlayerOverrun(false);
 
-                // Advance to the next player and phase
-                getJSONSync('/Game/MoveToNextPlayer', moveToNextPlayer, error); // URL, Success Function, Error Function
-                getJSONSync('/Game/GetNextGameState', startNextGameState, error); // URL, Success Function, Error Function
+                //// Advance to the next player and phase
+                //getJSONSync('/Game/MoveToNextPlayer', moveToNextPlayer, error); // URL, Success Function, Error Function
+                //getJSONSync('/Game/GetNextGameState', startNextGameState, error); // URL, Success Function, Error Function
                 break;
             default:
                 alert("Game state unknown!");
@@ -80,20 +80,11 @@ function executePostEnemyClickEvents(d) {
 }
 
 function highlightEnemyPlacementTiles(enemyCard) {
-    //var cardSelected = true; // todo: clean up card selected logic (may just remove it)
-    //if (!enemyCard.hasBeenPlaced && !cardSelected) { // ToDo: add error handling to trying to select another card before placing 
-        //selectedEnemyCard = enemyCard;
-        //cardSelected = true;
-
-        $.each(hexGrid.children, function () {
-            if (this.type == enemyCard.playerColor) {
-                highlight(this);
-            }
-        });
-    //}
-    //else {
-      //  alert('Card has already been placed!');
-    //}
+    $.each(hexGrid.children, function () {
+        if (this.type == enemyCard.playerColor) {
+            highlight(this);
+        }
+    });
 }
 
 Enemy.prototype.setAngle = function (tileType) { // FYI - tile type = player color

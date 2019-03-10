@@ -547,10 +547,10 @@ namespace DefendersOfCatan.Controllers
                         break;
                     case CardType.PlayerMove:
                         _playerRepo.SetCanMoveToAnyTile(true);
-                        result.Item.TileIds = _tileRepo.GetPlayerMoveableTileIds(); // ToDo: Ensure move phase only; Allow player to move anywhere (update the validation that must be neighbor).
+                        result.Item.TileIds = _tileRepo.GetPlayerMoveableTileIds(); // ToDo: Ensure move phase only
                         break;
                     case CardType.FreeDevelopment:
-                        // ToDo:
+                        _playerRepo.SetCanPurchaseAnyDevelopment(true); // ToDo: Ensure purchase phase only
                         break;
                     default:
                         Console.WriteLine("Error getting next player!");

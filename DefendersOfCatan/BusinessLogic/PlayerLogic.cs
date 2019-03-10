@@ -108,6 +108,11 @@ namespace DefendersOfCatan.BusinessLogic
 
         public bool CurrentPlayerCanPurchaseDevelopment(DevelopmentType developmentType)
         {
+            if (GetCurrentPlayer().CanPurchaseAnyDevelopment)
+            {
+                return true;
+            }
+
             var playerCanPurchase = false;
             var developmentCost = _developmentRepo.GetDevelopmentByType(developmentType).DevelopmentCost;
             var playerResources = GetCurrentPlayer().PlayerResources;

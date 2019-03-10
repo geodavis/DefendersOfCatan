@@ -22,7 +22,7 @@ namespace DefendersOfCatan.BusinessLogic.Repository
         void AddDevelopmentToCurrentPlayer(DevelopmentType developmentType);
         void AddCardToCurrentPlayer(CardType cardType);
         void SetCanMoveToAnyTile(bool canMoveToAnyTile);
-
+        void SetCanPurchaseAnyDevelopment(bool canPurchaseAnyDevelopment);
     }
     public class PlayerRepository : BaseRepository, IPlayerRepository
     {
@@ -111,6 +111,12 @@ namespace DefendersOfCatan.BusinessLogic.Repository
         {
             var player = GetCurrentPlayer();
             player.CanMoveToAnyTile = canMoveToAnyTile;
+            _db.SaveChanges();
+        }
+        public void SetCanPurchaseAnyDevelopment(bool canPurchaseAnyDevelopment)
+        {
+            var player = GetCurrentPlayer();
+            player.CanPurchaseAnyDevelopment = canPurchaseAnyDevelopment;
             _db.SaveChanges();
         }
     }

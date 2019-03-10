@@ -43,17 +43,11 @@ namespace DefendersOfCatan.BusinessLogic.Repository
         public bool SetSelectedEnemy(int id)
         {
             // Validate a selected enemy does not already exist
-            if (GetSelectedEnemy() == null) // ToDo: Return error to client
-            {
-                var enemy = GetGame().Enemies.Single(e => e.Id == id);
-                enemy.IsSelected = true;
-                _db.SaveChanges();
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+            if (GetSelectedEnemy() != null) return false;
+            var enemy = GetGame().Enemies.Single(e => e.Id == id);
+            enemy.IsSelected = true;
+            _db.SaveChanges();
+            return true;
 
         }
 
